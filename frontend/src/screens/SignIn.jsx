@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import { setUserDataWithRedux } from "../redux/slices/userData";
-//mport { useDispatch, useSelector } from "react-redux";
+import { setUserDataWithRedux } from "../redux/slices/userData";
+import { useDispatch, useSelector } from "react-redux";
 import { setCookie } from "../cookies/setCookie";
 const SignIn = () => {
-  //const navigate = useNavigate()
-  //const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [userData, setUserData] = useState({
     email: ""  , 
     password: "" , 
@@ -25,10 +25,10 @@ const SignIn = () => {
         let data = await response.json()
         console.log(data)
         if(data.success) {
-            //dispatch(setUserDataWithRedux({payload: data.userData}))
-            //console.log(data.userData._id)
-            setCookie("user_id" , data.userData._id)
-            //navigate("/home")
+            dispatch(setUserDataWithRedux({payload: data.userData}))
+            console.log(data.userData)
+            setCookie("token" , data.userData)
+            navigate("/home")
 
         }
         else {
