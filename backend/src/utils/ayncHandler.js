@@ -3,4 +3,6 @@ const asyncHandle = (reqHandle) => {
         Promise.resolve(reqHandle(req,res,next)).catch((err)=>next(err))
     }
 }
-export { asyncHandle }
+module.exports = {
+    asyncHandle
+}
