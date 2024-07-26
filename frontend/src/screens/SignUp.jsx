@@ -24,25 +24,20 @@ function SignUp() {
       const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8000/api/v1/users/signup' , {
+            let response = await fetch('http://localhost:8000/api/v1/users/signup' , {
                 headers : {
                   'Content-Type' : "application/json"
                 } , 
                 method: "POST" , 
-                body: JSON.stringify(data)
+                body: JSON.stringify({...data})
               })
           console.log(response);
-          setSuccessMessage(response.data.message)
-          setPasswordError('');
-          setEmailError('')
+          response  = await response.json()
+          //setSuccessMessage(response.data.message)
+          //setPasswordError('');
+          //setEmailError('')
         } catch (error) {
-          if(error.response.data.statuscode === 400){
-            setPasswordError(error.response.data.message);
-            setEmailError('')
-          }else if(error.response.data.statuscode === 401){
-            setEmailError(error.response.data.message)
-            setPasswordError('')
-          }
+          console.log(error)
         }
       };
   return (
