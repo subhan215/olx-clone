@@ -18,6 +18,15 @@ app.use(cors({
   credentials: true
 }))
 app.use(express.static(path.resolve("./public"))); 
+
+
+//api url ki starting yahan aur jo endpoint hit karna wo routes main
+//import route
+import userRouter from './routes/user.routes.js'
+//declaration
+app.use("/api/v1/users",userRouter)
+
+
 server.listen(PORT, () => {
   console.log("server connected!");
 });
