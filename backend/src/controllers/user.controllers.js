@@ -46,6 +46,7 @@ async function postSignUp(req, res) {
   console.log("Signup request received");
 
   let { email, password, confirmPassword, fullName } = req.body;
+ 
   fullName = fullName?.trim();
   email = email?.trim();
   password = password?.trim();
@@ -58,13 +59,14 @@ async function postSignUp(req, res) {
       message: "All fields are required."
     });
   }
-
+  
   if (password !== confirmPassword) {
     return res.status(400).json({
       success: false,
       message: "Passwords do not match."
     });
   }
+  
 
   if (!validateEmail(email)) {
     return res.status(400).json({
@@ -72,34 +74,30 @@ async function postSignUp(req, res) {
       message: "Invalid email format."
     });
   }
-
+ 
   if (!validatePassword(password)) {
     return res.status(400).json({
       success: false,
       message: "Password must have at least 8 and a maximum of 20 characters, including numeric and special characters."
     });
   }
-
-  try {
-    // Check if user already exists
-    const userExist = await User.findOne({ email });
+  
+  /*const userExist = await User.find({ email });
     if (userExist) {
       return res.status(400).json({
         success: false,
         message: "Email already exists."
       });
     }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(email) */
 
     // Create a new user
     const user = await User.create({
       fullName,
       email,
-      password: hashedPassword
+      password
     });
-
+    console.log(user)
     if (!user) {
       return res.status(500).json({
         success: false,
@@ -107,18 +105,21 @@ async function postSignUp(req, res) {
       });
     }
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
       userData: user,
       message: "Account registered successfully."
     });
+  /*try {
+    // Check if user already exists
+    
   } catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error."
     });
-  }
+  } */
 }
 
 
