@@ -51,7 +51,7 @@ async function postSignUp(req, res) {
   email = email?.trim();
   password = password?.trim();
   confirmPassword = confirmPassword?.trim();
-
+  console.log(fullName,email,password,confirmPassword)
   // Validate input fields
   if (!fullName || !email || !password || !confirmPassword) {
     return res.status(400).json({
@@ -81,17 +81,23 @@ async function postSignUp(req, res) {
       message: "Password must have at least 8 and a maximum of 20 characters, including numeric and special characters."
     });
   }
-  
-  /*const userExist = await User.find({ email });
+
+  try {
+    // Check if user already exists
+    console.log("db q1")
+    const userExist = await User.findOne({ email });
+    console.log("db q2  ")
+
     if (userExist) {
       return res.status(400).json({
         success: false,
         message: "Email already exists."
       });
     }
-    console.log(email) */
+
 
     // Create a new user
+    
     const user = await User.create({
       fullName,
       email,
@@ -110,16 +116,14 @@ async function postSignUp(req, res) {
       userData: user,
       message: "Account registered successfully."
     });
-  /*try {
-    // Check if user already exists
-    
-  } catch (error) {
+  }
+   catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error."
     });
-  } */
+  } 
 }
 
 

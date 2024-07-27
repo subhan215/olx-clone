@@ -24,20 +24,27 @@ function SignUp() {
       const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let response = await fetch('http://localhost:8000/api/v1/users/signup' , {
-                headers : {
-                  'Content-Type' : "application/json"
-                } , 
-                method: "POST" , 
-                body: JSON.stringify({...data})
-              })
-          console.log(response);
-          response  = await response.json()
-          //setSuccessMessage(response.data.message)
-          //setPasswordError('');
-          //setEmailError('')
+          console.log('Sending data:', data);
+          let response = await fetch('http://localhost:8000/api/v1/users/signup', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({ ...data }),
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.log('Error:', errorData.message);
+            // Handle specific error messages here
+            return;
+          }
+      
+          response = await response.json();
+          console.log('Response:', response);
+          // Handle success response here
         } catch (error) {
-          console.log(error)
+          console.log('Fetch error:', error);
         }
       };
   return (
@@ -70,14 +77,14 @@ function SignUp() {
                   required
                 />
               </div>
-              {emailError && (
+              {/* {emailError && (
               <div
                 id="error-message"
                 className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mt-4"
               >
                 {emailError}
               </div>
-            )}
+            )} */}
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
@@ -91,7 +98,7 @@ function SignUp() {
                   required
                 />
               </div>
-              {passwordError && (
+              {/* {passwordError && (
                 <div>
               <div
                 id="error-message"
@@ -100,7 +107,7 @@ function SignUp() {
                 {passwordError}
               </div>
               </div>
-            )}
+            )} */}
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
@@ -125,14 +132,14 @@ function SignUp() {
             {/* <p className="text-center text-sm text-gray-400 mt-4">
               Already have an account? <a href={props.loginPageLink} className="text-green-500">Login</a>
             </p> */}
-            {successMessage && (
+            {/* {successMessage && (
               <div
                 id="error-message"
                 className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center mt-4"
               >
                 {successMessage}
               </div>
-            )}
+            )} */}
           </div>
         </>
   )
