@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8000;
 const path = require("path");
 const { connectMongoDb } = require("./src/db");
 const userRoute = require("./src/routes/user.routes");
-connectMongoDb(`${process.env.MONGODB_URI}/blogify`);
+connectMongoDb(`${process.env.MONGODB_URI}khareedoFarokht`);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 app.use(cookieParser()); 

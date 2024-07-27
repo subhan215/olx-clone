@@ -50,7 +50,7 @@ async function postSignUp(req, res) {
   email = email?.trim();
   password = password?.trim();
   confirmPassword = confirmPassword?.trim();
-
+  console.log(fullName,email,password,confirmPassword)
   // Validate input fields
   if (!fullName || !email || !password || !confirmPassword) {
     return res.status(400).json({
@@ -82,7 +82,10 @@ async function postSignUp(req, res) {
 
   try {
     // Check if user already exists
+    console.log("db q1")
     const userExist = await User.findOne({ email });
+    console.log("db q2  ")
+
     if (userExist) {
       return res.status(400).json({
         success: false,
@@ -91,13 +94,14 @@ async function postSignUp(req, res) {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    //const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
+    
     const user = await User.create({
       fullName,
       email,
-      password: hashedPassword
+      password
     });
 
     if (!user) {
