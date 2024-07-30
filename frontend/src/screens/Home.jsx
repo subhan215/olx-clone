@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCookie } from "../cookies/getCookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserDataWithRedux } from "../redux/slices/userData";
-
+import Navbar from "../Components/Navbar/Navbar";
 const Home = () => {
   const dispatch = useDispatch()
   let token = getCookie("token")
@@ -34,7 +34,9 @@ const Home = () => {
     verifyToken()
  } , [])
   return (
-    <></>
+    <>
+      <Navbar/>
+    </>
   );
 };
 export default Home;

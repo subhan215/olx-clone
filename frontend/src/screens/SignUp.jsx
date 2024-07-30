@@ -49,16 +49,19 @@ function SignUp() {
       };
   return (
     <>
-          <div className="registration-form max-w-md mx-auto p-6 bg-white shadow-md rounded-lg ">
-            <form id="registerForm" className="mt-20 " onSubmit={handleSubmit}>
-              <div className="relative mb-4">
+          <div className="registration-form mt-20 max-w-md mx-auto p-6 bg-gray-500 shadow-md rounded-lg ">
+            <form id="registerForm" className=" " onSubmit={handleSubmit}>
+              <div className='text-4xl font-bold text-orange-400 m-2'>
+                <h3 className='ml-[9rem] mb-6' >Xlo</h3>
+              </div>
+              <div className="relative mb-4 ">
                 <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
                   type="text"
                   id="fullName"
                   name="fullName"
                   placeholder="Enter your Full Name"
-                  className="input-field w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
                   value={data.fullName}
                   onChange={handleFormData}
                   required
@@ -71,7 +74,7 @@ function SignUp() {
                   id="email"
                   name="email"
                   placeholder="Enter Email"
-                  className="input-field w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
                   value={data.email}
                   onChange={handleFormData}
                   required
@@ -92,7 +95,7 @@ function SignUp() {
                   id="password"
                   name="password"
                   placeholder="Enter Password"
-                  className="input-field w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
                   value={data.password}
                   onChange={handleFormData}
                   required
@@ -115,7 +118,7 @@ function SignUp() {
                   id="confirmPassword"
                   name="confirmPassword"
                   placeholder="Confirm Password"
-                  className="input-field w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
                   value={data.confirmPassword}
                   onChange={handleFormData}
                   required
@@ -124,7 +127,7 @@ function SignUp() {
               
               <button
                 type="submit"
-                className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                className="w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
               >
                 Register
               </button>
