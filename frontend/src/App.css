@@ -1,38 +1,67 @@
-.App {
+body {
+  font-family: Arial, sans-serif;
+}
+
+.upload-form {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.upload-container {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.upload-container h3 {
+  text-align: left;
+  margin-bottom: 10px;
+  color: #0A0A0A; /* Dark color for the title */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  justify-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.upload-item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.upload-label:hover {
+  background-color: #e0e0e0;
+}
+
+.upload-icon {
+  width: 30px;
+  height: 30px;
+ /* background-image: url('path/to/your/icon.png'); */ /* Replace with your icon path */
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.note {
+  margin-top: 10px;
+  color: #606060;
+  font-size: 0.9em;
 }

@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 8000;
 const path = require("path");
 const { connectMongoDb } = require("./src/db");
 const userRoute = require("./src/routes/user.routes");
+const postRoute = require("./src/routes/post.routes");
 connectMongoDb(`${process.env.MONGODB_URI}khareedoFarokht`);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
@@ -25,6 +26,7 @@ app.use(express.static(path.resolve("./public")));
 //import route
 //declaration
 app.use("/api/v1/users",userRoute)
+app.use("/api/v1/posts",postRoute)
 
 
 server.listen(PORT, () => {

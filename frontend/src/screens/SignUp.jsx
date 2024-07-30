@@ -77,14 +77,14 @@ function SignUp() {
                   required
                 />
               </div>
-              {/* {emailError && (
+              {emailError && (
               <div
                 id="error-message"
                 className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mt-4"
               >
                 {emailError}
               </div>
-            )} */}
+            )} 
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input

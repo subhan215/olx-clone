@@ -1,0 +1,246 @@
+const Job = require("../models/Ad Models/Job");
+const Mobile = require("../models/Ad Models/Mobile");
+const Service = require("../models/Ad Models/Service");
+const Vehicle = require("../models/Ad Models/Vehicle");
+const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary");
+
+async function postService(req , res) {
+  if( !req.body.adTitle || 
+      !req.body.description || !req.body.location ||
+      !req.body.ownerName || !req.body.phoneNo || 
+    !req.body.category) 
+  {
+      return res.status(400).json({
+          success: false , 
+          message: "Provide complete details!"
+      })
+  }
+  try {
+      let cloudinaryUrls = []
+      for(let i = 0 ; i < req?.files?.images?.length ; i++) {
+          let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
+          console.log("loop" , cloudinaryURL)
+          cloudinaryUrls.push(cloudinaryURL.url)
+      }
+     const service = await Service.create({
+          category: req.body.category ,
+          adTitle: req.body.adTitle , 
+          description: req.body.description , 
+          location: req.body.location , 
+          ownerName: req.body.ownerName , 
+          mobileNo: req.body.phoneNo , 
+          imagesURL: cloudinaryUrls
+      }) 
+  
+     
+  
+  
+      // Create a new Vehicle A ///
+      
+      if (!service) {
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error while creating account."
+        });
+      }
+  
+      return res.status(200).json({
+        success: true,
+        service: service,
+        message: "Service Ad created succesfully!"
+      }); 
+    }
+     catch (error) {
+      console.error("Error during creating service:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error."
+      });
+    } 
+
+}
+
+async function postJob(req , res) {
+  if(!req.body.category || !req.body.hiringPersonOrCompany
+    ||  !req.body.companyName|| !req.body.typeOfAd ||
+    !req.body.salaryFrom || !req.body.salaryTo ||
+    !req.body.salaryPeriod ||  !req.body.careerLevel ||
+    !req.body.positionType|| !req.body.adTitle || 
+      !req.body.description || !req.body.location || 
+      !req.body.ownerName || !req.body.phoneNo) 
+  {
+      return res.status(400).json({
+          success: false , 
+          message: "Provide complete details!"
+      })
+  }
+  try {
+      let cloudinaryUrls = []
+      for(let i = 0 ; i < req?.files?.images?.length ; i++) {
+          let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
+          console.log("loop" , cloudinaryURL)
+          cloudinaryUrls.push(cloudinaryURL.url)
+      }
+      // Check if user already exists
+     const job = await Job.create({
+          category: req.body.category , 
+          hiringPersonOrCompany: req.body.hiringPersonOrCompany , 
+          companyName : req.body.companyName , 
+          typeOfAd: req.body.typeOfAd , 
+          salaryFrom : Number(req.body.salaryFrom) , 
+          salaryTo: Number(req.body.salaryTo) , 
+          salaryPeriod: Number(req.body.salaryPeriod) , 
+          careerLevel: req.body.careerLevel  , 
+          positionType: req.body.positionType , 
+          adTitle: req.body.adTitle , 
+          description: req.body.description , 
+          location: req.body.location , 
+          ownerName: req.body.ownerName , 
+          mobileNo: req.body.phoneNo , 
+          imagesURL: cloudinaryUrls
+      }) 
+  
+     
+  
+  
+      // Create a new Vehicle A ///
+      
+      if (!job) {
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error while creating account."
+        });
+      }
+  
+      return res.status(200).json({
+        success: true,
+        job: job,
+        message: "Job Ad created succesfully!"
+      }); 
+    }
+     catch (error) {
+      console.error("Error during creating job:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error."
+      });
+    } 
+
+}
+
+async function postVehicle(req , res) {
+    if(!req.body.category || !req.body.make || !req.body.adTitle || 
+        !req.body.description || !req.body.location || !req.body.price || 
+        !req.body.ownerName || !req.body.phoneNo) 
+    {
+        return res.status(400).json({
+            success: false , 
+            message: "Provide complete details!"
+        })
+    }
+    try {
+        let cloudinaryUrls = []
+        for(let i = 0 ; i < req?.files?.images?.length ; i++) {
+            let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
+            console.log("loop" , cloudinaryURL)
+            cloudinaryUrls.push(cloudinaryURL.url)
+        }
+        // Check if user already exists
+       const vehicle = await Vehicle.create({
+            category: req.body.category , 
+            make: req.body.make , 
+            adTitle: req.body.adTitle , 
+            description: req.body.description , 
+            location: req.body.location , 
+            price: Number(req.body.price) , 
+            ownerName: req.body.ownerName , 
+            mobileNo: req.body.phoneNo , 
+            imagesURL: cloudinaryUrls
+        }) 
+    
+       
+    
+    
+        // Create a new Vehicle A ///
+        
+        if (!vehicle) {
+          return res.status(500).json({
+            success: false,
+            message: "Internal server error while creating account."
+          });
+        }
+    
+        return res.status(200).json({
+          success: true,
+          vehicle: vehicle,
+          message: "Vehicle Ad created succesfully!"
+        }); 
+      }
+       catch (error) {
+        console.error("Error during creating vehicle:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error."
+        });
+      } 
+
+}
+async function postMobile(req , res) {
+    if(!req.body.category || !req.body.brand || !req.body.condition || !req.body.adTitle || 
+        !req.body.description || !req.body.location || !req.body.price || 
+        !req.body.ownerName || !req.body.phoneNo) 
+    {
+        return res.status(400).json({
+            success: false , 
+            message: "Provide complete details!"
+        })
+    }
+    try {
+        let cloudinaryUrls = []
+        for(let i = 0 ; i < req?.files?.images?.length ; i++) {
+            let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
+            console.log("loop" , cloudinaryURL)
+            cloudinaryUrls.push(cloudinaryURL.url)
+        }
+        // Check if user already exists
+       const mobile = await Mobile.create({
+            category: req.body.category , 
+            brand: req.body.brand ,
+            condition: req.body.condition , 
+            adTitle: req.body.adTitle , 
+            description: req.body.description , 
+            location: req.body.location , 
+            price: Number(req.body.price) , 
+            ownerName: req.body.ownerName , 
+            mobileNo: req.body.phoneNo , 
+            imagesURL: cloudinaryUrls
+        }) 
+        // Create a new Mobile ad ///
+        if (!mobile) {
+          return res.status(500).json({
+            success: false,
+            message: "Internal server error while creating account."
+          });
+        }
+    
+        return res.status(200).json({
+          success: true,
+          mobileAd: mobile , 
+          message: "Mobile Ad created succesfully!"
+        }); 
+      }
+       catch (error) {
+        console.error("Error during creating vehicle:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error."
+        });
+      } 
+
+}
+module.exports = {
+    postVehicle , 
+    postMobile , 
+    postJob , 
+    postService
+}

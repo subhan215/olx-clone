@@ -6,10 +6,7 @@ const mobileSchema = new Schema(
         type: String , 
         required: true
     } , 
-    subCategory: {
-        type: String
-    }
-     , 
+   
      imagesURL : [
         {
           type: String  
@@ -40,7 +37,7 @@ const mobileSchema = new Schema(
         required: true
      } , 
      ownerName: {
-        type: string , 
+        type: String , 
         required: true 
      } , 
      mobileNo: {

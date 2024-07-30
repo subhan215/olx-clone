@@ -32,7 +32,7 @@ const vehicleSchema = new Schema(
         required: true
      } , 
      ownerName: {
-        type: string , 
+        type: String , 
         required: true 
      } , 
      mobileNo: {
