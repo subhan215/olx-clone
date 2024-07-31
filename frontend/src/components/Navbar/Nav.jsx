@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAdsDataWithRedux } from '../../redux/slices/adsData';
 const FontAwesomeIcon = require('@fortawesome/react-fontawesome').FontAwesomeIcon;
 const faMagnifyingGlass = require('@fortawesome/free-solid-svg-icons').faMagnifyingGlass;
 const faMagnifyingGlassLocation = require('@fortawesome/free-solid-svg-icons').faMagnifyingGlassLocation;
@@ -8,8 +10,27 @@ const faBox = require('@fortawesome/free-solid-svg-icons').faBox;
 const faLocationDot = require('@fortawesome/free-solid-svg-icons').faLocationDot;
 const { Link } = require('react-router-dom');
 
-function Navbar() {
-  const handleSearch = () => {};
+function Nav() {
+  const dispatch = useDispatch();
+  let allAds = useSelector((state) => state.adsData.data);
+  const [search, setSearch] = useState("");
+
+  const handleSearch = () => {
+    console.log(allAds);
+    const result = allAds.filter(ad => 
+      ad.category?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.adTitle?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.description?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.make?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.companyName?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.careerLevel?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.salaryPeriod?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.positionType?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.brand?.toLowerCase().includes(search.toLowerCase()) || 
+      ad.condition?.toLowerCase().includes(search.toLowerCase())
+    );
+    dispatch(setAdsDataWithRedux({ payload: result }));
+  };
 
   return (
     <div className="bg-white border-b border-black">
@@ -29,6 +50,7 @@ function Navbar() {
               type="text"
               className="p-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
               placeholder="Search in all Categories"
+              onChange={(e) => setSearch(e.target.value)}
             />
             <FontAwesomeIcon
               className="text-orange-500 hover:cursor-pointer ml-2"
@@ -55,4 +77,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default Nav;

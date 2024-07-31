@@ -4,6 +4,30 @@ const Service = require("../models/Ad Models/Service");
 const Vehicle = require("../models/Ad Models/Vehicle");
 const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary");
 
+
+async function allPosts (req , res) {
+  try{
+    const vehiclesAds = await Vehicle.find({})
+    const mobileAds = await Mobile.find({})
+    const jobAds = await Job.find({})
+    const serviceAds = await Service.find({})
+    return res.status(200).json({
+      message: "Ads successfully fetched" , 
+      success: true , 
+      adsData: [...vehiclesAds , ...mobileAds , ...jobAds , ...serviceAds]
+    })
+  }
+  catch(err) {
+    console.log("error: " , err)
+    return res.status(500).json({
+      message: "Internal Server Error" , 
+      success: false
+    })
+  }
+      
+
+}
+
 async function postService(req , res) {
   if( !req.body.adTitle || 
       !req.body.description || !req.body.location ||
@@ -242,5 +266,6 @@ module.exports = {
     postVehicle , 
     postMobile , 
     postJob , 
-    postService
+    postService , 
+    allPosts
 }

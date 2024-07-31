@@ -1,7 +1,9 @@
 const { Router } = require("express");
 const { upload } = require("../midddlewares/multer");
-const { postVehicle, postMobile, postJob, postService } = require("../controllers/post.controllers");
+const { postVehicle, postMobile, postJob, postService, allPosts } = require("../controllers/post.controllers");
 const router = Router();
+//get all posts //
+router.get("/" , allPosts) ; 
 router.post("/vehicle", upload.fields([
     {
         name: "images",

@@ -1,7 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userDataReducer from './slices/userData'
+import adsDataReducer from "./slices/adsData"
 export const store = configureStore({
   reducer: {
-    userData:userDataReducer
+    userData:userDataReducer , 
+    adsData: adsDataReducer
   },
 })

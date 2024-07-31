@@ -129,9 +129,9 @@ const MobileAd = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item eventKey="Suzuki">Samsung</Dropdown.Item>
-              <Dropdown.Item eventKey="Toyota">Real Me</Dropdown.Item>
-              <Dropdown.Item eventKey="Honda">Oppo</Dropdown.Item>
+              <Dropdown.Item eventKey="Samsung">Samsung</Dropdown.Item>
+              <Dropdown.Item eventKey="Real Me">Real Me</Dropdown.Item>
+              <Dropdown.Item eventKey="Oppo">Oppo</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           <div>
@@ -142,8 +142,8 @@ const MobileAd = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item eventKey="Suzuki">New</Dropdown.Item>
-              <Dropdown.Item eventKey="Toyota">Used</Dropdown.Item>
+              <Dropdown.Item eventKey="New">New</Dropdown.Item>
+              <Dropdown.Item eventKey="Used">Used</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           </div>
