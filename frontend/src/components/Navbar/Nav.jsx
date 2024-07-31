@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdsDataWithRedux } from '../../redux/slices/adsData';
 const FontAwesomeIcon = require('@fortawesome/react-fontawesome').FontAwesomeIcon;
@@ -14,6 +14,25 @@ function Nav() {
   const dispatch = useDispatch();
   let allAds = useSelector((state) => state.adsData.data);
   const [search, setSearch] = useState("");
+
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+
+  // Data for now, will use API in future
+  const provinces = ["All Over Pakistan","Sindh", "Punjab", "KPK", "Balochistan", "Kashmir"];
+  const sindhCities = ["Karachi", "Hyderabad", "Sukkur", "Larkana", "Nawabshah"];
+  const punjabCities = ["Lahore", "Faisalabad", "Rawalpindi", "Multan", "Gujranwala"];
+  const kpkCities = ["Peshawar", "Mardan", "Abbottabad", "Swat", "Kohat"];
+  const balochistanCities = ["Quetta", "Gwadar", "Turbat", "Khuzdar", "Sibi"];
+  const kashmirCities = ["Muzaffarabad", "Mirpur", "Rawalakot", "Bagh", "Kotli"];
+
+  const cityArrays = {
+    Sindh: sindhCities,
+    Punjab: punjabCities,
+    KPK: kpkCities,
+    Balochistan: balochistanCities,
+    Kashmir: kashmirCities
+  };
 
   const handleSearch = () => {
     console.log(allAds);
@@ -32,28 +51,108 @@ function Nav() {
     dispatch(setAdsDataWithRedux({ payload: result }));
   };
 
+
+
+  useEffect(()=>{
+    const getAllPosts = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/v1/posts/' , {
+          headers : {
+            'Content-Type' : "application/json"
+          } , 
+          method: "GET"
+        })
+        let data = await response.json()
+        console.log(data)
+        if(data.success) {
+            dispatch(setAdsDataWithRedux({payload:data.adsData })) 
+        }
+        else {
+            alert(data.message)
+        }
+      }
+      catch(err) {
+          console.log(err)
+      }
+    }
+
+    getAllPosts()
+    console.log(selectedCity)
+    console.log(selectedProvince)
+    console.log(allAds)
+    let dataToFilter = allAds
+
+    if(selectedProvince!=='All Over Pakistan' && selectedProvince){
+      dataToFilter = dataToFilter.filter((ad)=> ad.province === selectedProvince)
+    }
+    if(selectedCity){
+      dataToFilter = dataToFilter.filter((ad)=> ad.city === selectedCity)
+    }
+
+    //mobile keliye kar raha abhi
+    dataToFilter = dataToFilter.filter((ad)=> ad.category === "Mobile Phones")
+
+
+
+    // const categorizedAds = {
+    //   MobilePhones: dataToFilter.filter(ad => ad.category === "Mobile Phones"),
+      // Vehicles: dataToFilter.filter(ad => ad.category === "Cars"),
+      // Jobs: dataToFilter.filter(ad => ad.category === "Job"),
+      // Services: dataToFilter.filter(ad => ad.category === "Service")
+    // };
+    dispatch(setAdsDataWithRedux({ payload: dataToFilter }));
+  },[selectedProvince,selectedCity,dispatch])
+
   return (
     <div className="bg-white border-b border-black">
-      <nav className="flex flex-wrap items-center justify-between p-4 max-w-screen-xl mx-auto">
+      <nav className="flex flex-wrap items-center justify-between p-2 max-w-screen-xl mx-auto">
         <div className="flex items-center space-x-4">
           <h3 className="text-4xl font-bold text-orange-500 mr-10">Xlo</h3>
-          <div className="flex items-center bg-white rounded border-2 border-black p-2">
+          {/* <div className="flex items-center bg-white rounded border-2 border-black p-2">
             <FontAwesomeIcon className="text-orange-500 mr-2" icon={faLocationDot} />
             <input
               type="text"
               className="p-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
               placeholder="Location"
             />
+          </div> */}
+          <div className="flex items-center bg-white rounded border-2 border-black p-[0.1rem]">
+            <FontAwesomeIcon className="text-orange-500 ml-2 mr-2" icon={faLocationDot} />
+            <select
+              className="p-2"
+              value={selectedProvince}
+              onChange={(e) => {
+                setSelectedProvince(e.target.value);
+                setSelectedCity(''); // Reset city when province changes
+              }}
+            >
+              <option value="" disabled>Select Province</option>
+              {provinces.map((province) => (
+                <option className='' key={province} value={province}>{province}</option>
+              ))}
+            </select>
+            {selectedProvince && selectedProvince !== "All Over Pakistan" && (
+              <select
+                className="p-2 ml-2"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                <option value="" disabled>Select City (optional)</option>
+                {cityArrays[selectedProvince].map((city) => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            )}
           </div>
-          <div className="flex items-center bg-white rounded border-2 border-black p-2">
+          <div className=" flex items-center bg-white rounded border-2 border-black p-2">
             <input
               type="text"
-              className="p-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
+              className="p-[0.1rem] ml-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
               placeholder="Search in all Categories"
               onChange={(e) => setSearch(e.target.value)}
             />
             <FontAwesomeIcon
-              className="text-orange-500 hover:cursor-pointer ml-2"
+              className="text-orange-500 hover:cursor-pointer mr-2 ml-2"
               icon={faMagnifyingGlass}
               onClick={handleSearch}
             />
@@ -66,7 +165,7 @@ function Nav() {
             <FontAwesomeIcon icon={faBell} size="2x" className="text-black " />
           </div>
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">
-            <Link to={'/post'} className="flex items-center space-x-2 ">
+            <Link to={'/post'} className="flex items-center space-x-2 no-underline">
               <FontAwesomeIcon className="text-black " icon={faBox} size="lg" />
               <span className="text-black font-bold">BECH DAY</span>
             </Link>

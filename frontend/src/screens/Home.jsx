@@ -8,6 +8,7 @@ const Home = () => {
   const dispatch = useDispatch()
   let token = getCookie("token")
   let ads = useSelector((state)=> state.adsData.data )
+  let mobileAds = useSelector((state)=> state.adsData.data) 
   const [userLoginBool , setUserLoginBool] = useState(false)
  useEffect(()=> {
     const getAllPosts = async () => {
@@ -65,10 +66,22 @@ const Home = () => {
   return (
     <div>
       <Nav/>
+
+      <h1>All Ads</h1>
        {
         ads.map((ad) => (
           <div className="card">
               <p>{ad.adTitle}</p>
+          </div>
+        ))
+       }
+
+       <h1>Mobile Phones</h1>
+       {
+        mobileAds.map((ad)=>(
+          <div className="border border-orange">
+            <p>{ad.adTitle}</p>
+            <p>{ad.province},{ad.city}</p>
           </div>
         ))
        }

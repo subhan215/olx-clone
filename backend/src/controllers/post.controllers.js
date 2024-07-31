@@ -28,6 +28,8 @@ async function allPosts (req , res) {
 
 }
 
+
+
 async function postService(req , res) {
   if( !req.body.adTitle || 
       !req.body.description || !req.body.location ||
@@ -211,7 +213,7 @@ async function postVehicle(req , res) {
 }
 async function postMobile(req , res) {
     if(!req.body.category || !req.body.brand || !req.body.condition || !req.body.adTitle || 
-        !req.body.description || !req.body.location || !req.body.price || 
+        !req.body.description || !req.body.city || !req.body.province || !req.body.price || 
         !req.body.ownerName || !req.body.phoneNo) 
     {
         return res.status(400).json({
@@ -233,7 +235,8 @@ async function postMobile(req , res) {
             condition: req.body.condition , 
             adTitle: req.body.adTitle , 
             description: req.body.description , 
-            location: req.body.location , 
+            province: req.body.province , 
+            city: req.body.city , 
             price: Number(req.body.price) , 
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 
