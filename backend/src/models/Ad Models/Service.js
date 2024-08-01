@@ -19,7 +19,11 @@ const serviceSchema = new Schema(
         type: String , 
         required: true
      } , 
-     location: {
+     province: {
+        type: String , 
+        required: true
+     } , 
+     city: {
         type: String , 
         required: true
      } , 

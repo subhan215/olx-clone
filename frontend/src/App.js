@@ -6,6 +6,8 @@ import VehicleAd from './screens/adPostingScreens/vehicleAd';
 import MobileAd from './screens/adPostingScreens/MobileAd';
 import JobsAd from './screens/adPostingScreens/JobsAd';
 import ServiceAd from './screens/adPostingScreens/ServiceAd';
+import Profile from './screens/Profile';
+
 //import './App.css';
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
         <Route path = "signin" element = {<SignIn />}/>
         <Route path = "home" element = {<Home />}/>
         <Route path = "signup" element = {<SignUp />}/>
+        <Route path = "profile" element = {<Profile/>}/>
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>
           <Route path='mobile' element = {<MobileAd />}/>

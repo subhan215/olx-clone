@@ -14,7 +14,7 @@ async function allPosts (req , res) {
     return res.status(200).json({
       message: "Ads successfully fetched" , 
       success: true , 
-      adsData: [...vehiclesAds , ...mobileAds , ...jobAds , ...serviceAds]
+      adsData: [{model: "vehicle" , ads: [...vehiclesAds]} , {model: "mobile" , ads: [...mobileAds]} , {model: "jobs" , ads: [...jobAds]} , {model: "service" , ads: [...serviceAds]}]
     })
   }
   catch(err) {
@@ -32,7 +32,8 @@ async function allPosts (req , res) {
 
 async function postService(req , res) {
   if( !req.body.adTitle || 
-      !req.body.description || !req.body.location ||
+      !req.body.description || !req.body.city ||
+      !req.body.province ||
       !req.body.ownerName || !req.body.phoneNo || 
     !req.body.category) 
   {
@@ -52,7 +53,8 @@ async function postService(req , res) {
           category: req.body.category ,
           adTitle: req.body.adTitle , 
           description: req.body.description , 
-          location: req.body.location , 
+          city: req.body.city,
+          province:  req.body.province , 
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
           imagesURL: cloudinaryUrls
@@ -92,7 +94,8 @@ async function postJob(req , res) {
     !req.body.salaryFrom || !req.body.salaryTo ||
     !req.body.salaryPeriod ||  !req.body.careerLevel ||
     !req.body.positionType|| !req.body.adTitle || 
-      !req.body.description || !req.body.location || 
+      !req.body.description || !req.body.city || 
+      !req.body.province ||
       !req.body.ownerName || !req.body.phoneNo) 
   {
       return res.status(400).json({
@@ -120,7 +123,8 @@ async function postJob(req , res) {
           positionType: req.body.positionType , 
           adTitle: req.body.adTitle , 
           description: req.body.description , 
-          location: req.body.location , 
+          province: req.body.province , 
+          city: req.body.city , 
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
           imagesURL: cloudinaryUrls
@@ -156,7 +160,7 @@ async function postJob(req , res) {
 
 async function postVehicle(req , res) {
     if(!req.body.category || !req.body.make || !req.body.adTitle || 
-        !req.body.description || !req.body.location || !req.body.price || 
+        !req.body.description || !req.body.city|| !req.body.province || !req.body.price || 
         !req.body.ownerName || !req.body.phoneNo) 
     {
         return res.status(400).json({
@@ -177,7 +181,8 @@ async function postVehicle(req , res) {
             make: req.body.make , 
             adTitle: req.body.adTitle , 
             description: req.body.description , 
-            location: req.body.location , 
+            city: req.body.city ,
+            province: req.body.province ,
             price: Number(req.body.price) , 
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 

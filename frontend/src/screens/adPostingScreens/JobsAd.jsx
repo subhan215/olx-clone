@@ -49,7 +49,8 @@ const JobsAd = () => {
     positionType: "",
     adTitle: "",
     description: "",
-    location: "",
+    city: "",
+    province: "" , 
     ownerName: "",
     phoneNo: "",
   });
@@ -63,8 +64,11 @@ const JobsAd = () => {
   const handlePosTypeSelect = (eventKey) => {
     setVehicleAdData({ ...vehicleAdData, positionType: eventKey });
   };
-  const handleLocSelect = (eventKey) => {
-    setVehicleAdData({ ...vehicleAdData, location: eventKey });
+  const handleProvinceSelect = (eventKey) => {
+    setVehicleAdData({ ...vehicleAdData, province: eventKey });
+  };
+  const handleCitySelect = (eventKey) => {
+    setVehicleAdData({ ...vehicleAdData, city: eventKey });
   };
 
   const handleFileChange = (event, index) => {
@@ -93,8 +97,8 @@ const JobsAd = () => {
     postData.append("positionType", vehicleAdData.positionType);
     postData.append("adTitle", vehicleAdData.adTitle);
     postData.append("description", vehicleAdData.description);
-    postData.append("location", vehicleAdData.location);
-
+    postData.append("city", vehicleAdData.city);
+    postData.append("province", vehicleAdData.province);
     postData.append("ownerName", vehicleAdData.ownerName);
     postData.append("phoneNo", vehicleAdData.phoneNo);
     console.log(postData);
@@ -250,16 +254,32 @@ const JobsAd = () => {
             ></textarea>
           </div>
           <div>
-            <label>Location:</label>
-            <Dropdown onSelect={handleLocSelect}>
+            <label>City:</label>
+            <Dropdown onSelect={handleCitySelect}>
               <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Select Location
+                Select City
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <Dropdown.Item eventKey="Karachi">Karachi</Dropdown.Item>
                 <Dropdown.Item eventKey="Lahore">Lahore</Dropdown.Item>
                 <Dropdown.Item eventKey="Islamabad">Islamabad</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          <div>
+            <label>Province:</label>
+            <Dropdown onSelect={handleProvinceSelect}>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                Select Province
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item eventKey="Sindh">Sindh</Dropdown.Item>
+                <Dropdown.Item eventKey="Punjab">Punjab</Dropdown.Item>
+                <Dropdown.Item eventKey="KPK">KPK</Dropdown.Item>
+                <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
+                <Dropdown.Item eventKey="Kashmir">Kashmir</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>

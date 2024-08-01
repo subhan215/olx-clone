@@ -28,6 +28,12 @@ const userSchema = new Schema(
     profileImageURL: {
       type: String,
     },
+    gender: {
+      type: String
+    } , 
+    phoneNo: {
+      type: String
+    }
   },
   { timestamps: true }
 );
