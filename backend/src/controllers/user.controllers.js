@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const { validateToken } = require("../services/authentication");
+const { validateToken, createTokenForUser } = require("../services/authentication");
 const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary")
 const { validatePassword } = require("../validations/validatePassword");
 const { validateEmail } = require("../validations/validateEmail");
@@ -125,11 +125,47 @@ async function postSignUp(req, res) {
     });
   } 
 }
-
+async function postUpdateProf(req , res) {
+    if(req.body.id) {
+        let user = await User.findById(req.body.id)
+        if(req.body.fullName !== "") {
+          user.fullName =  req.body.fullName
+        }
+        if(req.body.gender !== "") {
+          user.gender = req.body.gender
+        }
+        if(req.body.phoneNo !== "") {
+          user.phoneNo = req.body.phoneNo
+        } 
+        if(req.body.email !== "") {
+          user.email = req.body.email
+        }
+      
+        if(req.files) {
+          console.log(req.files)
+          const cloudinaryURL = await uploadOnCloudinary(req?.files?.image[0]?.path)
+          user.profileImageURL = cloudinaryURL.url
+        }
+        await User.findByIdAndUpdate(req.body.id , {
+          ...user
+        })
+        const token = createTokenForUser(user)
+        return res.status(200).json({
+          userData: token , 
+          success: true , 
+          message: "Profile Updated Successfully!"
+        })
+    }
+    return res.status(400).json({
+      message: "Some error occured in user logIn!" , 
+      success: false
+    })
+}
 
 
 module.exports = {
     postSignIn,
     postSignUp  , 
-    getUser
+    getUser , 
+    postUpdateProf
 }

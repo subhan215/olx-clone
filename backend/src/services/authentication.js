@@ -4,11 +4,13 @@ const secret = "$uperMan@123"
 
 function createTokenForUser(user) {
     const payload = {
-        _id: user._id , 
-        email : user.email ,
-        profileImageUrl :user.profileImageUrl , 
-        role: user.role , 
-        fullName: user.fullName
+        _id: user?._id , 
+        email : user?.email ,
+        profileImageURL :user?.profileImageURL , 
+        role: user?.role , 
+        fullName: user?.fullName , 
+        gender: user?.gender , 
+        phoneNo: user?.phoneNo
         
     }
     const token = JWT.sign(payload , secret)

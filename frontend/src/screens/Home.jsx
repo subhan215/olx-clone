@@ -7,10 +7,10 @@ import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getAllPosts } from "../functions/allPosts";
 import Categories from "../components/Categories/Categories";
 
-import { PrimeReactProvider } from 'primereact/api';
-import { Button } from 'primereact/button';
-import { Carousel } from 'primereact/carousel';
-import { Tag } from 'primereact/tag';
+import { PrimeReactProvider } from "primereact/api";
+import { Button } from "primereact/button";
+import { Carousel } from "primereact/carousel";
+import { Tag } from "primereact/tag";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -23,37 +23,40 @@ const Home = () => {
 
   const responsiveOptions = [
     {
-      breakpoint: '1400px',
+      breakpoint: "1400px",
       numVisible: 4,
-      numScroll: 1
+      numScroll: 1,
     },
     {
-      breakpoint: '1199px',
+      breakpoint: "1199px",
       numVisible: 3,
-      numScroll: 1
+      numScroll: 1,
     },
     {
-      breakpoint: '767px',
+      breakpoint: "767px",
       numVisible: 2,
-      numScroll: 1
+      numScroll: 1,
     },
     {
-      breakpoint: '575px',
+      breakpoint: "575px",
       numVisible: 1,
-      numScroll: 1
-    }
+      numScroll: 1,
+    },
   ];
 
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/users/getUser', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST',
-          body: JSON.stringify({ token })
-        });
+        const response = await fetch(
+          "http://localhost:8000/api/v1/users/getUser",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({ token }),
+          }
+        );
         let data = await response.json();
         console.log(data);
         if (data.success) {
@@ -75,10 +78,16 @@ const Home = () => {
 
   let filteredAds = [];
 
-  if ((province === 'Sindh' || province === 'Punjab' || province === 'Balochistan' ||
-    province === 'KPK' || province === 'Kashmir') && province) {
-    ads.forEach(adObject => {
-      adObject.ads.forEach(ad => {
+  if (
+    (province === "Sindh" ||
+      province === "Punjab" ||
+      province === "Balochistan" ||
+      province === "KPK" ||
+      province === "Kashmir") &&
+    province
+  ) {
+    ads.forEach((adObject) => {
+      adObject.ads.forEach((ad) => {
         if (ad.province === province) {
           console.log("filtering on province");
           filteredAds.push(ad);
@@ -86,41 +95,49 @@ const Home = () => {
       });
     });
   } else {
-    ads.forEach(adObject => {
-      adObject.ads.forEach(ad => {
+    ads.forEach((adObject) => {
+      adObject.ads.forEach((ad) => {
         filteredAds.push(ad);
       });
     });
   }
 
   if (city) {
-    filteredAds = filteredAds.filter(ad => ad.city === city);
+    filteredAds = filteredAds.filter((ad) => ad.city === city);
   }
-  
-  filteredAds = filteredAds.filter(ad =>
-    ad.category?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.adTitle?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.description?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.make?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.companyName?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.careerLevel?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.salaryPeriod?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.positionType?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.brand?.toLowerCase().includes(search?.toLowerCase()) ||
-    ad.condition?.toLowerCase().includes(search?.toLowerCase())
+
+  filteredAds = filteredAds.filter(
+    (ad) =>
+      ad.category?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.adTitle?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.description?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.make?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.companyName?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.careerLevel?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.salaryPeriod?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.positionType?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.brand?.toLowerCase().includes(search?.toLowerCase()) ||
+      ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
 
-  const mobileAds = ads.filter(ad => ad.model === "mobile");
-  console.log(mobileAds)
+  const mobileAds = ads.filter((ad) => ad.model === "mobile");
+  console.log(mobileAds);
 
   const adTemplate = (ad) => {
-    const croppedDescription = ad?.description?.length > 100 ? `${ad.description.substring(0, 100)}...` : ad.description;
-    
+    const croppedDescription =
+      ad?.description?.length > 100
+        ? `${ad.description.substring(0, 100)}...`
+        : ad.description;
+
     return (
       <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
         <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
           {ad?.imagesURL?.length > 0 ? (
-            <img src={ad.imagesURL[0]} alt={ad.adTitle} className="h-full object-contain border rounded" />
+            <img
+              src={ad.imagesURL[0]}
+              alt={ad.adTitle}
+              className="h-full object-contain border rounded"
+            />
           ) : (
             <div className="h-full flex items-center justify-center">
               <span>No Image Available</span>
@@ -131,7 +148,8 @@ const Home = () => {
           <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4>
           <h3 className="text-lg font-semibold mb-2">{ad.adTitle}</h3>
           <p className="text-gray-600 mb-4">{croppedDescription}</p>
-          <span className="text-lg font-bold text-orange-600">{ad.price} </span><span>PKR</span>
+          <span className="text-lg font-bold text-orange-600">{ad.price} </span>
+          <span>PKR</span>
         </div>
       </div>
     );
@@ -143,21 +161,35 @@ const Home = () => {
         <Nav />
         <Categories />
 
-        <div className='p-2'>
-          <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold'>Mobile Phones</p>
+        <div className="p-2">
+          <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
+            Mobile Phones
+          </p>
         </div>
         <div className="card">
-          <Carousel value={mobileAds[0]?.ads} numScroll={1} numVisible={3} responsiveOptions={responsiveOptions} itemTemplate={adTemplate} />
+          {mobileAds[0]?.ads?.length > 0 ? (
+            <Carousel
+              value={mobileAds[0].ads}
+              numScroll={1}
+              numVisible={3}
+              responsiveOptions={responsiveOptions}
+              itemTemplate={adTemplate}
+            />
+          ) : (
+            <div>No ads available</div>
+          )}
         </div>
 
-        <div className='p-2'>
-          <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold'>Cars</p>
+        <div className="p-2">
+          <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Cars</p>
         </div>
-        <div className='p-2'>
-          <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold'>Services</p>
+        <div className="p-2">
+          <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
+            Services
+          </p>
         </div>
-        <div className='p-2'>
-          <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold'>Jobs</p>
+        <div className="p-2">
+          <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Jobs</p>
         </div>
       </div>
     </PrimeReactProvider>

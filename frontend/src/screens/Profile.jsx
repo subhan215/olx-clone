@@ -6,10 +6,11 @@ import { setCookie } from "../cookies/setCookie";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getCookie } from "../cookies/getCookie";
 import Nav from "../components/Navbar/Nav";
+import { verifyToken } from "../functions/verifyToken";
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let token = getCookie("token");
+  
   let user = useSelector((state) => state.userData.data);
   const [userData, setUserData] = useState({
     image: "",
@@ -18,39 +19,42 @@ const Profile = () => {
     phoneNo: "",
     email: "",
   });
+  
   useEffect(() => {
-    
-    const verifyToken = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8000/api/v1/users/getUser",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({ token }),
-          }
-        );
-        let data = await response.json();
-        console.log(data);
-        if (data.success) {
-          dispatch(setUserDataWithRedux({ payload: data.data }));
-        } else {
-          alert(data.message);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-
-    if (token) {
-      verifyToken();
-    }
+    verifyToken(dispatch)
   }, []);
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+      const updateProfFormData = new FormData()
+      updateProfFormData.append("image"  , userData.image)
+      updateProfFormData.append("fullName" , userData.fullName)
+      updateProfFormData.append("gender" , userData.gender)
+      updateProfFormData.append("phoneNo" , userData.phoneNo)
+      updateProfFormData.append("email" , userData.email)
+      updateProfFormData.append("id" , user?._id)
+      
+      try {
+        const response = await fetch('http://localhost:8000/api/v1/users/profileUpdate' , {
+          method: "POST" , 
+          body: updateProfFormData
+        })
+        let data = await response.json()
+        console.log(data)
+        if(data.success) {
+            dispatch(setUserDataWithRedux({payload: data.userData}))
+            console.log(data.userData)
+            setCookie("token" , data.userData)
+            verifyToken(dispatch)
+            ///navigate("/home")
 
+        }
+        else {
+            alert(data.message)
+        }
+      }
+      catch(err) {
+          console.log(err)
+      }
   }
   return (
     <div class="container">
@@ -58,6 +62,7 @@ const Profile = () => {
       <form onSubmit={handleSubmit}>
         <p>Edit Profile</p>
         <div>
+          <img src={user?.profileImageURL} alt="" width="200px"/>  
           <p>Profile Photo</p>
           <input type="file" onChange={(e)=> setUserData({...userData , image: e.target.files[0]})}/>
         </div>
