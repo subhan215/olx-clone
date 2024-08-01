@@ -110,20 +110,27 @@ const Home = () => {
     ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
 
-  const mobileAds = filteredAds.filter(ad => ad.category === "Mobile Phones");
+  const mobileAds = ads.filter(ad => ad.model === "mobile");
+  console.log(mobileAds)
 
   const adTemplate = (ad) => {
-    const croppedDescription = ad.description.length > 100 ? `${ad.description.substring(0, 100)}...` : ad.description;
+    const croppedDescription = ad?.description?.length > 100 ? `${ad.description.substring(0, 100)}...` : ad.description;
     
     return (
       <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
-        <div className=" rounded h-48 bg-gray-200 flex items-center justify-center">
-          <img src={ad.imagesURL[0]} alt={ad.adTitle} className="h-full object-contain border rounded" />
+        <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
+          {ad?.imagesURL?.length > 0 ? (
+            <img src={ad.imagesURL[0]} alt={ad.adTitle} className="h-full object-contain border rounded" />
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              <span>No Image Available</span>
+            </div>
+          )}
         </div>
         <div className="p-4">
           <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4>
           <h3 className="text-lg font-semibold mb-2">{ad.adTitle}</h3>
-            <p className="text-gray-600 mb-4">{croppedDescription}</p>
+          <p className="text-gray-600 mb-4">{croppedDescription}</p>
           <span className="text-lg font-bold text-orange-600">{ad.price} </span><span>PKR</span>
         </div>
       </div>
@@ -140,7 +147,7 @@ const Home = () => {
           <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold'>Mobile Phones</p>
         </div>
         <div className="card">
-          <Carousel value={mobileAds} numScroll={1} numVisible={3} responsiveOptions={responsiveOptions} itemTemplate={adTemplate} />
+          <Carousel value={mobileAds[0]?.ads} numScroll={1} numVisible={3} responsiveOptions={responsiveOptions} itemTemplate={adTemplate} />
         </div>
 
         <div className='p-2'>
