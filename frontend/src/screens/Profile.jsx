@@ -19,25 +19,7 @@ const Profile = () => {
     email: "",
   });
   useEffect(() => {
-    const getAllPosts = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/v1/posts/", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "GET",
-        });
-        let data = await response.json();
-        console.log(data);
-        if (data.success) {
-          dispatch(setAdsDataWithRedux({ payload: data.adsData }));
-        } else {
-          alert(data.message);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+    
     const verifyToken = async () => {
       try {
         const response = await fetch(
@@ -61,42 +43,46 @@ const Profile = () => {
         console.log(err);
       }
     };
-    getAllPosts();
+
 
     if (token) {
       verifyToken();
     }
   }, []);
+  const handleSubmit = () => {
+
+  }
   return (
     <div class="container">
       <Nav />
-      <div>
+      <form onSubmit={handleSubmit}>
         <p>Edit Profile</p>
         <div>
           <p>Profile Photo</p>
-          <input type="file" />
+          <input type="file" onChange={(e)=> setUserData({...userData , image: e.target.files[0]})}/>
         </div>
         <div>
             <label htmlFor="">Name</label>
-            <input type="text" value={user?.fullName}/>
+            <input type="text" value={user?.fullName} onChange={(e)=> setUserData({...userData , fullName: e.target.value})}/>
         </div>
         <div>
         <label htmlFor="">Gender</label>
-        <input type="text" value={user?.gender}/>
+        <input type="text" value={user?.gender} onChange={(e)=> setUserData({...userData , gender: e.target.value})}/>
         </div>
         <div>
             <p>Contact Information</p>
             <div>
             <label htmlFor="">Phone No: </label>
-            <input type="text" value={user?.phoneNo}/>
+            <input type="text" value={user?.phoneNo} onChange={(e)=> setUserData({...userData , phoneNo: e.target.value})}/>
             </div>
             <div>
             <label htmlFor="">Email: </label>
-            <input type="text" value={user?.email}/>
+            <input type="text" value={user?.email} onChange={(e)=> setUserData({...userData , email: e.target.value})}/>
             </div>
        
         </div>
-      </div>
+        <button type="submit">Save Changes</button>
+      </form>
     </div>
   );
 };
