@@ -55,17 +55,17 @@ function SignUp() {
                 <h3 className='ml-[9rem] mb-6' >Xlo</h3>
               </div>
               <div className="relative mb-4 ">
-                <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
+                <FontAwesomeIcon icon={faUser} className=" absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <div className=''><input
                   type="text"
                   id="fullName"
                   name="fullName"
                   placeholder="Enter your Full Name"
-                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
+                  className=" input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
                   value={data.fullName}
                   onChange={handleFormData}
                   required
-                />
+                /></div>
               </div>
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
