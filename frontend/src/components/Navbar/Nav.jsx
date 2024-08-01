@@ -84,7 +84,7 @@ function Nav() {
   // },[selectedProvince,selectedCity,dispatch])
 
   return (
-    <div className="bg-white border-b border-black">
+    <div className="bg-white border-b border-gray-900">
       <nav className="flex flex-wrap items-center justify-between p-2 max-w-screen-xl mx-auto">
         <div className="flex items-center space-x-4">
           <h3 className="text-4xl font-bold text-orange-500 mr-10">Xlo</h3>
