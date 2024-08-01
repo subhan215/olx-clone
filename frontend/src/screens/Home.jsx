@@ -8,7 +8,9 @@ const Home = () => {
   const dispatch = useDispatch()
   let token = getCookie("token")
   let ads = useSelector((state)=> state.adsData.data )
-  let mobileAds = useSelector((state)=> state.adsData.data) 
+  //getting states of location from store
+  let province = useSelector((state)=>state.locationData.province)
+  let city = useSelector((state)=> state.locationData.city)
   const [userLoginBool , setUserLoginBool] = useState(false)
  useEffect(()=> {
     const getAllPosts = async () => {
@@ -62,6 +64,18 @@ const Home = () => {
     }
     
  } , [])
+
+ //abhi ye kaam yahan kardia ha agay iska structure aur behtar kardon ga
+ let filteredAds = ads;
+ if (province !== 'All Over Pakistan' && province) {
+   filteredAds = filteredAds.filter((ad) => ad.province === province);
+ }
+ if (city) {
+   filteredAds = filteredAds.filter((ad) => ad.city === city);
+ }
+
+ // Filter ads for Mobile Phones category
+ const mobileAds = filteredAds.filter((ad) => ad.category === "Mobile Phones");
  
   return (
     <div>
