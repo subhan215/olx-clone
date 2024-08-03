@@ -220,15 +220,17 @@ async function postVehicle(req , res) {
 
 }
 async function postMobile(req , res) {
+    console.log(req.body)
     if(!req.body.category || !req.body.brand || !req.body.condition || !req.body.adTitle || 
         !req.body.description || !req.body.city || !req.body.province || !req.body.price || 
-        !req.body.ownerName || !req.body.phoneNo) 
+        !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) 
     {
         return res.status(400).json({
             success: false , 
             message: "Provide complete details!"
         })
     }
+    console.log(req.body.createdBy)
     try {
         let cloudinaryUrls = []
         for(let i = 0 ; i < req?.files?.images?.length ; i++) {
@@ -249,7 +251,7 @@ async function postMobile(req , res) {
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 
             imagesURL: cloudinaryUrls,
-            //createdBy:req.user._id
+            createdBy:req.body.createdBy
         }) 
         // Create a new Mobile ad ///
         if (!mobile) {

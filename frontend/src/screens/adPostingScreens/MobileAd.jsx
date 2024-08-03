@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../App.css";
 import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { verifyToken } from "../../functions/verifyToken";
+import { getCookie } from "../../cookies/getCookie";
+import { getAllPosts } from "../../functions/allPosts";
 const MobileAd = () => {
-  const user = useSelector((state) => state.userData.data);
-
+  const dispatch = useDispatch();
+  const token = getCookie("token");
+  useEffect(() => {
+    getAllPosts(dispatch);
+    if (token) {
+      verifyToken(dispatch);
+    }
+  }, [token, dispatch]);
+  let user = useSelector((state) => state.userData.data);
+  console.log(user)
   const categoryData = [
     "Tablets",
     "Smart Watches",
@@ -51,6 +61,7 @@ const MobileAd = () => {
     });
   };
   const handleFormSubmit = async (e) => {
+    verifyToken(dispatch)
     e.preventDefault();
     console.log(vehicleAdData)
     const postData = new FormData();
@@ -67,15 +78,14 @@ const MobileAd = () => {
     postData.append("price", vehicleAdData.price);
     postData.append("ownerName", vehicleAdData.ownerName);
     postData.append("phoneNo", vehicleAdData.phoneNo);
+    postData.append("createdBy"  , user._id)
     console.log(postData);
-    console.log(user)
     try {
       const response = await fetch(
         "http://localhost:8000/api/v1/posts/mobile",
         {
           method: "POST",
           body: postData,
-          user:user
         }
       );
       let data = await response.json();
@@ -222,7 +232,6 @@ const MobileAd = () => {
               id="ownerName"
               placeholder="Enter Name..."
               type="text"
-              value={user?.fullName}
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
