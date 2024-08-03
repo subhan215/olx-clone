@@ -7,6 +7,7 @@ import MobileAd from './screens/adPostingScreens/MobileAd';
 import JobsAd from './screens/adPostingScreens/JobsAd';
 import ServiceAd from './screens/adPostingScreens/ServiceAd';
 import Profile from './screens/Profile';
+import IndividualAd from './screens/IndividualAd';
 
 //import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
           <Route path='jobs' element = {<JobsAd />}/>
           <Route path='service' element = {<ServiceAd />}/>
         </Route>
+        <Route path='individualAd' element = {<IndividualAd />}/>
       </Routes>
     </div>
   );

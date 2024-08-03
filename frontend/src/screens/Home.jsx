@@ -6,11 +6,12 @@ import Nav from "../components/Navbar/Nav";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getAllPosts } from "../functions/allPosts";
 import Categories from "../components/Categories/Categories";
-
 import { PrimeReactProvider } from "primereact/api";
 import { Button } from "primereact/button";
 import { Carousel } from "primereact/carousel";
 import { Tag } from "primereact/tag";
+import { NavLink } from "react-router-dom";
+import { setIndividualAdData } from "../redux/slices/individualAd";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -129,29 +130,35 @@ const Home = () => {
         ? `${ad.description.substring(0, 100)}...`
         : ad.description;
 
+    const addMobileAdDataToRedux = () => {
+      dispatch(setIndividualAdData({ payload: ad }))
+    }
     return (
-      <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
-        <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
-          {ad?.imagesURL?.length > 0 ? (
-            <img
-              src={ad.imagesURL[0]}
-              alt={ad.adTitle}
-              className="h-full object-contain border rounded"
-            />
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <span>No Image Available</span>
-            </div>
-          )}
+      <NavLink to="/individualAd"  onClick={addMobileAdDataToRedux}>
+        <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
+          <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
+            {ad?.imagesURL?.length > 0 ? (
+              <img
+                src={ad.imagesURL[0]}
+                alt={ad.adTitle}
+                className="h-full object-contain border rounded"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <span>No Image Available</span>
+              </div>
+            )}
+          </div>
+          <div className="p-4">
+
+            <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4>
+            <h3 className="text-lg font-semibold mb-2">{ad.adTitle}</h3>
+            <p className="text-gray-600 mb-4">{croppedDescription}</p>
+            <span className="text-lg font-bold text-orange-600">{ad.price} </span>
+            <span>PKR</span>
+          </div>
         </div>
-        <div className="p-4">
-          <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4>
-          <h3 className="text-lg font-semibold mb-2">{ad.adTitle}</h3>
-          <p className="text-gray-600 mb-4">{croppedDescription}</p>
-          <span className="text-lg font-bold text-orange-600">{ad.price} </span>
-          <span>PKR</span>
-        </div>
-      </div>
+      </NavLink>
     );
   };
 
