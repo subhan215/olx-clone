@@ -68,12 +68,14 @@ const MobileAd = () => {
     postData.append("ownerName", vehicleAdData.ownerName);
     postData.append("phoneNo", vehicleAdData.phoneNo);
     console.log(postData);
+    console.log(user)
     try {
       const response = await fetch(
         "http://localhost:8000/api/v1/posts/mobile",
         {
           method: "POST",
           body: postData,
+          user:user
         }
       );
       let data = await response.json();

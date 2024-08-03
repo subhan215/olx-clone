@@ -54,10 +54,11 @@ async function postService(req , res) {
           adTitle: req.body.adTitle , 
           description: req.body.description , 
           city: req.body.city,
-          province:  req.body.province , 
+          province:  req.body.province ,
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
-          imagesURL: cloudinaryUrls
+          imagesURL: cloudinaryUrls,
+          createdBy:req.user._id 
       }) 
   
      
@@ -127,7 +128,8 @@ async function postJob(req , res) {
           city: req.body.city , 
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
-          imagesURL: cloudinaryUrls
+          imagesURL: cloudinaryUrls,
+          createdBy:req.user._id 
       }) 
   
      
@@ -186,7 +188,8 @@ async function postVehicle(req , res) {
             price: Number(req.body.price) , 
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 
-            imagesURL: cloudinaryUrls
+            imagesURL: cloudinaryUrls,
+            createdBy:req.user._id 
         }) 
     
        
@@ -245,7 +248,8 @@ async function postMobile(req , res) {
             price: Number(req.body.price) , 
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 
-            imagesURL: cloudinaryUrls
+            imagesURL: cloudinaryUrls,
+            //createdBy:req.user._id
         }) 
         // Create a new Mobile ad ///
         if (!mobile) {

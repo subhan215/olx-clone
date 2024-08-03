@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { schema } = require("../chat");
 
 const mobileSchema = new Schema(
   {
@@ -6,7 +7,6 @@ const mobileSchema = new Schema(
         type: String , 
         required: true
     } , 
-   
      imagesURL : [
         {
           type: String  
@@ -47,8 +47,11 @@ const mobileSchema = new Schema(
      mobileNo: {
         type: String , 
         required :true
+     },
+     createdBy:{
+      type:Schema.Types.ObjectId,
+      ref:'user'
      }
-
   },
   { timestamps: true }
 );
