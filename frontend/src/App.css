@@ -65,3 +65,73 @@ body {
   color: #606060;
   font-size: 0.9em;
 }
+/* individual-ad.css */
+/* individual-ad.css */
+.container {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+h1, h3 {
+    color: #FF7300;
+}
+
+.card {
+    margin-bottom: 20px;
+    border: none;
+}
+.adNameImagesDiv {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+.card-header {
+    background-color: #FF7300;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.card-body {
+    background-color: #FFF;
+}
+.carousel {
+  width: 50%;
+ 
+}
+.carousel img {
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.list-group-item {
+    background-color: #FFF;
+    border: none;
+    color: #333;
+}
+
+.alert {
+    font-size: 1.1em;
+    background-color: #FFF;
+    border: 1px solid #FF7300;
+    color: #333;
+}
+
+button {
+    background-color: #FF7300;
+    border: none;
+    color: #FFF;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #E56200;
+}

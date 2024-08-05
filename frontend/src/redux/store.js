@@ -4,6 +4,7 @@ import adsDataReducer from "./slices/adsData"
 import locationReducer from './slices/locationData'
 import searchReducer from './slices/searchFilter'
 import chatReducer from './slices/chatsData'
+import individualAdReducer  from './slices/individualAd'
 export const store = configureStore({
   reducer: {
     userData:userDataReducer , 
@@ -11,5 +12,7 @@ export const store = configureStore({
     locationData :locationReducer , 
     searchFilter:  searchReducer,
     chatData: chatReducer
+    searchFilter:  searchReducer , 
+    individualAd: individualAdReducer
   },
 })
