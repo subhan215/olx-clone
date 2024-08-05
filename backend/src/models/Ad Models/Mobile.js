@@ -1,5 +1,4 @@
 const { Schema, model } = require("mongoose");
-const { schema } = require("../chat");
 
 const mobileSchema = new Schema(
   {

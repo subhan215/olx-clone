@@ -1,3 +1,5 @@
+import { setChatData } from '../../redux/slices/chatsData';
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdsDataWithRedux } from '../../redux/slices/adsData';
@@ -14,6 +16,8 @@ const faLocationDot = require('@fortawesome/free-solid-svg-icons').faLocationDot
 const { Link } = require('react-router-dom');
 
 function Nav() {
+  const navigate = useNavigate();
+  let user = useSelector((state) => state.userData.data);
   const dispatch = useDispatch();
   let allAds = useSelector((state) => state.adsData.data);
   const [search, setSearch] = useState("");
@@ -51,37 +55,29 @@ function Nav() {
     dispatch(setProvinceWithRedux(provincee))
     dispatch(setCityWithRedux(''));
   }
+  const handleInboxClick = () => {
+    // try {
+    //   const response = await fetch("http://localhost:8000/api/v1/chat", {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     method: "POST",
+    //     body: JSON.stringify({ user: user._id }),
+    //   });
+    //   const chatData = await response.json();
+    //   console.log(chatData);
+    //   console.log(chatData.chat)
+    //   if (chatData.success) {
+    //     dispatch(setChatData(chatData.chat));
+    navigate('/chat', { state: { user } });
+    //   } else {
+    //     alert(chatData.message);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
 
-
-  // useEffect(()=>{
-  //   // 
-
-  //   // getAllPosts()
-  //   console.log(selectedCity)
-  //   console.log(selectedProvince)
-  //   console.log(allAds)
-  //   let dataToFilter = allAds
-
-  //   if(selectedProvince!=='All Over Pakistan' && selectedProvince){
-  //     dataToFilter = dataToFilter.filter((ad)=> ad.province === selectedProvince)
-  //   }
-  //   if(selectedCity){
-  //     dataToFilter = dataToFilter.filter((ad)=> ad.city === selectedCity)
-  //   }
-
-  //   //mobile keliye kar raha abhi
-  //   dataToFilter = dataToFilter.filter((ad)=> ad.category === "Mobile Phones")
-
-
-
-  //   // const categorizedAds = {
-  //   //   MobilePhones: dataToFilter.filter(ad => ad.category === "Mobile Phones"),
-  //     // Vehicles: dataToFilter.filter(ad => ad.category === "Cars"),
-  //     // Jobs: dataToFilter.filter(ad => ad.category === "Job"),
-  //     // Services: dataToFilter.filter(ad => ad.category === "Service")
-  //   // };
-  //   dispatch(setAdsDataWithRedux({ payload: dataToFilter }));
-  // },[selectedProvince,selectedCity,dispatch])
 
   return (
     <div className="bg-white border-b border-gray-900">
@@ -130,7 +126,7 @@ function Nav() {
         <div className="flex flex-wrap items-center space-x-4">
           
           <div className="flex space-x-4">
-            <FontAwesomeIcon icon={faMessage} size="2x" className="text-black " />
+            <button onClick={handleInboxClick}><FontAwesomeIcon icon={faMessage} size="2x" className="text-black " /></button>
             <FontAwesomeIcon icon={faBell} size="2x" className="text-black " />
           </div>
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">

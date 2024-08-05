@@ -230,7 +230,7 @@ async function postMobile(req , res) {
             message: "Provide complete details!"
         })
     }
-    console.log(req.body.createdBy)
+    console.log(`hllo ${req.body.createdBy}`)
     try {
         let cloudinaryUrls = []
         for(let i = 0 ; i < req?.files?.images?.length ; i++) {

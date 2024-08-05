@@ -7,6 +7,7 @@ import MobileAd from './screens/adPostingScreens/MobileAd';
 import JobsAd from './screens/adPostingScreens/JobsAd';
 import ServiceAd from './screens/adPostingScreens/ServiceAd';
 import Profile from './screens/Profile';
+import Chat from './screens/Chat';
 
 //import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
         <Route path = "home" element = {<Home />}/>
         <Route path = "signup" element = {<SignUp />}/>
         <Route path = "profile" element = {<Profile/>}/>
+        <Route path = "chat" element = {<Chat/>}/>
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>
           <Route path='mobile' element = {<MobileAd />}/>
