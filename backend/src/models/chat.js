@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const messageSchema = new Schema({
     sender: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'user',
       required: true,
     },
     content: {
@@ -26,26 +26,10 @@ const chatSchema = new Schema({
       adType: {
           type: String,
           required: true,
-          enum: ['Mobile Phones', 'vehicle', 'job', 'service'], // Ensure it matches the model names
+          enum: ['Mobile Phones', 'Cars', 'job', 'service'], // Ensure it matches the model names
       },
     },
-    // mobileAdId:{
-    //     type:Schema.Types.ObjectId,
-    //     ref:'mobile'
-    // },
-    // vehicleAdId:{
-    //     type:Schema.Types.ObjectId,
-    //     ref:'vehicle'
-    // },
-    // jobAdId:{
-    //     type:Schema.Types.ObjectId,
-    //     ref:'job'
-    // },
-    // serviceAdId:{
-    //     type:Schema.Types.ObjectId,
-    //     ref:'service'
-    // },
-    //messages ka array iska model uper ha
+    
     messages:[messageSchema],
 
     seller:{

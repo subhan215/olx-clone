@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { verifyToken } from "../../functions/verifyToken";
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/allPosts";
-const MobileAd = () => {
+const MobileAd = () => { 
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {

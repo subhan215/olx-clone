@@ -12,6 +12,7 @@ import { Carousel } from "primereact/carousel";
 import { Tag } from "primereact/tag";
 import { NavLink } from "react-router-dom";
 import { setIndividualAdData } from "../redux/slices/individualAd";
+import JobsAd from "./adPostingScreens/JobsAd";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -123,6 +124,12 @@ const Home = () => {
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");
   console.log(mobileAds);
+  const vehicleAds = ads.filter((ad)=> ad.model === "vehicle")
+  console.log(vehicleAds)
+  const jobAds = ads.filter((ad)=> ad.model === "jobs")
+  console.log(jobAds)
+  const serviceAds = ads.filter((ad)=> ad.model === "service")
+  console.log(serviceAds)
 
   const adTemplate = (ad) => {
     const croppedDescription =
@@ -134,7 +141,7 @@ const Home = () => {
       dispatch(setIndividualAdData({ payload: ad }))
     }
     return (
-      <NavLink to="/individualAd"  onClick={addMobileAdDataToRedux}>
+      <NavLink to="/individualAd"  onClick={addMobileAdDataToRedux} className="block no-underline text-black">
         <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
           <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
             {ad?.imagesURL?.length > 0 ? (
@@ -190,14 +197,50 @@ const Home = () => {
         <div className="p-2">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Cars</p>
         </div>
+        <div className="card">
+          {vehicleAds[0]?.ads?.length > 0 ? (
+            <Carousel
+              value={vehicleAds[0].ads}
+              numScroll={1}
+              numVisible={3}
+              responsiveOptions={responsiveOptions}
+              itemTemplate={adTemplate}
+            />
+          ) : (
+            <div>No ads available</div>
+          )}
+        </div>
+
         <div className="p-2">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
             Services
           </p>
         </div>
+        {serviceAds[0]?.ads?.length > 0 ? (
+            <Carousel
+              value={serviceAds[0].ads}
+              numScroll={1}
+              numVisible={3}
+              responsiveOptions={responsiveOptions}
+              itemTemplate={adTemplate}
+            />
+          ) : (
+            <div>No ads available</div>
+          )}
         <div className="p-2">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Jobs</p>
         </div>
+        {jobAds[0]?.ads?.length > 0 ? (
+            <Carousel 
+              value={jobAds[0].ads}
+              numScroll={1}
+              numVisible={3}
+              responsiveOptions={responsiveOptions}
+              itemTemplate={adTemplate}
+            />
+          ) : (
+            <div>No ads available</div>
+          )}
       </div>
     </PrimeReactProvider>
   );

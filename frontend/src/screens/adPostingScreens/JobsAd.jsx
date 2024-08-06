@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "../../App.css";
 import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { getCookie } from "../../cookies/getCookie";
+import { getAllPosts } from "../../functions/allPosts";
+import { verifyToken } from "../../functions/verifyToken";
 
 const JobsAd = () => {
+  const dispatch = useDispatch();
+  const token = getCookie("token");
+  useEffect(() => {
+    getAllPosts(dispatch);
+    if (token) {
+      verifyToken(dispatch);
+    }
+  }, [token, dispatch]);
   const user = useSelector((state) => state.userData.data);
-
+  console.log(user)
   const categoryData = [
     "Accounting and Finance",
     "Advertising and PR",
@@ -101,6 +112,7 @@ const JobsAd = () => {
     postData.append("province", vehicleAdData.province);
     postData.append("ownerName", vehicleAdData.ownerName);
     postData.append("phoneNo", vehicleAdData.phoneNo);
+    postData.append("createdBy"  , user._id)
     console.log(postData);
     try {
       const response = await fetch(

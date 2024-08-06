@@ -14,24 +14,7 @@ const allChats = async (req, res) => {
         })
         .populate('seller', 'fullName email profileImageURL')
         .populate('buyer', 'fullName email profileImageURL')
-        // .populate({
-        //     path: 'ad.adId',
-        //     select: 'adTitle brand price ownerName',
-        //     model: (doc) => {
-        //         switch (doc.ad.adType) {
-        //             case 'Mobile Phones':
-        //                 return mongoose.model('mobile');
-        //             // case 'vehicle':
-        //             //     return 'vehicle';
-        //             // case 'job':
-        //             //     return 'job';
-        //             // case 'service':
-        //             //     return 'service';
-        //             default:
-        //                 throw new Error('Unknown ad type');
-        //         }
-        //     }
-        // });
+        
 
         return res.status(200).json({
             success: true,
@@ -62,7 +45,7 @@ const createChat = async (req, res) => {
         case 'Mobile Phones':
             adModel = Mobile;
             break;
-        case 'vehicle':
+        case 'Cars':
             adModel = Vehicle;
             break;
         case 'job':
@@ -142,5 +125,93 @@ const createChat = async (req, res) => {
         });
     }
 };
+const getChatMessages = async (req, res) => {
+    const { chatId } = req.params;
+    console.log(chatId)
+    try {
+        // Check if the chatId is valid
+        if (!chatId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Chat ID is required',
+            });
+        }
 
-module.exports = { createChat,allChats };
+        // Find chat and populate messages.sender
+        const chat = await Chat.findById(chatId).populate('messages.sender');
+
+        // Check if chat exists
+        if (!chat) {
+            return res.status(404).json({
+                success: false,
+                message: 'Chat not found',
+            });
+        }
+
+        // Check if there are messages
+        if (chat.messages.length === 0) {
+            return res.status(200).json({
+                success: true,
+                messages: [],
+                message: 'No messages yet. Start the conversation!',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            messages: chat.messages,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Cannot retrieve messages',
+        });
+    }
+};
+const sendMessage = async (req, res) => {
+    const { chatId } = req.params;
+    const { sender, content } = req.body;
+  
+    try {
+      if (!chatId || !sender || !content) {
+        return res.status(400).json({
+          success: false,
+          message: 'Chat ID, sender ID, and message content are required',
+        });
+      }
+  
+      const chat = await Chat.findById(chatId);
+      if (!chat) {
+        return res.status(404).json({
+          success: false,
+          message: 'Chat not found',
+        });
+      }
+  
+      const newMessage = {
+        sender,
+        content,
+        timestamp: new Date(),
+      };
+  
+      chat.messages.push(newMessage);
+  
+      await chat.save();
+  
+      //await chat.populate('messages.sender').execPopulate();
+  
+      res.status(200).json({
+        success: true,
+        messages: chat.messages,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: 'Cannot send message',
+      });
+    }
+  };
+  
+module.exports = { createChat,allChats,getChatMessages,sendMessage };

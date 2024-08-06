@@ -1,19 +1,60 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Carousel, Alert, Card, ListGroup, Button } from 'react-bootstrap';
-
-
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { getCookie } from "../cookies/getCookie";
+import { getAllPosts } from "../functions/allPosts";
+import { verifyToken } from "../functions/verifyToken";
 const IndividualAd = () => {
+    const navigate=useNavigate()
+    const dispatch = useDispatch();
+    const token = getCookie("token");
+    useEffect(() => {
+        getAllPosts(dispatch);
+        if (token) {
+        verifyToken(dispatch);
+        }
+    }, [token, dispatch]);
+    const user = useSelector((state) => state.userData.data);
+    console.log(user)
     const adData = useSelector((state) => state.individualAd.data);
-
+    const handleChat= async (adId , adCategory)=>{
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/chat/new',{
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "POST",
+              body: JSON.stringify({ 
+                adId:adId,
+                adCategory: adCategory,
+                user:user._id
+              }),
+            })
+            const data = await response.json()
+            console.log(data)
+            if(data.success){
+              navigate(`/chat`, { state: { user } }) //isko change karna hoga
+            }else{
+              alert(data.message)
+            }
+            
+        } catch (error) {
+          console.log(error)
+        }
+      }
     const renderImages = () => (
-        <Carousel>
-            {adData.imagesURL.map((url, index) => (
-                <Carousel.Item key={index} >
-                    <img src={url} alt={`Slide ${index}`} className="d-block w-100" />
-                </Carousel.Item>
-            ))}
-        </Carousel>
+        adData && adData.imagesURL ? (
+            <Carousel>
+                {adData.imagesURL.map((url, index) => (
+                    <Carousel.Item key={index}>
+                        <img src={url} alt={`Slide ${index}`} className="d-block w-100" />
+                    </Carousel.Item>
+                ))}
+            </Carousel>
+        ) : null
     );
 
     const renderDetails = () => {
@@ -64,7 +105,7 @@ const IndividualAd = () => {
             <Alert variant="info" className="mt-4">
                 <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
             </Alert>
-            <Button variant="primary" className="mt-3">Contact Seller</Button>
+            <Button variant="primary" className="mt-3" onClick={()=>{handleChat(adData._id,adData.category)}}>Contact Seller</Button>
         </div>
     );
 };

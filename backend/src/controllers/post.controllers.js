@@ -35,13 +35,14 @@ async function postService(req , res) {
       !req.body.description || !req.body.city ||
       !req.body.province ||
       !req.body.ownerName || !req.body.phoneNo || 
-    !req.body.category) 
+    !req.body.category || !req.body.createdBy) 
   {
       return res.status(400).json({
           success: false , 
           message: "Provide complete details!"
       })
   }
+  console.log("service",req.body.createdBy)
   try {
       let cloudinaryUrls = []
       for(let i = 0 ; i < req?.files?.images?.length ; i++) {
@@ -58,7 +59,7 @@ async function postService(req , res) {
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
           imagesURL: cloudinaryUrls,
-          createdBy:req.user._id 
+          createdBy:req.body.createdBy 
       }) 
   
      
@@ -97,13 +98,15 @@ async function postJob(req , res) {
     !req.body.positionType|| !req.body.adTitle || 
       !req.body.description || !req.body.city || 
       !req.body.province ||
-      !req.body.ownerName || !req.body.phoneNo) 
+      !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) 
   {
       return res.status(400).json({
           success: false , 
           message: "Provide complete details!"
       })
   }
+  console.log("job",req.body.createdBy)
+
   try {
       let cloudinaryUrls = []
       for(let i = 0 ; i < req?.files?.images?.length ; i++) {
@@ -129,7 +132,7 @@ async function postJob(req , res) {
           ownerName: req.body.ownerName , 
           mobileNo: req.body.phoneNo , 
           imagesURL: cloudinaryUrls,
-          createdBy:req.user._id 
+          createdBy:req.body.createdBy 
       }) 
   
      
@@ -163,13 +166,14 @@ async function postJob(req , res) {
 async function postVehicle(req , res) {
     if(!req.body.category || !req.body.make || !req.body.adTitle || 
         !req.body.description || !req.body.city|| !req.body.province || !req.body.price || 
-        !req.body.ownerName || !req.body.phoneNo) 
+        !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) 
     {
         return res.status(400).json({
             success: false , 
             message: "Provide complete details!"
         })
     }
+    console.log("Vehicle",req.body.createdBy)
     try {
         let cloudinaryUrls = []
         for(let i = 0 ; i < req?.files?.images?.length ; i++) {
@@ -189,7 +193,7 @@ async function postVehicle(req , res) {
             ownerName: req.body.ownerName , 
             mobileNo: req.body.phoneNo , 
             imagesURL: cloudinaryUrls,
-            createdBy:req.user._id 
+            createdBy:req.body.createdBy
         }) 
     
        

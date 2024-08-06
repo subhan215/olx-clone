@@ -1,16 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { setChatData } from "../../redux/slices/chatsData";
+import { setChatData,setChatMessages } from "../../redux/slices/chatsData";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { formatDistanceToNow } from 'date-fns';
 import { NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import ChatDetail from "../ChatDetail/ChatDetail";
 //sari chat uthani hogi backend say
 function Inbox() {
   const location = useLocation();
+  const [selectedChat,setSelectedChat] = useState(null)
+  const [newMessage,setNewMessage]=useState('')
   const user = location.state?.user;
   const dispatch = useDispatch();
   console.log(user);
+
+
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -42,54 +48,200 @@ function Inbox() {
   }, [user, dispatch]);
   const chats = useSelector((state) => state.chatData.chats) || [];
 
+  const handleSpecificClick = async (chat)=>{
+    try {
+      setSelectedChat(chat)
+      console.log(chat._id)
+      const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}`);
+      const data = await response.json();
+      console.log(data.messages);
+      if (data.success) {
+        dispatch(setChatMessages(data.messages));
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const handleSendMessage = async (e)=>{
+    e.preventDefault();
+
+    if (!newMessage.trim()) {
+      alert("Message cannot be empty");
+      return;
+    }
+
+    if (!selectedChat) {
+      alert("No chat selected");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/chat/${selectedChat._id}/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: user._id,
+          content: newMessage,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Update chat messages in Redux state
+        dispatch(setChatMessages(data.messages));
+        // Clear the message input
+        setNewMessage('');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div className="flex h-screen m-4 border border-gray rounded-xl">
       {/* Sidebar */}
       <div className="w-1/3 bg-white border-r border-gray-300">
-        <div className="p-4  border-l border-gray-3 rounded-tl-xl bg-orange-100">
+        <div className="p-4 border-l border-gray-3 rounded-tl-xl bg-orange-100">
           <h2 className="text-2xl font-bold">INBOX</h2>
         </div>
-        <div className="">
-          <div className="">
-            {/* Quick Filters */}
-            {/* <div className="flex space-x-2 mb-4">
-              <button className="px-3 py-1 bg-blue-500 text-white rounded">
-                All
-              </button>
-              <button className="px-3 py-1 bg-gray-200 rounded">
-                Unread Chats
-              </button>
-              <button className="px-3 py-1 bg-gray-200 rounded">
-                Important
-              </button>
-            </div> */}
-            {/* Chat List */}
-            {chats.map((chat) => (
-            <NavLink
+        <div>
+          {/* Chat List */}
+          {chats.map((chat) => (
+            <div
               key={chat._id}
-              to={`chat/${chat._id}`}
-              className="block no-underline text-black" // Added classes here
+              onClick={() => handleSpecificClick(chat)}
+              className="block no-underline text-black cursor-pointer"
             >
               <div className="relative flex items-center p-3 bg-white border border-gray-900">
                 <div className="ml-4 flex-1">
-                  <div className="font-semibold">{chat.buyer.fullName}</div>
+                  <div className="font-semibold">{chat.seller._id === user._id ? `${chat.buyer.fullName}` : `${chat.seller.fullName}`}</div>
                   <div className="text-lg font-semibold text-gray-600">{chat.adTitle}</div>
-                  <div className="text-sm text-gray-500">{chat.adPrice}</div>
+                  <div className="text-sm text-gray-500">{chat.adPrice} PKR</div>
                 </div>
                 <div className="absolute top-0 right-0 p-2 text-xs text-gray-400">
-                  {user._id === chat.seller ? "You are selling" : "You looked for"}
+                  {user._id === chat.seller._id ? "You are selling" : "You looked for"}
                 </div>
                 <div className="absolute bottom-0 right-0 p-2 text-xs text-gray-400">
                   {formatDistanceToNow(new Date(chat.updatedAt), { addSuffix: true })}
                 </div>
               </div>
-            </NavLink>
+            </div>
           ))}
-          </div>
         </div>
       </div>
+      {/* Chat Detail and Message Input */}
+      <div className="flex-1 flex flex-col bg-white">
+        {selectedChat ? (
+          <>
+            <div className="flex-1 overflow-y-auto ">
+              <ChatDetail />
+            </div>
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message"
+                className="w-full px-4 py-2 border rounded"
+              />
+              <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
+            </form>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-600">
+            Select a chat to view messages
+          </div>
+        )}
+      </div>
+    </div>
+    // <div className="flex h-screen m-4 border border-gray rounded-xl">
+    //   {/* Sidebar */}
+    //   <div className="w-1/3 bg-white border-r border-gray-300">
+    //     <div className="p-4  border-l border-gray-3 rounded-tl-xl bg-orange-100">
+    //       <h2 className="text-2xl font-bold">INBOX</h2>
+    //     </div>
+    //     <div className="">
+    //       <div className="">
+            
+    //         {/* Chat List */}
+    //         {chats.map((chat) => (
+    //         <div
+    //           onClick={()=>{handleSpecificClick(chat)}}
+    //           key={chat._id}
+    //           to={`${chat._id}`}
+    //           className="block no-underline text-black" // Added classes here
+    //         >
+    //           <div className="relative flex items-center p-3 bg-white border border-gray-900">
+    //             <div className="ml-4 flex-1">
+    //               <div className="font-semibold">{chat.seller._id===user._id ? `${chat.buyer.fullName}`:`${chat.seller.fullName}`}</div>
+    //               <div className="text-lg font-semibold text-gray-600">{chat.adTitle}</div>
+    //               <div className="text-sm text-gray-500">{chat.adPrice} PKR</div>
+    //             </div>
+    //             <div className="absolute top-0 right-0 p-2 text-xs text-gray-400">
+    //               {user._id === chat.seller._id ? "You are selling" : "You looked for"}
+    //             </div>
+    //             <div className="absolute bottom-0 right-0 p-2 text-xs text-gray-400">
+    //               {formatDistanceToNow(new Date(chat.updatedAt), { addSuffix: true })}
+    //             </div>
+    //           </div>
+    //         </div>
+    //       ))}
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className="chat-detail">
+    //     {selectedChat ? (
+    //       <>
+    //        <div className="w-2/3">
+    //           <ChatDetail />
+    //         </div>
+    //         <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
+    //           <input
+    //             type="text"
+    //             value={newMessage}
+    //             onChange={(e) => setNewMessage(e.target.value)}
+    //             placeholder="Type a message"
+    //           />
+    //           <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
+    //         </form>
+    //       </>
+    //     ) : (
+    //       <p>Select a chat to view messages</p>
+    //     )}
+    //   </div>
+    
+    // </div>
+  );
+}
+
+export default Inbox;
+
+{/* <div className="chat-detail">
+        {selectedChat ? (
+          <>
+            <ChatDetail messages={messages} />
+            <form onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message"
+              />
+              <button type="submit">Send</button>
+            </form>
+          </>
+        ) : (
+          <p>Select a chat to view messages</p>
+        )}
+      </div>
+     */}
       {/* Chat Detail */}
-      <div className="w-2/3 bg-white">
+      {/* <div className="w-2/3 bg-white">
         <div className="p-4">
           <div className="flex items-center">
             <img
@@ -138,9 +290,4 @@ function Inbox() {
             />
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export default Inbox;
+      </div> */}

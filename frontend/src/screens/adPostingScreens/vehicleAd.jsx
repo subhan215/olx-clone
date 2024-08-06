@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "../../App.css";
 import { Dropdown } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyToken } from "../../functions/verifyToken";
+import { getCookie } from "../../cookies/getCookie";
+import { getAllPosts } from "../../functions/allPosts";
 
 const VehicleAd = () => {
+  const dispatch = useDispatch();
+  const token = getCookie("token");
+  useEffect(() => {
+    getAllPosts(dispatch);
+    if (token) {
+      verifyToken(dispatch);
+    }
+  }, [token, dispatch]);
   const user = useSelector((state) => state.userData.data);
-
+  console.log(user)
   const categoryData = [
     "Cars",
     "Cars Accessories",
@@ -66,6 +77,7 @@ const VehicleAd = () => {
     postData.append('price' , vehicleAdData.price)
     postData.append('ownerName' , vehicleAdData.ownerName)
     postData.append('phoneNo' , vehicleAdData.phoneNo)
+    postData.append("createdBy"  , user._id)
     console.log(postData)
     try {
       const response = await fetch('http://localhost:8000/api/v1/posts/vehicle' , {
