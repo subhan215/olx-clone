@@ -6,8 +6,8 @@ import Nav from "../components/Navbar/Nav";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getAllPosts } from "../functions/allPosts";
 import Categories from "../components/Categories/Categories";
-import { useNavigate } from "react-router-dom";
 import { PrimeReactProvider } from "primereact/api";
+import { Button } from "primereact/button";
 import { Carousel } from "primereact/carousel";
 import { Tag } from "primereact/tag";
 import { NavLink } from "react-router-dom";
@@ -15,14 +15,12 @@ import { setIndividualAdData } from "../redux/slices/individualAd";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const token = getCookie("token");
   const ads = useSelector((state) => state.adsData.data);
   const search = useSelector((state) => state.searchFilter.search);
   const province = useSelector((state) => state.locationData.province);
   const city = useSelector((state) => state.locationData.city);
   const [userLoginBool, setUserLoginBool] = useState(false);
-  let user = useSelector((state) => state.userData.data);
 
   const responsiveOptions = [
     {
@@ -125,32 +123,6 @@ const Home = () => {
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");
   console.log(mobileAds);
-
-  const handleChat= async (adId , adCategory)=>{
-    try {
-        const response = await fetch('http://localhost:8000/api/v1/chat/new',{
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({ 
-            adId:adId,
-            adCategory: adCategory,
-            user:user._id
-          }),
-        })
-        const data = await response.json()
-        console.log(data)
-        if(data.success){
-          navigate(`/chat/${data.chat._id}`)
-        }else{
-          alert(data.message)
-        }
-        
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const adTemplate = (ad) => {
     const croppedDescription =

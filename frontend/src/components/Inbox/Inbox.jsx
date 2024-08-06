@@ -4,7 +4,7 @@ import { setChatData } from "../../redux/slices/chatsData";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { formatDistanceToNow } from 'date-fns';
-
+import { NavLink } from "react-router-dom";
 //sari chat uthani hogi backend say
 function Inbox() {
   const location = useLocation();
@@ -65,10 +65,12 @@ function Inbox() {
             </div> */}
             {/* Chat List */}
             {chats.map((chat) => (
-              <div
-                key={chat._id}
-                className="relative flex items-center p-3 bg-gray-100 border border-gray-900"
-              >
+            <NavLink
+              key={chat._id}
+              to={`chat/${chat._id}`}
+              className="block no-underline text-black" // Added classes here
+            >
+              <div className="relative flex items-center p-3 bg-white border border-gray-900">
                 <div className="ml-4 flex-1">
                   <div className="font-semibold">{chat.buyer.fullName}</div>
                   <div className="text-lg font-semibold text-gray-600">{chat.adTitle}</div>
@@ -81,7 +83,8 @@ function Inbox() {
                   {formatDistanceToNow(new Date(chat.updatedAt), { addSuffix: true })}
                 </div>
               </div>
-            ))}
+            </NavLink>
+          ))}
           </div>
         </div>
       </div>

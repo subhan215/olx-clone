@@ -125,9 +125,9 @@ function Nav() {
         </div>
         <div className="flex flex-wrap items-center space-x-4">
           
-          <div className="flex space-x-4">
-            <button onClick={handleInboxClick}><FontAwesomeIcon icon={faMessage} size="2x" className="text-black " /></button>
-            <FontAwesomeIcon icon={faBell} size="2x" className="text-black " />
+          <div className="flex space-x-6 ">
+            <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
+            <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" />
           </div>
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">
             <Link to={'/post'} className="flex items-center space-x-2 no-underline">

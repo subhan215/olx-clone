@@ -11,7 +11,7 @@ export const store = configureStore({
     adsData: adsDataReducer,
     locationData :locationReducer , 
     searchFilter:  searchReducer,
-    chatData: chatReducer
+    chatData: chatReducer,
     searchFilter:  searchReducer , 
     individualAd: individualAdReducer
   },
