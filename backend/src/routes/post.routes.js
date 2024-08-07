@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { upload } = require("../midddlewares/multer");
-const { postVehicle, postMobile, postJob, postService, allPosts } = require("../controllers/post.controllers");
+const { postVehicle, postMobile, postJob, postService, allPosts , postLike } = require("../controllers/post.controllers");
 const router = Router();
 //get all posts //
 router.get("/" , allPosts) ; 
@@ -28,6 +28,6 @@ router.post("/mobile", upload.fields([
         maxCount: 15
     }
   ]) , postService);
-    
+ router.post("/:adId/like" , postLike)   
 const postRoute = router;
 module.exports = postRoute;

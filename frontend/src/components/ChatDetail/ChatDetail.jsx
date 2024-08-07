@@ -6,10 +6,12 @@ import { formatDistanceToNow } from 'date-fns';
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/allPosts";
 import { verifyToken } from "../../functions/verifyToken";
-
-const ChatDetail = () => {
-  const messages = useSelector((state) => state.chatData.messages) || [];
-
+import { io } from 'socket.io-client';
+import { setChatMessages } from '../../redux/slices/chatsData';
+const socket = io('http://localhost:8000');
+const ChatDetail = ({recipientId , chatId}) => {
+  let messages = useSelector((state) => state.chatData.messages) || [];
+  console.log(messages)
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {
@@ -19,6 +21,26 @@ const ChatDetail = () => {
     }
   }, [token, dispatch]);
   const user = useSelector((state) => state.userData.data);
+  useEffect(()=> {
+    socket.on('message' ,async (data)=> {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`);
+  
+        const data = await response.json();
+        if (data.success) {
+          // Update chat messages in Redux state
+          dispatch(setChatMessages(data.messages));
+          // Clear the message input
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      })
+    } , [socket])
+    
+  
   return (
     <div className="flex flex-col h-full bg-orange-100 p-4">
       {/* Chat Messages */}

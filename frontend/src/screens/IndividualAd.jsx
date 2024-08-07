@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { getCookie } from "../cookies/getCookie";
 import { getAllPosts } from "../functions/allPosts";
 import { verifyToken } from "../functions/verifyToken";
+
 const IndividualAd = () => {
     const navigate=useNavigate()
     const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const IndividualAd = () => {
     console.log(user)
     const adData = useSelector((state) => state.individualAd.data);
     const handleChat= async (adId , adCategory)=>{
+        
         try {
             const response = await fetch('http://localhost:8000/api/v1/chat/new',{
               headers: {
@@ -29,7 +31,6 @@ const IndividualAd = () => {
               method: "POST",
               body: JSON.stringify({ 
                 adId:adId,
-                adCategory: adCategory,
                 user:user._id
               }),
             })

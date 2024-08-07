@@ -12,6 +12,8 @@ const { connectMongoDb } = require("./src/db");
 const userRoute = require("./src/routes/user.routes");
 const postRoute = require("./src/routes/post.routes");
 const chatRoute = require("./src/routes/chat.routes")
+const socketIo = require('socket.io');
+
 connectMongoDb(`${process.env.MONGODB_URI}khareedoFarokht`);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
@@ -29,7 +31,23 @@ app.use(express.static(path.resolve("./public")));
 app.use("/api/v1/users",userRoute)
 app.use("/api/v1/posts",postRoute)
 app.use("/api/v1/chat",chatRoute)
-
+const io = socketIo(server , {cors: {
+  origin: 'http://localhost:3000'
+} })
+io.on('connection' , (socket) => {
+  socket.on("register" , ()=> {
+    console.log("New Client Connected")
+  })
+  
+  socket.on('message' , (data)=> {
+    console.log(data)
+    io.emit('message' , data)
+  })
+  socket.on('disconect' , ()=> {
+    console.log("client disconnected")
+  })
+  
+})
 
 server.listen(PORT, () => {
   console.log("server connected!");
