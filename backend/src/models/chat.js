@@ -26,7 +26,7 @@ const chatSchema = new Schema({
       adType: {
           type: String,
           required: true,
-          enum: ['Mobile Phones', 'Cars', 'job', 'service'], // Ensure it matches the model names
+          enum: ['Mobile Phones', 'Vehicle', 'job', 'service'], // Ensure it matches the model names
       },
     },
     

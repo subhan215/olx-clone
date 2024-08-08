@@ -7,15 +7,18 @@ import { formatDistanceToNow } from 'date-fns';
 import { NavLink } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import ChatDetail from "../ChatDetail/ChatDetail";
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:8000');
 //sari chat uthani hogi backend say
 function Inbox() {
   const location = useLocation();
   const [selectedChat,setSelectedChat] = useState(null)
   const [newMessage,setNewMessage]=useState('')
+  const [selectedChatId , setSelectedChatId] = useState(null)
   const user = location.state?.user;
   const dispatch = useDispatch();
   console.log(user);
-
+  
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -46,11 +49,13 @@ function Inbox() {
       console.error("User data is missing");
     }
   }, [user, dispatch]);
+  
   const chats = useSelector((state) => state.chatData.chats) || [];
-
+  
   const handleSpecificClick = async (chat)=>{
     try {
       setSelectedChat(chat)
+      setSelectedChatId(chat._id)
       console.log(chat._id)
       const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}`);
       const data = await response.json();
@@ -76,7 +81,12 @@ function Inbox() {
       alert("No chat selected");
       return;
     }
-
+    socket.emit('message' , {
+         sender: user, 
+         recipient: (selectedChat.seller._id == user._id ? selectedChat.buyer : selectedChat.seller) , 
+         content: newMessage , 
+         timestamp: new Date()
+    })
     try {
       const response = await fetch(`http://localhost:8000/api/v1/chat/${selectedChat._id}/message`, {
         method: 'POST',
@@ -139,7 +149,7 @@ function Inbox() {
         {selectedChat ? (
           <>
             <div className="flex-1 overflow-y-auto ">
-              <ChatDetail />
+              <ChatDetail recipientId = {selectedChat.seller._id == user._id ?selectedChat.buyer :  selectedChat.seller} chatId = {selectedChatId}/>
             </div>
             <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
               <input

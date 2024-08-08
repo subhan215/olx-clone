@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCookie } from "../cookies/getCookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserDataWithRedux } from "../redux/slices/userData";
+import userData, { setUserDataWithRedux } from "../redux/slices/userData";
 import Nav from "../components/Navbar/Nav";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getAllPosts } from "../functions/allPosts";
@@ -13,6 +13,8 @@ import { Tag } from "primereact/tag";
 import { NavLink } from "react-router-dom";
 import { setIndividualAdData } from "../redux/slices/individualAd";
 import JobsAd from "./adPostingScreens/JobsAd";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -20,9 +22,10 @@ const Home = () => {
   const ads = useSelector((state) => state.adsData.data);
   const search = useSelector((state) => state.searchFilter.search);
   const province = useSelector((state) => state.locationData.province);
+  let user = useSelector((state) => state.userData.data);
   const city = useSelector((state) => state.locationData.city);
   const [userLoginBool, setUserLoginBool] = useState(false);
-
+  const [filterBool , setFilterBool] = useState(false)
   const responsiveOptions = [
     {
       breakpoint: "1400px",
@@ -96,6 +99,7 @@ const Home = () => {
         }
       });
     });
+    setFilterBool(true)
   } else {
     ads.forEach((adObject) => {
       adObject.ads.forEach((ad) => {
@@ -106,6 +110,7 @@ const Home = () => {
 
   if (city) {
     filteredAds = filteredAds.filter((ad) => ad.city === city);
+    setFilterBool(true)
   }
 
   filteredAds = filteredAds.filter(
@@ -121,6 +126,15 @@ const Home = () => {
       ad.brand?.toLowerCase().includes(search?.toLowerCase()) ||
       ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
+  useEffect(()=> {
+    if(search != "") {
+      setFilterBool(true)
+    }
+    else {
+      setFilterBool(false)
+    }
+  } )
+  
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");
   console.log(mobileAds);
@@ -137,12 +151,40 @@ const Home = () => {
         ? `${ad.description.substring(0, 100)}...`
         : ad.description;
 
-    const addMobileAdDataToRedux = () => {
+    const addAdDataToRedux = () => {
       dispatch(setIndividualAdData({ payload: ad }))
     }
-    return (
-      <NavLink to="/individualAd"  onClick={addMobileAdDataToRedux} className="block no-underline text-black">
+    const handleLike = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/posts/${ad._id}/like`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({ userId: user._id }),
+          }
+        );
+        let data = await response.json();
+        console.log(data);
+        if (data.success) {
+
+          getAllPosts(dispatch)
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    return (<>
+     
         <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
+          <div>
+            <FontAwesomeIcon icon={faHeart} style={ad.likes.includes(user._id) ? {color: "red"} : "" } onClick={handleLike}/>
+          </div>
+          <NavLink to="/individualAd"  onClick={addAdDataToRedux} className="block no-underline text-black">
           <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
             {ad?.imagesURL?.length > 0 ? (
               <img
@@ -164,13 +206,14 @@ const Home = () => {
             <span className="text-lg font-bold text-orange-600">{ad.price} </span>
             <span>PKR</span>
           </div>
-        </div>
+        
       </NavLink>
-    );
+      </div>
+      </>);
   };
 
-  return (
-    <PrimeReactProvider>
+  return (<PrimeReactProvider>
+      {!filterBool  ? ( 
       <div>
         <Nav />
         <Categories />
@@ -242,7 +285,20 @@ const Home = () => {
             <div>No ads available</div>
           )}
       </div>
-    </PrimeReactProvider>
+   
+  ):<div>
+    <Nav />
+    <Categories />
+  <Carousel 
+  value={filteredAds}
+  numScroll={1}
+  numVisible={3}
+  responsiveOptions={responsiveOptions}
+  itemTemplate={adTemplate}
+/>
+</div> }
+  </PrimeReactProvider>
+
   );
 };
 

@@ -70,7 +70,11 @@ const jobSchema = new Schema(
      createdBy:{
       type:Schema.Types.ObjectId,
       ref:'user'
-     }
+     }, 
+     likes: [{
+       type:Schema.Types.ObjectId,
+      ref:'user'
+     }]
 
   },
   { timestamps: true }
