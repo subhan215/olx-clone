@@ -1,9 +1,9 @@
-const Chat = require("../models/Chat.js");
 const Mobile = require("../models/Ad Models/Mobile.js");
 const User = require("../models/User.js");
 const Vehicle = require("../models/Ad Models/Vehicle.js");
 const Job = require("../models/Ad Models/Job.js");
 const Service = require("../models/Ad Models/Service.js");
+const Chat = require("../models/chat.js");
 
 const allChats = async (req, res) => {
     const { user } = req.body;
@@ -198,5 +198,35 @@ const sendMessage = async (req, res) => {
         });
     }
 };
-
-module.exports = { createChat, allChats, getChatMessages, sendMessage };
+const updateSeenStatus = async (req , res) => {
+    console.log("this function hitted")
+       const {chatId} = req.params
+       if(chatId) {
+            const {userId} = req.body ; 
+            if(userId) {
+                 let chat = await Chat.findById(chatId)
+                for(let i = 0 ; i < chat.messages.length ; i++) {
+                    if(chat.messages[i].sender != userId) {
+                        chat.messages[i].isSeen = true
+                    } 
+                }
+                let updatedChat = await Chat.findByIdAndUpdate(chatId , {
+                    ...chat
+                })
+                return res.status(200).json({
+                    messages: updatedChat.messages ,
+                    success: true , 
+                    message: "Seen status updated successfully"
+                })
+            }
+            return res.status(400).json({
+                success: false,  
+                message: "User Id didn't found!"
+            })
+       }
+       return res.status(400).json({
+            success: false , 
+            messsage: "Chat Id didnt found!"
+       })
+}
+module.exports = { createChat, allChats, getChatMessages, sendMessage  , updateSeenStatus};

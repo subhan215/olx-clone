@@ -8,6 +8,9 @@ import { getAllPosts } from "../../functions/allPosts";
 import { verifyToken } from "../../functions/verifyToken";
 import { io } from 'socket.io-client';
 import { setChatMessages } from '../../redux/slices/chatsData';
+import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckSquare } from '@fortawesome/free-solid-svg-icons/faCheckSquare';
 const socket = io('http://localhost:8000');
 const ChatDetail = ({recipientId , chatId}) => {
   let messages = useSelector((state) => state.chatData.messages) || [];
@@ -24,21 +27,44 @@ const ChatDetail = ({recipientId , chatId}) => {
   useEffect(()=> {
     socket.on('message' ,async (data)=> {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`);
-  
+        console.log("seen status hit")
+        const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}` , {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({ userId: user._id }),
+
+        });
         const data = await response.json();
+        console.log(data.messages);
+        console.log(data)
         if (data.success) {
-          // Update chat messages in Redux state
           dispatch(setChatMessages(data.messages));
-          // Clear the message input
+          console.log(messages)
         } else {
           alert(data.message);
         }
       } catch (error) {
         console.log(error);
-      }
+      } 
       })
-    } , [socket])
+      setTimeout(async () => {
+        try {
+          const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`);
+          const data = await response.json();
+          if(data.success) {
+            setChatMessages(data.messages)
+          }
+
+        }
+        catch(err) {
+          console.log(err)
+        }
+       
+      }, 500);
+
+    } , [socket , dispatch]) 
     
   
   return (
@@ -53,11 +79,11 @@ const ChatDetail = ({recipientId , chatId}) => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${message.sender._id === user._id ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${(message.sender == user._id || message.sender._id == user._id) ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`p-2 rounded-lg ${
-                  message.sender._id === user._id
+                  (message.sender == user._id || message.sender._id == user._id)
                     ? 'bg-blue-500 text-white'
                     : 'bg-white text-black'
                 }`}
@@ -66,6 +92,13 @@ const ChatDetail = ({recipientId , chatId}) => {
                 <div className="text-xs text-gray-500 mt-1">
                   {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
                 </div>
+                {(message.sender == user._id || message.sender._id == user._id) &&
+                <div>
+                  <FontAwesomeIcon icon={message.isSeen ? faCheckDouble : faCheck}>
+
+                  </FontAwesomeIcon>
+                </div>
+}
               </div>
             </div>
           ))
