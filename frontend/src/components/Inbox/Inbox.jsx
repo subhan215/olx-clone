@@ -106,7 +106,7 @@ function Inbox() {
     <div className="flex h-screen m-4 border border-gray rounded-xl">
       {/* Sidebar */}
       <div className="w-1/3 bg-white border-r border-gray-300">
-        <div className="p-4 border-l border-gray-3 rounded-tl-xl bg-orange-100">
+        <div className="p-4 border-l border-gray-3 rounded-tl-xl bg-gray-100">
           <h2 className="text-2xl font-bold">INBOX</h2>
         </div>
         <div>
@@ -115,7 +115,7 @@ function Inbox() {
             <div
               key={chat._id}
               onClick={() => handleSpecificClick(chat)}
-              className="block no-underline text-black cursor-pointer"
+              className="block no-underline text-black cursor-pointer hover:bg-orange-200"
             >
               <div className="relative flex items-center p-3 bg-white border border-gray-900">
                 <div className="ml-4 flex-1">

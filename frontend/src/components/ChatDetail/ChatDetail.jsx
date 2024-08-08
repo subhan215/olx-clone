@@ -20,7 +20,7 @@ const ChatDetail = () => {
   }, [token, dispatch]);
   const user = useSelector((state) => state.userData.data);
   return (
-    <div className="flex flex-col h-full bg-orange-100 p-4">
+    <div className="flex flex-col h-full bg-gray-100 p-4">
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto flex flex-col space-y-4">
       {messages.length === 0 ? (
@@ -36,7 +36,7 @@ const ChatDetail = () => {
               <div
                 className={`p-2 rounded-lg ${
                   message.sender._id === user._id
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-orange-300 text-white'
                     : 'bg-white text-black'
                 }`}
               >
