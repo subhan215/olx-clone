@@ -1,9 +1,78 @@
-const User = require("../models/User");
 const { validateToken, createTokenForUser } = require("../services/authentication");
 const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary")
 const { validatePassword } = require("../validations/validatePassword");
 const { validateEmail } = require("../validations/validateEmail");
+const User = require("../models/User.js");
+const Vehicle = require("../models/Ad Models/Vehicle.js");
+const Job = require("../models/Ad Models/Job.js");
+const Service = require("../models/Ad Models/Service.js");
+const Mobile=require("../models/Ad Models/Mobile.js")
+const Chat=require("../models/chat.js")
 
+async function getUserAds(req,res){
+  try {
+    const userId = req.query.id;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    // Fetch ads
+    const [mobileAds, vehicleAds, jobAds, serviceAds] = await Promise.all([
+      Mobile.find({ createdBy: userId }).exec(),
+      Vehicle.find({ createdBy: userId }).exec(),
+      Job.find({ createdBy: userId }).exec(),
+      Service.find({ createdBy: userId }).exec()
+    ]);
+
+    // Helper function to get chat count
+    const getChatCountForAds = async (ads) => {
+      const adIds = ads.map(ad => ad._id);
+      const chatCounts = await Chat.aggregate([
+        { $match: { 'ad.adId': { $in: adIds } } },
+        { $group: { _id: '$ad.adId', count: { $sum: 1 } } }
+      ]);
+
+      const chatCountMap = chatCounts.reduce((map, { _id, count }) => {
+        map[_id.toString()] = count;
+        return map;
+      }, {});
+
+      return ads.map(ad => ({
+        ...ad.toObject(),
+        chatCount: chatCountMap[ad._id.toString()] || 0
+      }));
+    };
+
+    // Fetch chat counts for each ad type
+    const adsWithChatCounts = await Promise.all([
+      getChatCountForAds(mobileAds),
+      getChatCountForAds(vehicleAds),
+      getChatCountForAds(jobAds),
+      getChatCountForAds(serviceAds)
+    ]);
+
+    const [mobileAdsWithChats, vehicleAdsWithChats, jobAdsWithChats, serviceAdsWithChats] = adsWithChatCounts;
+
+    const userAds = {
+      mobileAds: mobileAdsWithChats,
+      vehicleAds: vehicleAdsWithChats,
+      jobAds: jobAdsWithChats,
+      serviceAds: serviceAdsWithChats
+    };
+
+    return res.status(200).json({
+      success: true,
+      userAds,
+      message: "User ads have been fetched."
+    });
+  } catch (error) {
+    console.error("Error fetching user ads:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Cannot fetch user ads data"
+    });
+  }
+} 
 async function postSignIn(req , res) {
     console.log(req.body)
       const { email, password } = req.body;
@@ -126,40 +195,46 @@ async function postSignUp(req, res) {
   } 
 }
 async function postUpdateProf(req , res) {
-    if(req.body.id) {
-        let user = await User.findById(req.body.id)
-        if(req.body.fullName !== "") {
-          user.fullName =  req.body.fullName
-        }
-        if(req.body.gender !== "") {
-          user.gender = req.body.gender
-        }
-        if(req.body.phoneNo !== "") {
-          user.phoneNo = req.body.phoneNo
-        } 
-        if(req.body.email !== "") {
-          user.email = req.body.email
-        }
+  try {
+    console.log(req.body.id,req.body.fullName)
+    if (req.body.id) {
+      let user = await User.findById(req.body.id);
       
-        if(req.files) {
-          console.log(req.files)
-          const cloudinaryURL = await uploadOnCloudinary(req?.files?.image[0]?.path)
-          user.profileImageURL = cloudinaryURL.url
-        }
-        await User.findByIdAndUpdate(req.body.id , {
-          ...user
-        })
-        const token = createTokenForUser(user)
-        return res.status(200).json({
-          userData: token , 
-          success: true , 
-          message: "Profile Updated Successfully!"
-        })
-    }
+      if (req.body.fullName) {
+          user.fullName = req.body.fullName;
+      }
+      if (req.body.gender) {
+          user.gender = req.body.gender;
+      }
+      if (req.body.phoneNo) {
+          user.phoneNo = req.body.phoneNo;
+      }
+      if (req.body.email) {
+          user.email = req.body.email;
+      }
+      if (req.files?.image) {
+          const cloudinaryURL = await uploadOnCloudinary(req.files.image[0].path);
+          user.profileImageURL = cloudinaryURL.url;
+      }
+  
+      await User.findByIdAndUpdate(req.body.id, user);
+  
+      const token = createTokenForUser(user);
+      return res.status(200).json({
+          userData: token,
+          success: true,
+          message: "Profile Updated Successfully!",
+      });
+  }
+  } catch (error) {
+    console.log(error)
     return res.status(400).json({
-      message: "Some error occured in user logIn!" , 
-      success: false
-    })
+      message: "Some error occurred during profile update!",
+      success: false,
+  });
+  }
+
+
 }
 
 
@@ -167,5 +242,6 @@ module.exports = {
     postSignIn,
     postSignUp  , 
     getUser , 
-    postUpdateProf
+    postUpdateProf,
+    getUserAds
 }
