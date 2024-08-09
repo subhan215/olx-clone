@@ -15,6 +15,7 @@ import { setIndividualAdData } from "../redux/slices/individualAd";
 import JobsAd from "./adPostingScreens/JobsAd";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { setNotifications } from "../redux/slices/notifications";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -75,12 +76,38 @@ const Home = () => {
       }
     };
     getAllPosts(dispatch);
-
+   
     if (token) {
       verifyToken();
     }
   }, [token, dispatch]);
-
+   useEffect(()=> {
+    const getNotifications = async (userId) => {
+      console.log(userId)
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/chat/notifications/${userId}`
+        );
+        let data = await response.json();
+        console.log(data);
+        if (data.success) {
+          console.log(data.notifications)
+          dispatch(setNotifications({ payload: data.notifications }));
+        } else {
+          //alert(data.message);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    console.log(user._id)
+    setTimeout(()=> {
+      if(user) {
+        getNotifications(user._id)
+      }
+     
+    } , 500) 
+   } )
   let filteredAds = [];
   
   if (
@@ -108,9 +135,9 @@ const Home = () => {
     });
   }
 
-  if (city) {
+  if (city && city!=="All Cities" && city !== "") {
     filteredAds = filteredAds.filter((ad) => ad.city === city);
-    setFilterBool(true)
+    
   }
 
   filteredAds = filteredAds.filter(
@@ -126,14 +153,17 @@ const Home = () => {
       ad.brand?.toLowerCase().includes(search?.toLowerCase()) ||
       ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
-  useEffect(()=> {
-    if(search !== "" ||  (province === "All Over Pakistan" )) {
-      setFilterBool(true)
+  useEffect(() => {
+    if (
+        (search && search !== "") ||
+        (province && province !== "" && province !== "All Over Pakistan") ||
+        (city && city !== "" && city !== "All Cities")
+    ) {
+        setFilterBool(true);
+    } else {
+        setFilterBool(false);
     }
-    else {
-      setFilterBool(false)
-    }
-  } , [search] )
+}, [search, city, province]);
   
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");

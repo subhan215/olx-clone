@@ -223,6 +223,7 @@ async function postVehicle(req, res) {
 }
 async function postMobile(req, res) {
   console.log(req.body)
+  console.log(req.files)
   if (!req.body.category || !req.body.brand || !req.body.condition || !req.body.adTitle ||
     !req.body.description || !req.body.city || !req.body.province || !req.body.price ||
     !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
@@ -269,7 +270,7 @@ async function postMobile(req, res) {
     });
   }
   catch (error) {
-    console.error("Error during creating vehicle:", error);
+    console.error("Error during creating mobile:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error."

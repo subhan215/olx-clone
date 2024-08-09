@@ -5,6 +5,7 @@ import locationReducer from './slices/locationData'
 import searchReducer from './slices/searchFilter'
 import chatReducer from './slices/chatsData'
 import individualAdReducer  from './slices/individualAd'
+import notificationsReducer from './slices/notifications'
 export const store = configureStore({
   reducer: {
     userData:userDataReducer , 
@@ -13,6 +14,7 @@ export const store = configureStore({
     searchFilter:  searchReducer,
     chatData: chatReducer,
     searchFilter:  searchReducer , 
-    individualAd: individualAdReducer
+    individualAd: individualAdReducer , 
+    notifications: notificationsReducer
   },
 })

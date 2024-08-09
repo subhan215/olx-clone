@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { setChatData,setChatMessages } from "../../redux/slices/chatsData";
+import { setChatData, setChatId, setChatMessages, setChat } from "../../redux/slices/chatsData";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { formatDistanceToNow } from 'date-fns';
@@ -12,13 +12,18 @@ const socket = io('http://localhost:8000');
 //sari chat uthani hogi backend say
 function Inbox() {
   const location = useLocation();
-  const [selectedChat,setSelectedChat] = useState(null)
-  const [newMessage,setNewMessage]=useState('')
-  const [selectedChatId , setSelectedChatId] = useState(null)
-  const user = location.state?.user;
+  const [selectedChat, setSelectedChat] = useState(null)
+  const [newMessage, setNewMessage] = useState('')
+  const [selectedChatId, setSelectedChatId] = useState(null)
+  let chatId = useSelector((state) => state.chatData.selectedChatId)
+  let chatRedux = useSelector((state) => state?.chatData?.selectedChat)
+  console.log(chatId, chatRedux)
+  let user = useSelector((state) => state.userData.data);
+  let messages = useSelector((state) => state.chatData.messages) || [];
+  console.log(messages)
   const dispatch = useDispatch();
   console.log(user);
-  
+
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -40,30 +45,62 @@ function Inbox() {
       } catch (error) {
         console.log(error);
       }
+
     };
-    
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "PUT",
+          body: JSON.stringify({ userId: user._id }),
+        });
+        const data = await response.json();
+        /// console.log(data.chat)
+        if (data.success) {
+          dispatch(setChatMessages(data.messages));
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     if (user) {
       fetchChats();
-      
+
     } else {
       console.error("User data is missing");
     }
+    if (chatId && user) {
+      fetchMessages()
+    }
   }, [user, dispatch]);
-  
+
   const chats = useSelector((state) => state.chatData.chats) || [];
-  
-  const handleSpecificClick = async (chat)=>{
+
+  const handleSpecificClick = async (chat) => {
     try {
       setSelectedChat(chat)
+      dispatch(setChatId(chat._id))
+      dispatch(setChat(chat))
       setSelectedChatId(chat._id)
       console.log(chat._id)
-      const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}`);
+      const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify({ userId: user._id }),
+      });
       const data = await response.json();
       console.log(data.messages);
       if (data.success) {
         try {
           console.log("seen status hit")
-          const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}` , {
+          const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}`, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -80,8 +117,8 @@ function Inbox() {
           }
         } catch (error) {
           console.log(error);
-        } 
-         
+        }
+
       } else {
         alert(data.message);
       }
@@ -89,7 +126,7 @@ function Inbox() {
       console.log(error);
     }
   }
-  const handleSendMessage = async (e)=>{
+  const handleSendMessage = async (e) => {
     e.preventDefault();
 
     if (!newMessage.trim()) {
@@ -97,18 +134,18 @@ function Inbox() {
       return;
     }
 
-    if (!selectedChat) {
+    if (!chatRedux) {
       alert("No chat selected");
       return;
     }
-    socket.emit('message' , {
-         sender: user, 
-         recipient: (selectedChat.seller._id == user._id ? selectedChat.buyer : selectedChat.seller) , 
-         content: newMessage , 
-         timestamp: new Date()
+    socket.emit('message', {
+      sender: user,
+      recipient: (chatRedux.seller._id == user._id ? chatRedux.buyer : chatRedux.seller),
+      content: newMessage,
+      timestamp: new Date()
     })
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/chat/${selectedChat._id}/message`, {
+      const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,6 +153,7 @@ function Inbox() {
         body: JSON.stringify({
           sender: user._id,
           content: newMessage,
+          name: user.fullName
         }),
       });
 
@@ -166,27 +204,30 @@ function Inbox() {
       </div>
       {/* Chat Detail and Message Input */}
       <div className="flex-1 flex flex-col bg-white">
-        {selectedChat ? (
+        { chatRedux ? (
           <>
             <div className="flex-1 overflow-y-auto ">
-              <ChatDetail recipientId = {selectedChat.seller._id == user._id ?selectedChat.buyer :  selectedChat.seller} chatId = {selectedChatId}/>
+              <ChatDetail />
             </div>
-            <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message"
-                className="w-full px-4 py-2 border rounded"
-              />
-              <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
-            </form>
+
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-600">
             Select a chat to view messages
           </div>
         )}
+        {chatRedux &&
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message"
+              className="w-full px-4 py-2 border rounded"
+            />
+            <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
+          </form>
+        }
       </div>
     </div>
     // <div className="flex h-screen m-4 border border-gray rounded-xl">
@@ -197,7 +238,7 @@ function Inbox() {
     //     </div>
     //     <div className="">
     //       <div className="">
-            
+
     //         {/* Chat List */}
     //         {chats.map((chat) => (
     //         <div
@@ -244,7 +285,7 @@ function Inbox() {
     //       <p>Select a chat to view messages</p>
     //     )}
     //   </div>
-    
+
     // </div>
   );
 }
@@ -270,8 +311,8 @@ export default Inbox;
         )}
       </div>
      */}
-      {/* Chat Detail */}
-      {/* <div className="w-2/3 bg-white">
+{/* Chat Detail */ }
+{/* <div className="w-2/3 bg-white">
         <div className="p-4">
           <div className="flex items-center">
             <img

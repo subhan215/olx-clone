@@ -12,8 +12,11 @@ import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons/faCheckSquare';
 const socket = io('http://localhost:8000');
-const ChatDetail = ({recipientId , chatId}) => {
+const ChatDetail = () => {
   let messages = useSelector((state) => state.chatData.messages) || [];
+  let chatId = useSelector((state)=> state.chatData.selectedChatId)
+  let chat = useSelector((state)=> state.chatData.chats)
+  console.log(chatId)
   console.log(messages)
   const dispatch = useDispatch();
   const token = getCookie("token");
@@ -51,7 +54,9 @@ const ChatDetail = ({recipientId , chatId}) => {
       })
       setTimeout(async () => {
         try {
-          const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`);
+          const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`, {
+            method: "PUT"
+          });
           const data = await response.json();
           if(data.success) {
             setChatMessages(data.messages)
