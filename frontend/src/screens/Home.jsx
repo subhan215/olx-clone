@@ -153,14 +153,17 @@ const Home = () => {
       ad.brand?.toLowerCase().includes(search?.toLowerCase()) ||
       ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
-  useEffect(()=> {
-    if(search !== "" ||  province !== "All Over Pakistan" || province!== "" ||  city !== "All Cities" || city!== "" ) {
-      setFilterBool(true)
+  useEffect(() => {
+    if (
+        (search && search !== "") ||
+        (province && province !== "" && province !== "All Over Pakistan") ||
+        (city && city !== "" && city !== "All Cities")
+    ) {
+        setFilterBool(true);
+    } else {
+        setFilterBool(false);
     }
-    else {
-      setFilterBool(false)
-    }
-  } , [search , province , city] )
+}, [search, city, province]);
   
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");

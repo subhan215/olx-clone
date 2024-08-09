@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 export const locationDataSlice = createSlice({
     initialState: {
-       province:'',
-       city:''
+       province:"",
+       city:""
     } , 
     name: 'locationData' , 
     reducers: {

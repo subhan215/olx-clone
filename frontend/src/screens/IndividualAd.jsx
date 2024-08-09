@@ -45,6 +45,28 @@ const IndividualAd = () => {
                 dispatch(setChat(data.chat))
                 dispatch(setChatId(data.chat._id))
                 dispatch(setChatMessages(data.chat.messages))
+                try {
+                    console.log("seen status hit")
+                    const response = await fetch(`http://localhost:8000/api/v1/chat/${data.chat._id}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        method: "POST",
+                        body: JSON.stringify({ userId: user._id }),
+
+                    });
+                    const data1 = await response.json();
+                    console.log(data1.messages);
+                    console.log(data1)
+                    if (data1.success) {
+                        dispatch(setChatMessages(data1.messages));
+
+                    } else {
+                        alert(data1.message);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
               navigate(`/chat`, { state: { user } }) //isko change karna hoga
             }else{
               alert(data.message)

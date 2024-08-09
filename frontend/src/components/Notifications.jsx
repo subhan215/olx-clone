@@ -28,26 +28,26 @@ const Notifications = ({ turnNotificationsToOff }) => {
                 navigate("/chat")
                 try {
                     console.log("seen status hit")
-                    const response = await fetch(`http://localhost:8000/api/v1/chat/${notification.chatId}` , {
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      method: "POST",
-                      body: JSON.stringify({ userId: user._id }),
-            
+                    const response = await fetch(`http://localhost:8000/api/v1/chat/${notification.chatId}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        method: "POST",
+                        body: JSON.stringify({ userId: user._id }),
+
                     });
                     const data = await response.json();
                     console.log(data.messages);
                     console.log(data)
                     if (data.success) {
-                      dispatch(setChatMessages(data.messages));
-                      
+                        dispatch(setChatMessages(data.messages));
+
                     } else {
-                      alert(data.message);
+                        alert(data.message);
                     }
-                  } catch (error) {
+                } catch (error) {
                     console.log(error);
-                  } 
+                }
             } else {
                 alert(data.message);
             }
@@ -95,7 +95,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
                         notifications.map((notification) => (
                             <div
                                 key={notification._id}
-                                onClick={()=> handleSpecificClick(notification)}
+                                onClick={() => handleSpecificClick(notification)}
                                 className="mb-4 p-3 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors duration-200"
                             >
                                 <div className="flex items-center">
