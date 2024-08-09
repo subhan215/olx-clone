@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { getCookie } from "../cookies/getCookie";
 import { getAllPosts } from "../functions/allPosts";
 import { verifyToken } from "../functions/verifyToken";
+import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 
 const IndividualAd = () => {
     const navigate=useNavigate()
@@ -21,8 +22,11 @@ const IndividualAd = () => {
     const user = useSelector((state) => state.userData.data);
     console.log(user)
     const adData = useSelector((state) => state.individualAd.data);
-    const handleChat= async (adId , adCategory)=>{
-        
+    const handleChat= async (adId , adCategory , createdBy)=>{
+        if(createdBy == user._id) {
+            alert("You can't create an ad with yourself!")
+            return 
+        }
         try {
             const response = await fetch('http://localhost:8000/api/v1/chat/new',{
               headers: {
@@ -31,12 +35,16 @@ const IndividualAd = () => {
               method: "POST",
               body: JSON.stringify({ 
                 adId:adId,
-                user:user._id
+                user:user._id , 
+                createdBy
               }),
             })
             const data = await response.json()
             console.log(data)
             if(data.success){
+                dispatch(setChat(data.chat))
+                dispatch(setChatId(data.chat._id))
+                dispatch(setChatMessages(data.chat.messages))
               navigate(`/chat`, { state: { user } }) //isko change karna hoga
             }else{
               alert(data.message)
@@ -106,7 +114,7 @@ const IndividualAd = () => {
             <Alert variant="info" className="mt-4">
                 <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
             </Alert>
-            <Button variant="primary" className="mt-3" onClick={()=>{handleChat(adData._id,adData.category)}}>Contact Seller</Button>
+            <Button variant="primary" className="mt-3" onClick={()=>{handleChat(adData._id,adData.category , adData.createdBy)}}>Contact Seller</Button>
         </div>
     );
 };

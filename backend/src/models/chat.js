@@ -57,7 +57,8 @@ const chatSchema = new Schema({
 },{timestamps:true})
 
 const Chat = model("Chat",chatSchema)
-module.exports = Chat
+const Message = model("message" , messageSchema)
+module.exports = {Chat , Message}
 
 //const allChats = async (req, res) => {
   //     const { user } = req.body;

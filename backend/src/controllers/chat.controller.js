@@ -3,7 +3,8 @@ const User = require("../models/User.js");
 const Vehicle = require("../models/Ad Models/Vehicle.js");
 const Job = require("../models/Ad Models/Job.js");
 const Service = require("../models/Ad Models/Service.js");
-const Chat = require("../models/chat.js");
+const {Chat }= require("../models/chat.js");
+const notificationMsg = require("../models/NotificationsMsg.js");
 
 const allChats = async (req, res) => {
     const { user } = req.body;
@@ -32,14 +33,19 @@ const allChats = async (req, res) => {
 
 
 const createChat = async (req, res) => {
-    const { adId, user } = req.body;
+    const { adId, user , createdBy } = req.body;
     if (!adId || !user) {
         return res.status(400).json({
             success: false,
             message: 'Invalid request',
         });
     }
-
+    if(createdBy == user) {
+        return res.status(400).json({
+            success: false , 
+            message: "You can't created an ad with yourself!"
+        })
+    }
     let mobileAd = await Mobile.findById(adId)
     let vehicleAd = await Vehicle.findById(adId)
     let serviceAd = await Service.findById(adId)
@@ -123,7 +129,8 @@ const getChatMessages = async (req, res) => {
         }
 
         // Find chat and populate messages.sender
-        const chat = await Chat.findById(chatId).populate('messages.sender');
+        let chat = null
+        if(chatId!= "undefined") chat = await Chat.findById(chatId).populate('messages.sender');
 
         // Check if chat exists
         if (!chat) {
@@ -141,14 +148,16 @@ const getChatMessages = async (req, res) => {
                 message: 'No messages yet. Start the conversation!',
             });
         }
+        await notificationMsg.deleteMany({chatId: chat._id , recipientId: req?.body?.userId})
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             messages: chat.messages,
+            chat
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Cannot retrieve messages',
         });
@@ -156,7 +165,7 @@ const getChatMessages = async (req, res) => {
 };
 const sendMessage = async (req, res) => {
     const { chatId } = req.params;
-    const { sender, content } = req.body;
+    const { sender, content , name } = req.body;
 
     try {
         if (!chatId || !sender || !content) {
@@ -179,10 +188,16 @@ const sendMessage = async (req, res) => {
             content,
             timestamp: new Date(),
         };
-
         chat.messages.push(newMessage);
+        let recipientId = (chat.seller == sender ? chat.buyer : chat.seller) || (chat.seller._id == sender ? chat.buyer._id : chat.seller._id)
+        await chat.save()
+        await notificationMsg.create({
+            senderId: sender , 
+            recipientId , 
+            chatId , 
+            senderName: name
 
-        await chat.save();
+        })
 
         //await chat.populate('messages.sender').execPopulate();
 
@@ -229,4 +244,18 @@ const updateSeenStatus = async (req , res) => {
             messsage: "Chat Id didnt found!"
        })
 }
-module.exports = { createChat, allChats, getChatMessages, sendMessage  , updateSeenStatus};
+const getNotifications =  async (req , res) => {
+     if(req.params.recipientId != "undefined") {
+        const notifications = await notificationMsg.find({recipientId: req.params.recipientId})
+        return res.status(200).json({
+            message: "Notifications fetched successfully!" , 
+            notifications , 
+            success: true
+        })
+     }
+     return res.status(400).json({
+        success: false , 
+        message: "Recipient id didn't found"
+     })
+}
+module.exports = { createChat, allChats, getChatMessages, sendMessage  , updateSeenStatus , getNotifications};

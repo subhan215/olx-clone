@@ -3,7 +3,9 @@ const chatDataSlice = createSlice({
     name:'chatData',
     initialState:{
         chats:null,
-        messages:[]
+        messages:[] , 
+        selectedChatId: "" , 
+        selectedChat: null
     },
     reducers:{
         setChatData:(state,action)=>{
@@ -13,8 +15,15 @@ const chatDataSlice = createSlice({
         setChatMessages: (state, action) => {
             state.messages = action.payload;
           },
+        setChatId: (state , action) => {
+            state.selectedChatId = action.payload
+        } , 
+        setChat:(state,action)=>{
+            console.log(action)
+            state.selectedChat = action.payload
+        }
     }
 })
 
-export const {setChatData,setChatMessages } = chatDataSlice.actions
+export const {setChatData,setChatMessages , setChatId , setChat } = chatDataSlice.actions
 export default chatDataSlice.reducer
