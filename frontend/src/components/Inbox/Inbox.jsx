@@ -61,7 +61,27 @@ function Inbox() {
       const data = await response.json();
       console.log(data.messages);
       if (data.success) {
-        dispatch(setChatMessages(data.messages));
+        try {
+          console.log("seen status hit")
+          const response = await fetch(`http://localhost:8000/api/v1/chat/${chat._id}` , {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({ userId: user._id }),
+
+          });
+          const data = await response.json();
+          console.log(data.messages);
+          if (data.success) {
+            dispatch(setChatMessages(data.messages));
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.log(error);
+        } 
+         
       } else {
         alert(data.message);
       }

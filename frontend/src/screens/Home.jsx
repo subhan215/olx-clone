@@ -82,7 +82,7 @@ const Home = () => {
   }, [token, dispatch]);
 
   let filteredAds = [];
-
+  
   if (
     (province === "Sindh" ||
       province === "Punjab" ||
@@ -99,7 +99,7 @@ const Home = () => {
         }
       });
     });
-    setFilterBool(true)
+    //setFilterBool(true)
   } else {
     ads.forEach((adObject) => {
       adObject.ads.forEach((ad) => {
@@ -127,13 +127,13 @@ const Home = () => {
       ad.condition?.toLowerCase().includes(search?.toLowerCase())
   );
   useEffect(()=> {
-    if(search != "") {
+    if(search !== "" ||  (province === "All Over Pakistan" )) {
       setFilterBool(true)
     }
     else {
       setFilterBool(false)
     }
-  } )
+  } , [search] )
   
 
   const mobileAds = ads.filter((ad) => ad.model === "mobile");
@@ -169,7 +169,6 @@ const Home = () => {
         let data = await response.json();
         console.log(data);
         if (data.success) {
-
           getAllPosts(dispatch)
         } else {
           alert(data.message);
