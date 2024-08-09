@@ -1,0 +1,33 @@
+/* Custom styling for the dropdown */
+.custom-menu {
+    background-color: #ffffff; /* Background color for the dropdown */
+    border: 1px solid #000000; /* Border color */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 80px;
+    width: 280px; /* Increased width */
+}
+
+.custom-menu .p-menuitem-link {
+    font-size: 1.25rem; /* Font size for list items */
+    color: #333; /* Font color */
+    padding: 20px; /* Padding for each item */
+    padding-left: 0; /* Remove left padding */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make font bold */
+    border-radius: 4px; /* Rounded corners for hover effect */
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+.custom-menu .p-menuitem-link:hover {
+    background-color: #f0f0f0; /* Background color on hover */
+    color: #ff7a18; /* Text color on hover */
+}
+
+.custom-menu .pi {
+    color: #ff7a18; /* Icon color */
+}
+
+.custom-menu .p-menu-separator {
+    margin: 8px 0; /* Space above and below separator */
+    border-top: 1px solid #030303; /* Separator color */
+}

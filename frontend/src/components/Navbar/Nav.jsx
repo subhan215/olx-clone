@@ -1,19 +1,27 @@
-import { setChatData } from '../../redux/slices/chatsData';
 import { useNavigate } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAdsDataWithRedux } from '../../redux/slices/adsData';
 import { setCityWithRedux } from '../../redux/slices/locationData';
 import { setProvinceWithRedux } from '../../redux/slices/locationData';
 import { setSearchFilterWithRedux } from '../../redux/slices/searchFilter';
+import classNames from 'classnames';
+import  { useRef } from 'react';
+import { Button } from 'primereact/button';
+import { Menu } from 'primereact/menu';
+import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
+import { Avatar } from 'primereact/avatar';
+
+import './nav.css'
 const FontAwesomeIcon = require('@fortawesome/react-fontawesome').FontAwesomeIcon;
 const faMagnifyingGlass = require('@fortawesome/free-solid-svg-icons').faMagnifyingGlass;
-const faMagnifyingGlassLocation = require('@fortawesome/free-solid-svg-icons').faMagnifyingGlassLocation;
 const faMessage = require('@fortawesome/free-solid-svg-icons').faMessage;
 const faBell = require('@fortawesome/free-solid-svg-icons').faBell;
 const faBox = require('@fortawesome/free-solid-svg-icons').faBox;
 const faLocationDot = require('@fortawesome/free-solid-svg-icons').faLocationDot;
+const faCircleUser = require('@fortawesome/free-solid-svg-icons').faCircleUser;
 const { Link } = require('react-router-dom');
+
 
 function Nav() {
   const navigate = useNavigate();
@@ -56,34 +64,25 @@ function Nav() {
     dispatch(setCityWithRedux(''));
   }
   const handleInboxClick = () => {
-    // try {
-    //   const response = await fetch("http://localhost:8000/api/v1/chat", {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     method: "POST",
-    //     body: JSON.stringify({ user: user._id }),
-    //   });
-    //   const chatData = await response.json();
-    //   console.log(chatData);
-    //   console.log(chatData.chat)
-    //   if (chatData.success) {
-    //     dispatch(setChatData(chatData.chat));
-    navigate('/chat', { state: { user } });
-    //   } else {
-    //     alert(chatData.message);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    navigate('/chat', { state: { user } })
   };
+  const menuRef = useRef(null);
 
-
+  const items = [
+    { label: 'View and Edit Profile', icon: 'pi pi-user-edit', command: () => navigate('/update-profile',{ state: { user } }) },
+    { label: 'My Ads', icon: 'pi pi-list', command: () => navigate('/my-ads',{ state: { user } }) },
+    { label: 'Favourites', icon: 'pi pi-heart', command: () => console.log('Favourites clicked') },
+    { separator: true },
+    { label: 'Logout', icon: 'pi pi-sign-out', command: () => console.log('Logout clicked') }
+  ];
+  const handleMenuToggle = (event) => {
+    menuRef.current.toggle(event);
+};
   return (
     <div className="bg-white border-b border-gray-900">
       <nav className="flex flex-wrap items-center justify-between p-2 max-w-screen-xl mx-auto">
         <div className="flex items-center space-x-4">
-          <h3 className="text-4xl font-bold text-orange-500 mr-10">Xlo</h3>
+          <Link className='block no-underline' to={'/home'}><h3 className="text-4xl font-bold text-orange-500 mr-10">Xlo</h3></Link>
           <div className="flex items-center bg-white rounded border-2 border-black p-[0.1rem]">
             <FontAwesomeIcon className="text-orange-500 ml-2 mr-2" icon={faLocationDot} />
             <select
@@ -124,10 +123,15 @@ function Nav() {
           </div>
         </div>
         <div className="flex flex-wrap items-center space-x-4">
-          
           <div className="flex space-x-6 ">
             <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
             <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" />
+            <div className="relative">
+            <Menu model={items} popup ref={menuRef} id="popup_menu" my="left" at="left bottom" className="custom-menu" />
+            <FontAwesomeIcon onClick={handleMenuToggle} size='2x' icon={faCircleUser} className="text-black hover:cursor-pointer"/>
+        </div>
+
+
           </div>
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">
             <Link to={'/post'} className="flex items-center space-x-2 no-underline">

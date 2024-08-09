@@ -49,10 +49,13 @@ function SignUp() {
       };
   return (
     <>
-          <div className="registration-form mt-20 max-w-md mx-auto p-6 bg-gray-500 shadow-md rounded-lg ">
+          <div className=' min-h-screen py-16 px-4'>
+          
+          <div className="registration-form  max-w-md mx-auto p-6 bg-gray-500 shadow-2xl rounded-lg z-10">
+          
             <form id="registerForm" className=" " onSubmit={handleSubmit}>
-              <div className='text-4xl font-bold text-orange-400 m-2'>
-                <h3 className='ml-[9rem] mb-6' >Xlo</h3>
+              <div className='text-4xl font-extrabold text-orange-400 m-2 item-center flex justify-center '>
+                <h3 className=' mb-6 font-bold' >K.o.F</h3>
               </div>
               <div className="relative mb-4 ">
                 <FontAwesomeIcon icon={faUser} className=" absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -61,7 +64,7 @@ function SignUp() {
                   id="fullName"
                   name="fullName"
                   placeholder="Enter your Full Name"
-                  className=" input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
                   value={data.fullName}
                   onChange={handleFormData}
                   required
@@ -74,7 +77,7 @@ function SignUp() {
                   id="email"
                   name="email"
                   placeholder="Enter Email"
-                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
                   value={data.email}
                   onChange={handleFormData}
                   required
@@ -95,22 +98,15 @@ function SignUp() {
                   id="password"
                   name="password"
                   placeholder="Enter Password"
-                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
                   value={data.password}
                   onChange={handleFormData}
                   required
                 />
               </div>
-              {/* {passwordError && (
-                <div>
-              <div
-                id="error-message"
-                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mt-4"
-              >
-                {passwordError}
-              </div>
-              </div>
-            )} */}
+              
+              
+
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
@@ -118,7 +114,7 @@ function SignUp() {
                   id="confirmPassword"
                   name="confirmPassword"
                   placeholder="Confirm Password"
-                  className="input-field bg-gray-200 w-full p-3 pl-10 border border-gray-300 rounded"
+                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
                   value={data.confirmPassword}
                   onChange={handleFormData}
                   required
@@ -127,22 +123,13 @@ function SignUp() {
               
               <button
                 type="submit"
-                className="w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
               >
-                Register
+              Sign Up
               </button>
             </form>
-            {/* <p className="text-center text-sm text-gray-400 mt-4">
-              Already have an account? <a href={props.loginPageLink} className="text-green-500">Login</a>
-            </p> */}
-            {/* {successMessage && (
-              <div
-                id="error-message"
-                className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center mt-4"
-              >
-                {successMessage}
-              </div>
-            )} */}
+            
+          </div>  
           </div>
         </>
   )

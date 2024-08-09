@@ -10,6 +10,8 @@ import Profile from './screens/Profile';
 import IndividualAd from './screens/IndividualAd';
 import Chat from './screens/Chat';
 import ChatDetail from './components/ChatDetail/ChatDetail';
+import UpdateProfile from './screens/UpdateProfile'
+import AllUserAds from './screens/AllUserAds';
 //import './App.css';
 
 function App() {
@@ -21,9 +23,9 @@ function App() {
         <Route path = "signup" element = {<SignUp />}/>
         <Route path = "profile" element = {<Profile/>}/>
         <Route path = "chat" element = {<Chat/>}/>
-        {/* <Route path = "chat" element ={<Chat/>}>
-          <Route path=':chatId' element = {<ChatDetail/>}/> 
-        </Route> */}
+        <Route path = "update-profile" element = {<UpdateProfile/>}/>
+        <Route path = "my-ads" element = {<AllUserAds/>}/>
+
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>
           <Route path='mobile' element = {<MobileAd />}/>
