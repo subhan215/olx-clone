@@ -16,7 +16,7 @@ import JobsAd from "./adPostingScreens/JobsAd";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setNotifications } from "../redux/slices/notifications";
-
+import './Home.css'
 const Home = () => {
   const dispatch = useDispatch();
   const token = getCookie("token");
@@ -176,11 +176,24 @@ const Home = () => {
   console.log(serviceAds)
 
   const adTemplate = (ad) => {
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString(undefined, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+    const maxTitleLength = 30; // Set the maximum number of characters for the title
+    const croppedTitle =
+      ad.adTitle.length > maxTitleLength
+        ? `${ad.adTitle.substring(0, maxTitleLength)}...`
+        : ad.adTitle;
+  
     const croppedDescription =
-      ad?.description?.length > 100
-        ? `${ad.description.substring(0, 100)}...`
+      ad?.description?.length > 70
+        ? `${ad.description.substring(0, 70)}...`
         : ad.description;
-
     const addAdDataToRedux = () => {
       dispatch(setIndividualAdData({ payload: ad }))
     }
@@ -209,12 +222,12 @@ const Home = () => {
     }
     return (<>
      
-        <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
-          <div>
-            <FontAwesomeIcon icon={faHeart} style={ad.likes.includes(user._id) ? {color: "red"} : "" } onClick={handleLike}/>
+        <div className="rounded-lg overflow-hidden p-4 m-2 bg-white border border-black ">
+          <div className="m-2">
+            <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? {color: "red"} : "" } onClick={handleLike}/>
           </div>
           <NavLink to="/individualAd"  onClick={addAdDataToRedux} className="block no-underline text-black">
-          <div className="rounded h-48 bg-gray-200 flex items-center justify-center">
+          <div className=" rounded-lg h-48 bg-gray-200 flex items-center justify-center">
             {ad?.imagesURL?.length > 0 ? (
               <img
                 src={ad.imagesURL[0]}
@@ -227,13 +240,16 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="p-4">
+          <div className="p-4 mt-2 bg-white border-t border-black ">
 
-            <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4>
-            <h3 className="text-lg font-semibold mb-2">{ad.adTitle}</h3>
-            <p className="text-gray-600 mb-4">{croppedDescription}</p>
-            <span className="text-lg font-bold text-orange-600">{ad.price} </span>
-            <span>PKR</span>
+            {/* <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4> */}
+            <h3 className="text-lg font-bold mb-4">{croppedTitle}</h3>
+            <div className="text-lg font-bold text-black">{ad.price} PKR</div>
+            <div className="text-gray-600">{croppedDescription}</div>
+            <div className="text-gray-600">{ad.city}, {ad.province}</div>
+            <div className="text-gray-600">Posted on {formatDate(ad.createdAt)}</div>
+            
+            
           </div>
         
       </NavLink>
@@ -247,12 +263,12 @@ const Home = () => {
         <Nav />
         <Categories />
 
-        <div className="p-2">
+        <div className="p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
             Mobile Phones
           </p>
         </div>
-        <div className="card">
+        <div className=" ">
           {mobileAds[0]?.ads?.length > 0 ? (
             <Carousel
               value={mobileAds[0].ads}
@@ -266,10 +282,10 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-2">
+        <div className="p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Cars</p>
         </div>
-        <div className="card">
+        <div className="">
           {vehicleAds[0]?.ads?.length > 0 ? (
             <Carousel
               value={vehicleAds[0].ads}
@@ -283,7 +299,7 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-2">
+        <div className="p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
             Services
           </p>
@@ -299,14 +315,14 @@ const Home = () => {
           ) : (
             <div>No ads available</div>
           )}
-        <div className="p-2">
+        <div className="p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Jobs</p>
         </div>
         {jobAds[0]?.ads?.length > 0 ? (
             <Carousel 
               value={jobAds[0].ads}
               numScroll={1}
-              numVisible={3}
+              numVisible={4}
               responsiveOptions={responsiveOptions}
               itemTemplate={adTemplate}
             />

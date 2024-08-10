@@ -4,19 +4,23 @@
     border: 1px solid #000000; /* Border color */
     border-radius: 8px; /* Rounded corners */
     margin-top: 80px;
-    margin-right: 40ox;
+    margin-right: 40px;
     width: 280px; /* Increased width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
+    padding: 10px; /* Padding around the dropdown content */
 }
 
 .custom-menu .p-menuitem-link {
+    margin-right: 30px;
     font-size: 1.25rem; /* Font size for list items */
     color: #333; /* Font color */
-    padding: 20px; /* Padding for each item */
-    padding-left: 0; /* Remove left padding */
+    padding: 10px 10px; /* Adjusted padding for a better look */
     text-decoration: none; /* Remove underline */
     font-weight: bold; /* Make font bold */
     border-radius: 4px; /* Rounded corners for hover effect */
-    transition: background-color 0.3s ease; /* Smooth hover transition */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth hover transition */
+    display: flex; /* Flexbox for better alignment */
+    align-items: center; /* Vertically center the text and icon */
 }
 
 .custom-menu .p-menuitem-link:hover {
@@ -26,9 +30,10 @@
 
 .custom-menu .pi {
     color: #ff7a18; /* Icon color */
+    margin-right: 10px; /* Space between icon and text */
 }
 
 .custom-menu .p-menu-separator {
-    margin: 8px 0; /* Space above and below separator */
+    margin: 12px 0; /* Increased space above and below separator */
     border-top: 1px solid #030303; /* Separator color */
 }

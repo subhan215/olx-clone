@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const React = require('react');
 const { useState } = require('react');
 const FontAwesomeIcon = require('@fortawesome/react-fontawesome').FontAwesomeIcon;
@@ -33,11 +35,14 @@ function SignUp() {
             body: JSON.stringify({ ...data }),
           });
       
-          if (!response.ok) {
+          if (response.success) {
+            alert('Account has been created')
             const errorData = await response.json();
             console.log('Error:', errorData.message);
             // Handle specific error messages here
             return;
+          }else{
+            alert('Error:',response.error)
           }
       
           response = await response.json();
@@ -49,26 +54,30 @@ function SignUp() {
       };
   return (
     <>
-          <div className=' min-h-screen py-16 px-4'>
-          
-          <div className="registration-form  max-w-md mx-auto p-6 bg-gray-500 shadow-2xl rounded-lg z-10">
-          
-            <form id="registerForm" className=" " onSubmit={handleSubmit}>
-              <div className='text-4xl font-extrabold text-orange-400 m-2 item-center flex justify-center '>
-                <h3 className=' mb-6 font-bold' >K.o.F</h3>
-              </div>
-              <div className="relative mb-4 ">
-                <FontAwesomeIcon icon={faUser} className=" absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <div className=''><input
+          <div className='min-h-screen py-16 px-4 flex justify-center items-center'>
+        <div className="flex max-w-3xl w-full">
+          <div className="w-1/2 flex flex-col justify-center items-start bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8 rounded-l-lg">
+            <h1 className="text-4xl text-orange-600 font-extrabold mb-8"><div>Khareed.</div>o.<div>Farokht</div></h1>
+            <h2 className="text-4xl text-white font-semibold mb-2">Create your account</h2>
+            <Link to="/signin" className="text-orange-600 text-lg no-underline hover:text-orange-700 transition duration-300">Already have an account? Sign in</Link>
+          </div>
+          <div className="w-1/2 bg-white p-6 rounded-r-lg border border-black">
+            <form id="registerForm" onSubmit={handleSubmit}>
+              {/* <div className='border-b border-black font-extrabold text-orange-400 mb-6 flex justify-start'>
+                <h1 className='font-bold'>Sign Up</h1>
+              </div> */}
+              <div className="relative mb-4 mt-8">
+                <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <input
                   type="text"
                   id="fullName"
                   name="fullName"
                   placeholder="Enter your Full Name"
-                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
+                  className="w-full px-8 py-3 border border-black rounded"
                   value={data.fullName}
                   onChange={handleFormData}
                   required
-                /></div>
+                />
               </div>
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -77,20 +86,20 @@ function SignUp() {
                   id="email"
                   name="email"
                   placeholder="Enter Email"
-                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
+                  className="w-full px-8 py-3 border border-black rounded"
                   value={data.email}
                   onChange={handleFormData}
                   required
                 />
               </div>
               {emailError && (
-              <div
-                id="error-message"
-                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mt-4"
-              >
-                {emailError}
-              </div>
-            )} 
+                <div
+                  id="error-message"
+                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mt-4"
+                >
+                  {emailError}
+                </div>
+              )}
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
@@ -98,15 +107,12 @@ function SignUp() {
                   id="password"
                   name="password"
                   placeholder="Enter Password"
-                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
+                  className="w-full px-8 py-3 border border-black rounded"
                   value={data.password}
                   onChange={handleFormData}
                   required
                 />
               </div>
-              
-              
-
               <div className="relative mb-4">
                 <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
@@ -114,23 +120,22 @@ function SignUp() {
                   id="confirmPassword"
                   name="confirmPassword"
                   placeholder="Confirm Password"
-                  className="bg-gray-200 w-full px-8 py-3 border border-gray-300 rounded"
+                  className="w-full px-8 py-3 border border-black rounded"
                   value={data.confirmPassword}
                   onChange={handleFormData}
                   required
                 />
               </div>
-              
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
               >
-              Sign Up
+                Sign Up
               </button>
             </form>
-            
-          </div>  
           </div>
+        </div>
+      </div>
         </>
   )
 }
