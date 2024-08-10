@@ -25,6 +25,8 @@ function App() {
         <Route path = "chat" element = {<Chat/>}/>
         <Route path = "update-profile" element = {<UpdateProfile/>}/>
         <Route path = "my-ads" element = {<AllUserAds/>}/>
+        //<Route path = "update-vehicle-ad/:adId" element = {<VehicleAd/>}/>
+        <Route path="update-vehicle-ad/:adId" element={<VehicleAd />} />
 
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>

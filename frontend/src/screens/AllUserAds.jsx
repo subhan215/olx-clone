@@ -44,10 +44,24 @@ function AllUserAds() {
         }
         fetchData()
 },[user])
-const handleUpdate = (adId) => {
-    navigate(`/update-ad/${adId}`);
+
+
+const handleUpdate = (adId,adData,type) => {
+  console.log(adId,adData,type)
+  if(type==='Vehicle'){
+    navigate(`/update-vehicle-ad/${adId}`, { state: { adId, adData } });
+  }else if(type==='Mobile'){
+
+  }else if(type==='Job'){
+    
+  }else if(type==='Service'){
+
+  }else{
+    console.error('Invalid ad type while navigating to update page')
+  }
   };
 
+  
   const handleDelete = async (adId) => {
     if (window.confirm('Are you sure you want to delete this ad?')) {
       try {
@@ -94,7 +108,7 @@ const handleUpdate = (adId) => {
             <li key={ad._id} className="border p-4 mb-2 rounded flex items-center justify-between w-full">
               <div className="flex items-center w-full">
                 <img
-                  src={ad.imageUrl || 'placeholder.jpg'}
+                  src={ad.imagesURL[0] || 'placeholder.jpg'}
                   alt={ad.adTitle}
                   className="w-20 h-20 object-cover rounded mr-4"
                 />
@@ -122,7 +136,7 @@ const handleUpdate = (adId) => {
                   <span>{ad.likes.length}</span>
                 </div>
                 <button
-                  onClick={() => handleUpdate(ad._id)}
+                  onClick={() => handleUpdate(ad._id,ad,type)}
                   className="px-4 py-2 border border-gray-400 rounded hover:bg-gray-200"
                 >
                   Edit

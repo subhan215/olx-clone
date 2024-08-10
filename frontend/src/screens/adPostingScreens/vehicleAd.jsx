@@ -6,8 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { verifyToken } from "../../functions/verifyToken";
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/allPosts";
-
+import { useLocation } from "react-router-dom";
 const VehicleAd = () => {
+  //ye agar update ad ki request hogi tu ismay data hoga
+  const location = useLocation();
+  const adId = location.state?.adId;
+  const adData = location.state?.adData;
+  
+  console.log(adId,adData)
+
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {
@@ -31,16 +38,16 @@ const VehicleAd = () => {
 
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
-    category: "",
-    images: [],
-    make: "",
-    adTitle: "",
-    description: "",
-    city: "" , 
-    province: "" , 
-    price: "",
-    ownerName: "",
-    phoneNo: "",
+    category:adData?.category || "",
+    images: adData?.imagesURL || [],
+    make: adData?.make || "",
+    adTitle: adData?.adTitle || "",
+    description:adData?.description || "",
+    city:adData?.city || "" , 
+    province: adData?.province ||"" , 
+    price: adData?.price ||"",
+    ownerName: adData?.ownerName ||"",
+    phoneNo: adData?.mobileNo ||"",
   });
 
   const handleMakeSelect = (eventKey) => {
@@ -80,13 +87,21 @@ const VehicleAd = () => {
     postData.append("createdBy"  , user._id)
     console.log(postData)
     try {
-      const response = await fetch('http://localhost:8000/api/v1/posts/vehicle' , {
-        method: "POST" , 
-        body: postData
-      })
+      const response = await fetch(
+        `http://localhost:8000/api/v1/posts/vehicle${adId ? `/${adId}` : ""}`,
+        {
+          method: adId ? "PUT" : "POST",
+          body: postData,
+        }
+      );
+      // const response = await fetch('http://localhost:8000/api/v1/posts/vehicle' , {
+      //   method: "POST" , 
+      //   body: postData
+      // })
       let data = await response.json()
       console.log(data)
       if(data.success) {
+        alert(adId ? "Ad updated successfully" : "Ad posted successfully");
           //dispatch(setUserDataWithRedux({payload: data.userData}))
           //console.log(data.userData)
           //setCookie("token" , data.userData)
@@ -94,9 +109,10 @@ const VehicleAd = () => {
    
       }
       else {
-         
+        alert("Failed to submit the ad");
+        alert(data.message)
       }
-      alert(data.message)
+      //alert(data.message)
     }
     catch(err) {
         console.log(err)
@@ -155,6 +171,7 @@ const VehicleAd = () => {
             <label htmlFor="adTitle">Ad Title</label>
             <textarea
               id="adTitle"
+              value={vehicleAdData.adTitle}
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
               }
@@ -164,6 +181,7 @@ const VehicleAd = () => {
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
+              value={vehicleAdData.description}
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
@@ -206,6 +224,7 @@ const VehicleAd = () => {
             <label htmlFor="price">Price: </label>
             <input
               id="price"
+              value={vehicleAdData.price}
               placeholder="Enter Price..."
               type="text"
               onChange={(e) =>
@@ -219,7 +238,7 @@ const VehicleAd = () => {
               id="ownerName"
               placeholder="Enter Name..."
               type="text"
-              value={user?.fullName}
+              value={vehicleAdData.ownerName}
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, ownerName: e.target.value })
               }
@@ -231,6 +250,7 @@ const VehicleAd = () => {
               id="phonoNo"
               placeholder="Enter Phone No..."
               type="text"
+              value={vehicleAdData.phoneNo}
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
               }

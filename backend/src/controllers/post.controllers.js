@@ -163,64 +163,149 @@ async function postJob(req, res) {
 }
 
 async function postVehicle(req, res) {
-  if (!req.body.category || !req.body.make || !req.body.adTitle ||
-    !req.body.description || !req.body.city || !req.body.province || !req.body.price ||
-    !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
+  const { adId } = req.params; // Extract adId from URL params
+  const {
+    category, make, adTitle, description, city, province, price,
+    ownerName, phoneNo, createdBy
+  } = req.body;
+
+  if (!category || !make || !adTitle || !description || !city || !province || !price || !ownerName || !phoneNo || !createdBy) {
     return res.status(400).json({
       success: false,
       message: "Provide complete details!"
-    })
-  }
-  console.log("Vehicle", req.body.createdBy)
-  try {
-    let cloudinaryUrls = []
-    for (let i = 0; i < req?.files?.images?.length; i++) {
-      let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
-      console.log("loop", cloudinaryURL)
-      cloudinaryUrls.push(cloudinaryURL.url)
-    }
-    // Check if user already exists
-    const vehicle = await Vehicle.create({
-      category: req.body.category,
-      make: req.body.make,
-      adTitle: req.body.adTitle,
-      description: req.body.description,
-      city: req.body.city,
-      province: req.body.province,
-      price: Number(req.body.price),
-      ownerName: req.body.ownerName,
-      mobileNo: req.body.phoneNo,
-      imagesURL: cloudinaryUrls,
-      createdBy: req.body.createdBy
-    })
-
-
-
-
-    // Create a new Vehicle A ///
-
-    if (!vehicle) {
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error while creating account."
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      vehicle: vehicle,
-      message: "Vehicle Ad created succesfully!"
     });
   }
-  catch (error) {
-    console.error("Error during creating vehicle:", error);
+
+  try {
+    let cloudinaryUrls = [];
+
+    // Upload new images if any
+    if (req.files && req.files.images) {
+      for (let i = 0; i < req.files.images.length; i++) {
+        let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path);
+        cloudinaryUrls.push(cloudinaryURL.url);
+      }
+    }
+
+    // Check if it's an update operation
+    if (adId) {
+      const existingVehicle = await Vehicle.findById(adId);
+
+      if (!existingVehicle) {
+        return res.status(404).json({
+          success: false,
+          message: "Vehicle Ad not found!"
+        });
+      }
+
+      // Update the existing vehicle ad
+      existingVehicle.category = category;
+      existingVehicle.make = make;
+      existingVehicle.adTitle = adTitle;
+      existingVehicle.description = description;
+      existingVehicle.city = city;
+      existingVehicle.province = province;
+      existingVehicle.price = Number(price);
+      existingVehicle.ownerName = ownerName;
+      existingVehicle.mobileNo = phoneNo;
+      if (cloudinaryUrls.length > 0) {
+        existingVehicle.imagesURL = cloudinaryUrls;
+      }
+
+      await existingVehicle.save();
+
+      return res.status(200).json({
+        success: true,
+        vehicle: existingVehicle,
+        message: "Vehicle Ad updated successfully!"
+      });
+    } else {
+      // Create a new Vehicle Ad
+      const vehicle = await Vehicle.create({
+        category, make, adTitle, description, city, province, price: Number(price),
+        ownerName, mobileNo: phoneNo, imagesURL: cloudinaryUrls, createdBy
+      });
+
+      if (!vehicle) {
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error while creating the ad."
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        vehicle: vehicle,
+        message: "Vehicle Ad created successfully!"
+      });
+    }
+  } catch (error) {
+    console.error("Error during creating or updating vehicle:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error."
     });
   }
-
+  
 }
+
+// if (!req.body.category || !req.body.make || !req.body.adTitle ||
+  //   !req.body.description || !req.body.city || !req.body.province || !req.body.price ||
+  //   !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "Provide complete details!"
+  //   })
+  // }
+  // console.log("Vehicle", req.body.createdBy)
+  // try {
+  //   let cloudinaryUrls = []
+  //   for (let i = 0; i < req?.files?.images?.length; i++) {
+  //     let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
+  //     console.log("loop", cloudinaryURL)
+  //     cloudinaryUrls.push(cloudinaryURL.url)
+  //   }
+  //   // Check if user already exists
+  //   const vehicle = await Vehicle.create({
+  //     category: req.body.category,
+  //     make: req.body.make,
+  //     adTitle: req.body.adTitle,
+  //     description: req.body.description,
+  //     city: req.body.city,
+  //     province: req.body.province,
+  //     price: Number(req.body.price),
+  //     ownerName: req.body.ownerName,
+  //     mobileNo: req.body.phoneNo,
+  //     imagesURL: cloudinaryUrls,
+  //     createdBy: req.body.createdBy
+  //   })
+
+
+
+
+  //   // Create a new Vehicle A ///
+
+  //   if (!vehicle) {
+  //     return res.status(500).json({
+  //       success: false,
+  //       message: "Internal server error while creating account."
+  //     });
+  //   }
+
+  //   return res.status(200).json({
+  //     success: true,
+  //     vehicle: vehicle,
+  //     message: "Vehicle Ad created succesfully!"
+  //   });
+  // }
+  // catch (error) {
+  //   console.error("Error during creating vehicle:", error);
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: "Internal server error."
+  //   });
+  // }
+
 async function postMobile(req, res) {
   console.log(req.body)
   console.log(req.files)
