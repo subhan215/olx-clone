@@ -51,7 +51,7 @@ const handleUpdate = (adId) => {
   const handleDelete = async (adId) => {
     if (window.confirm('Are you sure you want to delete this ad?')) {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/ads/delete/${adId}`, {
+        const response = await fetch(`http://localhost:8000/api/v1/users/deleteUserAd/${adId}`, {
           method: 'DELETE',
         });
 

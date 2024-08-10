@@ -1,4 +1,5 @@
 const { validateToken, createTokenForUser } = require("../services/authentication");
+const {Chat} = require("../models/chat.js")
 const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary")
 const { validatePassword } = require("../validations/validatePassword");
 const { validateEmail } = require("../validations/validateEmail");
@@ -7,7 +8,41 @@ const Vehicle = require("../models/Ad Models/Vehicle.js");
 const Job = require("../models/Ad Models/Job.js");
 const Service = require("../models/Ad Models/Service.js");
 const Mobile=require("../models/Ad Models/Mobile.js")
-const Chat=require("../models/chat.js")
+
+async function deleteUserAd(req,res){
+  const { adId } = req.params;
+    try {
+        const isVehicle = await Vehicle.findById(adId);
+        const isMobile = await Mobile.findById(adId);
+        const isService = await Service.findById(adId);
+        const isJob = await Job.findById(adId);
+
+        if (isVehicle) {
+            await Vehicle.findByIdAndDelete(adId);
+            return res.status(200).json({ success: true, message: 'Vehicle ad deleted successfully' });
+        }
+
+        if (isMobile) {
+            await Mobile.findByIdAndDelete(adId);
+            return res.status(200).json({ success: true, message: 'Mobile ad deleted successfully' });
+        }
+
+        if (isService) {
+            await Service.findByIdAndDelete(adId);
+            return res.status(200).json({ success: true, message: 'Service ad deleted successfully' });
+        }
+
+        if (isJob) {
+            await Job.findByIdAndDelete(adId);
+            return res.status(200).json({ success: true, message: 'Job ad deleted successfully' });
+        }
+
+        return res.status(404).json({ success: false, message: 'Ad not found in any category' });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+}
 
 async function getUserAds(req,res){
   try {
@@ -243,5 +278,6 @@ module.exports = {
     postSignUp  , 
     getUser , 
     postUpdateProf,
-    getUserAds
+    getUserAds,
+    deleteUserAd
 }

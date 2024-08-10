@@ -131,17 +131,14 @@ function Nav() {
         </div>
         <div className="flex flex-wrap items-center space-x-4">
           <div className="flex space-x-6 ">
-            <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
-            <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" onClick={()=> setShowNotifications(true)}/>
-             </div>
-            <div className="relative">
+          <div className="relative">
             <Menu model={items} popup ref={menuRef} id="popup_menu" my="left" at="left bottom" className="custom-menu" />
             <FontAwesomeIcon onClick={handleMenuToggle} size='2x' icon={faCircleUser} className="text-black hover:cursor-pointer"/>
-        </div>
-
-
-            
-         
+            </div>
+            <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
+            <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" onClick={()=> setShowNotifications(true)}/>
+          </div>
+     
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">
             <Link to={'/post'} className="flex items-center space-x-2 no-underline">
               <FontAwesomeIcon className="text-black " icon={faBox} size="lg" />
