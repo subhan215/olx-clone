@@ -6,8 +6,16 @@ import { useSelector,useDispatch } from "react-redux";
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/allPosts";
 import { verifyToken } from "../../functions/verifyToken";
-
+import { useLocation } from "react-router-dom";
+import adsData from "../../redux/slices/adsData";
 const ServiceAd = () => {
+  //ye agar update ad ki request hogi tu ismay data hoga
+  const location = useLocation();
+  const adId = location.state?.adId;
+  const adData = location.state?.adData;
+
+  console.log(adId,adData)
+
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {
@@ -46,14 +54,14 @@ const ServiceAd = () => {
 
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
-    category: "",
-    images: [],
-    adTitle: "",
-    description: "",
-    city: "" , 
-    province: "",
-    ownerName: "",
-    phoneNo: "",
+    category:adData?.category || "",
+    images: adData?.imagesURL || [],
+    adTitle: adData?.adTitle ||"",
+    description: adData?.description ||"",
+    city: adData?.city ||"" , 
+    province: adData?.province ||"",
+    ownerName: adData?.ownerName ||"",
+    phoneNo: adData?.mobileNo ||"",
   });
 
   
@@ -91,22 +99,25 @@ const ServiceAd = () => {
     console.log(postData);
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/posts/services",
+        `http://localhost:8000/api/v1/posts/services${adId ? `/${adId}` : ""}`,
         {
-          method: "POST",
+          method: adId ? "PUT" : "POST",
           body: postData,
         }
       );
       let data = await response.json();
       console.log(data);
       if (data.success) {
+        alert(adId ? "Ad updated successfully" : "Ad posted successfully");
         //dispatch(setUserDataWithRedux({payload: data.userData}))
         //console.log(data.userData)
         //setCookie("token" , data.userData)
         //navigate("/home")
       } else {
+        alert("Failed to submit the ad");
+        alert(data.message)
       }
-      alert(data.message);
+      // alert(data.message);
     } catch (err) {
       console.log(err);
     }
@@ -153,6 +164,7 @@ const ServiceAd = () => {
             <label htmlFor="adTitle">Ad Title</label>
             <textarea
               id="adTitle"
+              value={vehicleAdData.adTitle}
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
               }
@@ -162,6 +174,7 @@ const ServiceAd = () => {
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
+              value={vehicleAdData.description}
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
@@ -204,9 +217,8 @@ const ServiceAd = () => {
             <label htmlFor="ownerName">Name: </label>
             <input
               id="ownerName"
-              placeholder="Enter Name..."
+              value={vehicleAdData.ownerName}
               type="text"
-              value={user?.fullName}
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
@@ -219,7 +231,7 @@ const ServiceAd = () => {
             <label htmlFor="phonoNo">Phone No: </label>
             <input
               id="phonoNo"
-              placeholder="Enter Phone No..."
+              value={vehicleAdData.phoneNo}
               type="text"
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })

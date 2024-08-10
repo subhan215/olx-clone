@@ -53,9 +53,9 @@ const handleUpdate = (adId,adData,type) => {
   }else if(type==='Mobile'){
     navigate(`/update-mobile-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Job'){
-    
+    navigate(`/update-job-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Service'){
-
+    navigate(`/update-service-ad/${adId}`, { state: { adId, adData } });
   }else{
     console.error('Invalid ad type while navigating to update page')
   }

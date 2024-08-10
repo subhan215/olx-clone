@@ -6,8 +6,13 @@ import { useSelector,useDispatch } from "react-redux";
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/allPosts";
 import { verifyToken } from "../../functions/verifyToken";
-
+import { useLocation } from "react-router-dom";
 const JobsAd = () => {
+  //ye agar update ad ki request hogi tu ismay data hoga
+  const location = useLocation();
+  const adId = location.state?.adId;
+  const adData = location.state?.adData;
+  console.log(adData,adId)
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {
@@ -48,22 +53,22 @@ const JobsAd = () => {
 
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
-    category: "",
-    images: [],
-    hiringPersonOrCompany: "",
-    companyName: "",
-    typeOfAd: "",
-    salaryFrom: "",
-    salaryTo: "",
-    careerLevel: "",
-    salaryPeriod: "",
-    positionType: "",
-    adTitle: "",
-    description: "",
-    city: "",
-    province: "" , 
-    ownerName: "",
-    phoneNo: "",
+    category:adData?.category || "",
+    images: adData?.imagesURL || [],
+    hiringPersonOrCompany: adData?.hiringPersonOrCompany ||"",
+    companyName: adData?.companyName ||"",
+    typeOfAd: adData?.typeOfAd ||"",
+    salaryFrom: adData?.salaryFrom ||"",
+    salaryTo: adData?.salaryTo ||"",
+    careerLevel: adData?.careerLevel ||"",
+    salaryPeriod: adData?.salaryPeriod ||"",
+    positionType: adData?.positionType ||"",
+    adTitle: adData?.adTitle ||"",
+    description: adData?.description ||"",
+    city: adData?.city ||"",
+    province: adData?.province ||"" , 
+    ownerName: adData?.ownerName ||"",
+    phoneNo: adData?.mobileNo ||"",
   });
 
   const handleCareerSelect = (eventKey) => {
@@ -116,22 +121,24 @@ const JobsAd = () => {
     console.log(postData);
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/posts/jobs",
+        `http://localhost:8000/api/v1/posts/jobs${adId ? `/${adId}` : ""}`,
         {
-          method: "POST",
+          method: adId ? "PUT" : "POST",
           body: postData,
         }
       );
       let data = await response.json();
       console.log(data);
       if (data.success) {
+        alert(adId ? "Ad updated successfully" : "Ad posted successfully");
         //dispatch(setUserDataWithRedux({payload: data.userData}))
         //console.log(data.userData)
         //setCookie("token" , data.userData)
         //navigate("/home")
       } else {
+        alert("Failed to submit the ad");
+        alert(data.message)
       }
-      alert(data.message);
     } catch (err) {
       console.log(err);
     }
@@ -181,7 +188,7 @@ const JobsAd = () => {
           </div>
           <div>
             <label htmlFor="">Company Name</label>
-            <input type="text" placeholder="Enter Company Name" onChange={(e)=> setVehicleAdData({...vehicleAdData , companyName: e.target.value})}/>
+            <input  value={vehicleAdData.companyName} type="text" placeholder="Enter Company Name" onChange={(e)=> setVehicleAdData({...vehicleAdData , companyName: e.target.value})}/>
           </div>
           <div>
           <label htmlFor="">Type of Ad</label>
@@ -190,11 +197,12 @@ const JobsAd = () => {
           </div>
           <div>
           <label htmlFor="">Salary from</label>
-            <input type="text" placeholder="Enter salary from" onChange={(e)=> setVehicleAdData({...vehicleAdData , salaryFrom: e.target.value})}/>
+            <input value={vehicleAdData.salaryFrom} type="text" placeholder="Enter salary from" onChange={(e)=> setVehicleAdData({...vehicleAdData , salaryFrom: e.target.value})}/>
           </div>
           <div>
           <label htmlFor="">Salary to</label>
-            <input type="text" placeholder="Enter salary to" onChange={(e) => setVehicleAdData({...vehicleAdData , salaryTo: e.target.value})}/>
+             
+              <input value={vehicleAdData.salaryTo} type="text"  onChange={(e) => setVehicleAdData({...vehicleAdData , salaryTo: e.target.value})}/>
           </div>
           <div>
             <label htmlFor="">Career level*</label>
@@ -248,6 +256,8 @@ const JobsAd = () => {
             <label htmlFor="adTitle">Ad Title</label>
             <textarea
               id="adTitle"
+              value={vehicleAdData.adTitle}
+
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
               }
@@ -257,6 +267,8 @@ const JobsAd = () => {
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
+              value={vehicleAdData.description}
+
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
@@ -301,7 +313,8 @@ const JobsAd = () => {
               id="ownerName"
               placeholder="Enter Name..."
               type="text"
-              value={user?.fullName}
+              value={vehicleAdData.ownerName}
+
               onChange={(e) =>
                 setVehicleAdData({
                   ...vehicleAdData,
@@ -314,7 +327,7 @@ const JobsAd = () => {
             <label htmlFor="phonoNo">Phone No: </label>
             <input
               id="phonoNo"
-              placeholder="Enter Phone No..."
+              value={vehicleAdData.phoneNo}
               type="text"
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
