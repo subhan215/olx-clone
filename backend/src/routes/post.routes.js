@@ -16,12 +16,20 @@ router.put("/vehicle/:adId", upload.fields([
     maxCount: 15
   }
 ]), postVehicle);
+
 router.post("/mobile", upload.fields([
     {
         name: "images",
         maxCount: 15
     }
   ]) , postMobile);
+router.put("/mobile/:adId", upload.fields([
+    {
+        name: "images",
+        maxCount: 15
+    }
+  ]) , postMobile);
+  
   router.post("/jobs", upload.fields([
     {
         name: "images",

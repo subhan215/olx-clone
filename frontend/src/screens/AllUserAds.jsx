@@ -51,7 +51,7 @@ const handleUpdate = (adId,adData,type) => {
   if(type==='Vehicle'){
     navigate(`/update-vehicle-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Mobile'){
-
+    navigate(`/update-mobile-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Job'){
     
   }else if(type==='Service'){

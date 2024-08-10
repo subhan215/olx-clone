@@ -225,7 +225,6 @@ const VehicleAd = () => {
             <input
               id="price"
               value={vehicleAdData.price}
-              placeholder="Enter Price..."
               type="text"
               onChange={(e) =>
                 setVehicleAdData({ ...vehicleAdData, price: e.target.value })
