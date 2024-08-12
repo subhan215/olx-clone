@@ -487,7 +487,7 @@ const JobsAd = () => {
           <div className="flex justify-center mt-6">
             <button
               type="submit"
-              className="px-6 py-3 text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg  hover:shadow-lg focus:ring focus:ring-orange-600 transition duration-200"
+              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
             >
               {adId ? "Update Ad" : "Post Ad"}
             </button>
