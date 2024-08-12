@@ -30,7 +30,7 @@ const Home = () => {
   const responsiveOptions = [
     {
       breakpoint: "1400px",
-      numVisible: 4,
+      numVisible: 3,
       numScroll: 1,
     },
     {
@@ -322,7 +322,7 @@ const Home = () => {
             <Carousel 
               value={jobAds[0].ads}
               numScroll={1}
-              numVisible={4}
+              numVisible={3}
               responsiveOptions={responsiveOptions}
               itemTemplate={adTemplate}
             />

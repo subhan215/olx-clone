@@ -1,0 +1,124 @@
+.individual-ad-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+.ad-images-carousel .carousel-item img {
+    object-fit: cover; /* This ensures the image covers the area without distortion */
+    height: 700px; /* Increase the height as needed */
+    width: 100%; /* Ensure the image fills the container width */
+}
+.ad-images-section {
+    flex: 1;
+    /* Optional: Ensure the section has enough height to accommodate larger images */
+}
+@media (max-width: 768px) {
+    .ad-images-carousel .carousel-item img {
+        height: 400px; /* Smaller height for smaller screens */
+    }
+}
+
+@media (min-width: 768px) {
+    .ad-images-carousel .carousel-item img {
+        height: 500px; /* Medium height for tablets */
+    }
+}
+
+@media (min-width: 992px) {
+    .ad-images-carousel .carousel-item img {
+        height: 700px; /* Larger height for desktops */
+    }
+}
+.ad-images-carousel .carousel-item {
+    max-height: 600px; /* Match this with your image height */
+}
+.ad-content {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.ad-images-section {
+    flex: 1;
+}
+
+.ad-info-contact-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: black;
+}
+
+.ad-info-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.contact-info-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.ad-images-carousel .carousel-item img {
+    object-fit: cover;
+    height: 400px;
+}
+
+.ad-price {
+    color: #ff7a18;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.ad-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.ad-location {
+    color: #777;
+    font-size: 1rem;
+}
+
+.contact-header {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.contact-number {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.contact-button {
+    background-color: #ff7a18;
+    border-color: #ff7a18;
+}
+
+.contact-button:hover {
+    background-color: #e66b15;
+    border-color: #e66b15;
+}
+
+.description-card, .details-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-card-header {
+    background-color: #ff7a18;
+    color: #fff;
+}
+
+.details-list-item {
+    padding: 10px 20px;
+}

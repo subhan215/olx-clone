@@ -216,7 +216,7 @@ async function postJob(req, res) {
       typeOfAd: req.body.typeOfAd,
       salaryFrom: Number(req.body.salaryFrom),
       salaryTo: Number(req.body.salaryTo),
-      salaryPeriod: Number(req.body.salaryPeriod),
+      salaryPeriod: req.body.salaryPeriod,
       careerLevel: req.body.careerLevel,
       positionType: req.body.positionType,
       adTitle: req.body.adTitle,

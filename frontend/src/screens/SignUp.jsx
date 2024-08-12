@@ -57,7 +57,7 @@ function SignUp() {
           <div className='min-h-screen py-16 px-4 flex justify-center items-center'>
         <div className="flex max-w-3xl w-full">
           <div className="w-1/2 flex flex-col justify-center items-start bg-gradient-to-r from-gray-900 to-gray-800 text-white p-8 rounded-l-lg">
-            <h1 className="text-4xl text-orange-600 font-extrabold mb-8"><div>Khareed.</div>o.<div>Farokht</div></h1>
+            <h1 className="text-5xl text-orange-600 font-extrabold mb-8"><div>Khareed.</div>o.<div>Farokht</div></h1>
             <h2 className="text-4xl text-white font-semibold mb-2">Create your account</h2>
             <Link to="/signin" className="text-orange-600 text-lg no-underline hover:text-orange-700 transition duration-300">Already have an account? Sign in</Link>
           </div>
