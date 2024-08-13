@@ -162,7 +162,7 @@ const handleUpdate = (adId,adData,type) => {
     </div>
 );  return (
     <div>
-        <Nav/>
+        <Nav showSearchBar={false} showlocationBar={false}/>
       <div className="">
       <div className='px-4 py-4'><h1 className="text-2xl font-bold">Your Ads</h1></div>
       <div className='pr-4'>

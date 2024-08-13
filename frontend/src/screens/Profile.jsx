@@ -58,7 +58,7 @@ const Profile = () => {
   }
   return (
     <div class="container">
-      <Nav />
+      <Nav showSearchBar={false} showlocationBar={false}/>
       <form onSubmit={handleSubmit}>
         <p>Edit Profile</p>
         <div>

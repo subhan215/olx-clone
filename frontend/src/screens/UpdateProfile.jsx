@@ -45,7 +45,7 @@ const ProfileUpdateForm = () => {
 
   return (
     <>
-      <Nav />
+      <Nav showSearchBar={false} showlocationBar={false}/>
       <div className='border border-black rounded p-4 my-8 mx-auto max-w-3xl'>
         <div className='pb-2 border-b border-black mb-2'>
           <h4>Edit Profile</h4>

@@ -1,3 +1,4 @@
+import Nav from "../../components/Navbar/Nav";
 import React, { useState,useEffect } from "react";
 import "../../App.css";
 import { Dropdown } from "react-bootstrap";
@@ -51,7 +52,7 @@ const ServiceAd = () => {
     "Web Development",
     "Other Services",
   ];
-
+  const [previewURL,setPreviewUrl] = useState([])
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
     category:adData?.category || "",
@@ -74,10 +75,18 @@ const ServiceAd = () => {
 
   const handleFileChange = (event, index) => {
     const files = Array.from(event.target.files);
+    const file = files[0]
     setVehicleAdData((prevState) => {
       const updatedImages = [...prevState.images];
-      updatedImages[index] = files[0];
+      updatedImages[index] = file;
+      // updatedImages[index] = URL.createObjectURL(files[0]); // Create a preview URL for the image
       return { ...prevState, images: updatedImages };
+    });
+    const previewURL = URL.createObjectURL(file);
+    setPreviewUrl((prevUrls) => {
+    const newPreviewUrls = [...prevUrls];
+    newPreviewUrls[index] = previewURL;
+    return newPreviewUrls;
     });
   };
   const handleFormSubmit = async (e) => {
@@ -122,13 +131,25 @@ const ServiceAd = () => {
       console.log(err);
     }
   };
+  useEffect(() => {
+    return () => {
+      previewURL.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, [previewURL]);
   return (
-    <div>
+    <>
+    <Nav showSearchBar={false} showlocationBar={false} showBechDay={false}/>
+    <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-8">
+      
       {!formShow && (
-        <ul>
+        <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <h2>Select a Subcategory</h2>
           {categoryData.map((cat) => (
             <li
               key={cat}
+              className="p-4  border border-black rounded-lg text-center cursor-pointer hover:bg-orange-300"
               onClick={() => {
                 setFormShow(true);
                 setVehicleAdData({ ...vehicleAdData, category: cat });
@@ -140,26 +161,51 @@ const ServiceAd = () => {
         </ul>
       )}
       {formShow && (
-        <form className="upload-form" onSubmit={handleFormSubmit}>
-          <div className="upload-container">
-            <h3>Upload Images</h3>
-            <div className="upload-grid">
+        <form className="space-y-6" onSubmit={handleFormSubmit}>
+          <div className="py-4 border-b border-black">
+          <h3 className="text-xl font-semibold mb-4">Category  <span className="text-sm pl-24">{vehicleAdData.category}</span></h3>
+          </div>
+          <div className="upload-container border-b border-black pb-4">
+            <h3 className="text-xl font-semibold mb-4">Upload Images</h3>
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {[...Array(12)].map((_, index) => (
-                <div className="upload-item" key={index}>
+                <div  key={index}>
                   <input
                     type="file"
                     id={`file${index + 1}`}
                     accept="image/*"
                     onChange={(event) => handleFileChange(event, index)}
+                    className="hidden"
                   />
-                  <label htmlFor={`file${index + 1}`} className="upload-label">
-                    <i className="upload-icon"></i>
+                  <label htmlFor={`file${index + 1}`} className="block w-full h-32 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center justify-center">
+                  {previewURL[index] ? (
+                    <img
+                      src={previewURL[index]}
+                      alt={`Preview ${index + 1}`}
+                      className="object-cover w-full h-full rounded-lg"
+                    />
+                  ) : (
+                    <i className="upload-icon text-gray-400"></i>
+                  )}
                   </label>
                 </div>
               ))}
             </div>
           </div>
-          <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="col-span-2">
+              <label className="block text font-medium text-gray-700">Ad Title</label>
+              <div className="mt-1 border border-black rounded-md"><input
+                value={vehicleAdData.adTitle}
+                type="text"
+                placeholder=""
+                onChange={(e) =>
+                  setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
+                }
+                className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+              /></div>
+            </div>
+          {/* <div>
 
             <label htmlFor="adTitle">Ad Title</label>
             <textarea
@@ -169,8 +215,20 @@ const ServiceAd = () => {
                 setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
               }
             ></textarea>
-          </div>
-          <div>
+          </div> */}
+          <div className="col-span-2">
+              <label className="block text font-medium text-gray-700">Description</label>
+              <div className="mt-1 border border-black rounded-md"><textarea
+                value={vehicleAdData.description}
+                rows="4"
+                placeholder=""
+                onChange={(e) =>
+                  setVehicleAdData({ ...vehicleAdData, description: e.target.value })
+                }
+                className=" p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+              ></textarea></div>
+            </div>
+          {/* <div>
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
@@ -182,8 +240,8 @@ const ServiceAd = () => {
                 })
               }
             ></textarea>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <label>City:</label>
             <Dropdown onSelect={handleCitySelect}>
               <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -212,8 +270,8 @@ const ServiceAd = () => {
                 <Dropdown.Item eventKey="Kashmir">Kashmir</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <label htmlFor="ownerName">Name: </label>
             <input
               id="ownerName"
@@ -226,8 +284,59 @@ const ServiceAd = () => {
                 })
               }
             />
-          </div>
+          </div> */}
           <div>
+              <label className="block text font-medium text-gray-700">Province</label>
+              <Dropdown onSelect={handleProvinceSelect}>
+                <Dropdown.Toggle
+                  variant="light"
+                  id="dropdown-province"
+                  className="w-full text-left p-3 mt-1 rounded-md border-black  focus:ring focus:bg-orange-300 focus:ring-white"
+                >
+                  {vehicleAdData.province || "Select Province"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="Punjab">Punjab</Dropdown.Item>
+                  <Dropdown.Item eventKey="Sindh">Sindh</Dropdown.Item>
+                  <Dropdown.Item eventKey="Khyber Pakhtunkhwa">
+                    Khyber Pakhtunkhwa
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div>
+              <label className="block text font-medium text-gray-700">City</label>
+              <Dropdown onSelect={handleCitySelect}>
+                <Dropdown.Toggle
+                  variant="light"
+                  id="dropdown-city"
+                  className="w-full text-left p-3 mt-1 rounded-md border-black focus:ring focus:bg-orange-300 focus:ring-white"
+                >
+                  {vehicleAdData.city || "Select City"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="Lahore">Lahore</Dropdown.Item>
+                  <Dropdown.Item eventKey="Karachi">Karachi</Dropdown.Item>
+                  <Dropdown.Item eventKey="Islamabad">Islamabad</Dropdown.Item>
+                  <Dropdown.Item eventKey="Peshawar">Peshawar</Dropdown.Item>
+                  <Dropdown.Item eventKey="Quetta">Quetta</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          <div className="col-span-2">
+              <label className="block text font-medium text-gray-700">Owner Name</label>
+              <div className="mt-1 border border-black rounded-md"><input
+                value={vehicleAdData.ownerName}
+                type="text"
+                placeholder=""
+                onChange={(e) =>
+                  setVehicleAdData({ ...vehicleAdData, ownerName: e.target.value })
+                }
+                className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+              /></div>
+            </div>
+          {/* <div>
             <label htmlFor="phonoNo">Phone No: </label>
             <input
               id="phonoNo"
@@ -237,11 +346,32 @@ const ServiceAd = () => {
                 setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
               }
             />
+          </div> */}
+          <div className="col-span-2">
+              <label className="block text font-medium text-gray-700">Phone Number</label>
+              <div className="mt-1 border border-black rounded-md"><input
+                value={vehicleAdData.phoneNo}
+                type="text"
+                placeholder=""
+                onChange={(e) =>
+                  setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
+                }
+                className="p-3 block w-full rounded-md focus:ring focus:ring-indigo-300"
+              /></div>
+            </div>
           </div>
-          <button type="Submit">Post Ad</button>
+          <div className="flex justify-center mt-6">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
+            >
+              {adId ? "Update Ad" : "Post Ad"}
+            </button>
+          </div>
         </form>
       )}
     </div>
+    </>
   );
 };
 

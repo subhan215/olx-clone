@@ -171,21 +171,21 @@ function Inbox() {
     }
   }
   return (
-    <div className="flex h-screen m-4 border border-gray rounded-xl">
+    <div className="flex h-[calc(100vh-120px)] mx-4 border border-gray rounded-xl ">
       {/* Sidebar */}
       <div className="w-1/3 bg-white border-r border-gray-300">
         <div className="p-4 border-l border-gray-3 rounded-tl-xl bg-gray-100">
           <h2 className="text-2xl font-bold">INBOX</h2>
         </div>
-        <div>
+        <div className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 210px)' }}>
           {/* Chat List */}
           {chats.map((chat) => (
             <div
               key={chat._id}
               onClick={() => handleSpecificClick(chat)}
-              className="block no-underline text-black cursor-pointer hover:bg-orange-200"
+                className={`block no-underline text-black cursor-pointer ${chat._id === selectedChatId ? 'bg-orange-300':''}  hover:bg-orange-200`}
             >
-              <div className="relative flex items-center p-3 bg-white border border-gray-900">
+              <div className={ `relative flex items-center p-3 bg-white border border-gray-900 ${chat._id === selectedChatId ? 'bg-orange-300':''}`}>
                 <div className="ml-4 flex-1">
                   <div className="font-semibold">{chat.seller._id === user._id ? `${chat.buyer.fullName}` : `${chat.seller.fullName}`}</div>
                   <div className="text-lg font-semibold text-gray-600">{chat.adTitle}</div>
@@ -217,148 +217,24 @@ function Inbox() {
           </div>
         )}
         {chatRedux &&
-          <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
+          <form onSubmit={handleSendMessage} className=" border-t border-gray-300">
+            <div className="flex">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message"
-              className="w-full px-4 py-2 border rounded"
+              className="flex-grow p-3 border "
             />
-            <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
+            <button type="submit" className="p-3 px-5 bg-orange-500 text-white">Send</button>
+            </div>
           </form>
         }
       </div>
     </div>
-    // <div className="flex h-screen m-4 border border-gray rounded-xl">
-    //   {/* Sidebar */}
-    //   <div className="w-1/3 bg-white border-r border-gray-300">
-    //     <div className="p-4  border-l border-gray-3 rounded-tl-xl bg-orange-100">
-    //       <h2 className="text-2xl font-bold">INBOX</h2>
-    //     </div>
-    //     <div className="">
-    //       <div className="">
-
-    //         {/* Chat List */}
-    //         {chats.map((chat) => (
-    //         <div
-    //           onClick={()=>{handleSpecificClick(chat)}}
-    //           key={chat._id}
-    //           to={`${chat._id}`}
-    //           className="block no-underline text-black" // Added classes here
-    //         >
-    //           <div className="relative flex items-center p-3 bg-white border border-gray-900">
-    //             <div className="ml-4 flex-1">
-    //               <div className="font-semibold">{chat.seller._id===user._id ? `${chat.buyer.fullName}`:`${chat.seller.fullName}`}</div>
-    //               <div className="text-lg font-semibold text-gray-600">{chat.adTitle}</div>
-    //               <div className="text-sm text-gray-500">{chat.adPrice} PKR</div>
-    //             </div>
-    //             <div className="absolute top-0 right-0 p-2 text-xs text-gray-400">
-    //               {user._id === chat.seller._id ? "You are selling" : "You looked for"}
-    //             </div>
-    //             <div className="absolute bottom-0 right-0 p-2 text-xs text-gray-400">
-    //               {formatDistanceToNow(new Date(chat.updatedAt), { addSuffix: true })}
-    //             </div>
-    //           </div>
-    //         </div>
-    //       ))}
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="chat-detail">
-    //     {selectedChat ? (
-    //       <>
-    //        <div className="w-2/3">
-    //           <ChatDetail />
-    //         </div>
-    //         <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-300">
-    //           <input
-    //             type="text"
-    //             value={newMessage}
-    //             onChange={(e) => setNewMessage(e.target.value)}
-    //             placeholder="Type a message"
-    //           />
-    //           <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Send</button>
-    //         </form>
-    //       </>
-    //     ) : (
-    //       <p>Select a chat to view messages</p>
-    //     )}
-    //   </div>
-
-    // </div>
   );
 }
 
 export default Inbox;
 
-{/* <div className="chat-detail">
-        {selectedChat ? (
-          <>
-            <ChatDetail messages={messages} />
-            <form onSubmit={handleSendMessage}>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message"
-              />
-              <button type="submit">Send</button>
-            </form>
-          </>
-        ) : (
-          <p>Select a chat to view messages</p>
-        )}
-      </div>
-     */}
-{/* Chat Detail */ }
-{/* <div className="w-2/3 bg-white">
-        <div className="p-4">
-          <div className="flex items-center">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="User"
-              className="rounded-full mr-4"
-            />
-            <div>
-              <div className="font-semibold">Farhan Ahmadzai Khan</div>
-              <div className="text-sm text-gray-600">Last active 1 day ago</div>
-            </div>
-          </div>
-          <div className="mt-4">
-            <div className="flex items-center">
-              <img
-                src="https://via.placeholder.com/100"
-                alt="Ad"
-                className="rounded mr-4"
-              />
-              <div>
-                <div className="font-semibold">iphone 13 pro max</div>
-                <div className="text-lg text-gray-700">Rs 170,000</div>
-              </div>
-            </div>
-            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-              View Ad
-            </button>
-          </div>
-          <div className="mt-4 border-t pt-4">
-            <div className="text-sm text-gray-500">SATURDAY 3 AUGUST</div>
-            <div className="mt-2 text-gray-700">SMS at 8:14 pm</div>
-          </div>
-          <div className="mt-4">
-            <div className="flex items-center space-x-4">
-              <button className="px-4 py-2 bg-gray-200 rounded">
-                QUESTIONS
-              </button>
-              <button className="px-4 py-2 bg-gray-200 rounded">OFFER</button>
-            </div>
-          </div>
-          <div className="mt-4">
-            <input
-              type="text"
-              className="w-full px-4 py-2 border rounded"
-              placeholder="Type a message"
-            />
-          </div>
-        </div>
-      </div> */}
+

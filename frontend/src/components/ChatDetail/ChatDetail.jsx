@@ -84,13 +84,13 @@ const ChatDetail = () => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${(message.sender == user._id || message.sender._id == user._id) ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${(message.sender == user._id || message.sender._id == user._id) ? 'justify-end ' : 'justify-start'}`}
             >
               <div
                 className={`p-2 rounded-lg ${
                   (message.sender == user._id || message.sender._id == user._id)
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white text-black'
+                    ? 'bg-orange-300 text-white'
+                    : 'bg-orange-300 text-black'
                 }`}
               >
                 {message.content}

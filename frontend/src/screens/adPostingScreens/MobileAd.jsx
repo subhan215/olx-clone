@@ -135,7 +135,7 @@ const MobileAd = () => {
     }
   };
   return (
-    <><Nav/>
+    <><Nav showSearchBar={false} showlocationBar={false} showBechDay={false}/>
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-16 ">
     {!formShow && (
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4  py-20">

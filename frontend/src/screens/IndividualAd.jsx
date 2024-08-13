@@ -122,7 +122,7 @@ const IndividualAd = () => {
 
     return (
         <>
-            <Nav />
+            <Nav showBechDay={false}  showSearchBar={false} showlocationBar={false}/>
             <div className="max-w-7xl mx-auto p-5 mt-5">
                 <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
                     <div className="flex-1">

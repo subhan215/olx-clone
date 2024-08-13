@@ -169,7 +169,7 @@ const JobsAd = () => {
   }, [previewURL]);
   return (
     <>
-    <Nav/>
+    <Nav showSearchBar={false} showlocationBar={false} showBechDay={false}/>
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-8">
       
       {!formShow && (

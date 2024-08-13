@@ -24,7 +24,7 @@ const faCircleUser = require('@fortawesome/free-solid-svg-icons').faCircleUser;
 const { Link } = require('react-router-dom');
 
 
-function Nav() {
+function Nav({showlocationBar=true , showSearchBar=true ,showBechDay=true}) {
   const navigate = useNavigate();
   let user = useSelector((state) => state.userData.data);
   const dispatch = useDispatch();
@@ -87,48 +87,57 @@ function Nav() {
   return (
     <>
     <div className="bg-white border-b border-gray-900">
-      <nav className="flex flex-wrap items-center justify-between p-2 max-w-screen-xl mx-auto">
+      <nav className="flex flex-wrap items-center justify-between px-2 py-3 max-w-screen-xl mx-auto">
         <div className="flex items-center space-x-4">
           <Link className='block no-underline' to={'/home'}><h3 className="text-4xl font-bold text-orange-500 mr-10">K.o.F</h3></Link>
-          <div className="flex items-center bg-white rounded border-2 border-black p-[0.1rem]">
-            <FontAwesomeIcon className="text-orange-500 ml-2 mr-2" icon={faLocationDot} />
-            <select
-              className="p-2"
-              value={province}
-              onChange={handleProvinceChange}
-            >
-              <option value="" disabled>Select Province</option>
-              {provinces.map((province) => (
-                <option className='' key={province} value={province}>{province}</option>
-              ))}
-            </select>
-            {province && province !== "All Over Pakistan" && (
+          
+          {showlocationBar && (
+              <div className="flex items-center bg-white rounded border-2 border-black p-[0.1rem]">
+              <FontAwesomeIcon className="text-orange-500 ml-2 mr-2" icon={faLocationDot} />
               <select
-                className="p-2 ml-2"
-                value={city}
-                onChange={handleCityChange}
+                className="p-2"
+                value={province}
+                onChange={handleProvinceChange}
               >
-                <option value="" disabled>Select City (optional)</option>
-                {cityArrays[province].map((city) => (
-                  <option key={city} value={city}>{city}</option>
+                <option value="" disabled>Select Province</option>
+                {provinces.map((province) => (
+                  <option className='' key={province} value={province}>{province}</option>
                 ))}
               </select>
-            )}
-          </div>
+              {province && province !== "All Over Pakistan" && (
+                <select
+                  className="p-2 ml-2"
+                  value={city}
+                  onChange={handleCityChange}
+                >
+                  <option value="" disabled>Select City (optional)</option>
+                  {cityArrays[province].map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )
+
+          }
+          
+          {showSearchBar && (
           <div className=" flex items-center bg-white rounded border-2 border-black p-2">
-            <input
-              type="text"
-              className="p-[0.1rem] ml-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
-              placeholder="Search in all Categories"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <FontAwesomeIcon
-              className="text-orange-500 hover:cursor-pointer mr-2 ml-2"
-              icon={faMagnifyingGlass}
-              onClick={handleSearch}
-            />
-          </div>
+          <input
+            type="text"
+            className="p-[0.1rem] ml-2 w-40 sm:w-48 md:w-56 lg:w-64 xl:w-72"
+            placeholder="Search in all Categories"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <FontAwesomeIcon
+            className="text-orange-500 hover:cursor-pointer mr-2 ml-2"
+            icon={faMagnifyingGlass}
+            onClick={handleSearch}
+          />
         </div>
+        )}  
+        </div>
+        
         <div className="flex flex-wrap items-center space-x-4">
           <div className="flex space-x-6 ">
           <div className="relative">
@@ -138,13 +147,14 @@ function Nav() {
             <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
             <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" onClick={()=> setShowNotifications(true)}/>
           </div>
-     
+          {showBechDay &&(
           <div className="flex items-center border-8 border-orange-400 hover:bg-orange-400 rounded-full p-2">
             <Link to={'/post'} className="flex items-center space-x-2 no-underline">
               <FontAwesomeIcon className="text-black " icon={faBox} size="lg" />
               <span className="text-black font-bold">BECH DAY</span>
             </Link>
           </div>
+          )}
         </div>
       </nav>
     </div>

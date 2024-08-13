@@ -11,11 +11,12 @@ function Chat() {
   const navigate = useNavigate()
   return (
     <div>
+      <Nav showSearchBar={false} showlocationBar={false}/>
       <FontAwesomeIcon icon={faArrowCircleLeft} onClick={()=> {
          socket.disconnect();
          console.log('Socket disconnected');
         navigate('/home')}}/>
-      <Inbox/>
+      <div className=''><Inbox/></div>
     </div>
   )
 }
