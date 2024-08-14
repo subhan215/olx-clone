@@ -53,9 +53,9 @@ const handleUpdate = (adId,adData,type) => {
   }else if(type==='Mobile'){
     navigate(`/update-mobile-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Job'){
-    
+    navigate(`/update-job-ad/${adId}`, { state: { adId, adData } });
   }else if(type==='Service'){
-
+    navigate(`/update-service-ad/${adId}`, { state: { adId, adData } });
   }else{
     console.error('Invalid ad type while navigating to update page')
   }
@@ -100,12 +100,12 @@ const handleUpdate = (adId,adData,type) => {
   };
 
   const renderAdList = (ads, type) => (
-    <div className="my-4 w-full">
-      <h2 className="text-xl font-bold mb-2">{type} Ads</h2>
+    <div className=" w-full">
+      <div className='p-4'><h2 className="text-xl font-semibold text-gray-700 mb-2">{type} Ads</h2></div>
       <ul className="list-none">
         {ads.length > 0 ? (
           ads.map((ad) => (
-            <li key={ad._id} className="border p-4 mb-2 rounded flex items-center justify-between w-full">
+            <li key={ad._id} className="border p-4  flex items-center justify-between w-full">
               <div className="flex items-center w-full">
                 <img
                   src={ad.imagesURL[0] || 'placeholder.jpg'}
@@ -113,7 +113,7 @@ const handleUpdate = (adId,adData,type) => {
                   className="w-20 h-20 object-cover rounded mr-4"
                 />
                 <div className="flex-grow">
-                  <h3 className="text-lg font-semibold">{ad.adTitle} - in {type}</h3>
+                  <span className="text-lg font-bold">{ad.adTitle} - </span><span className=''>in {type}</span>
                   <p className="text-gray-600">Rs {ad.price}</p>
                   <p className="text-gray-600">Posted on {formatDate(ad.createdAt)}</p>
                 </div>
@@ -128,25 +128,30 @@ const handleUpdate = (adId,adData,type) => {
                   <span>{ad.tel || 0}</span>
                 </div> */}
                 <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faCommentDots} />
+                  <FontAwesomeIcon icon={faCommentDots} size='xl' style={{color: "orange"}}/>
                   <span>{ad.chatCount || 0}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faHeart} />
+                  <FontAwesomeIcon icon={faHeart} size='xl' style={{color: "red"}}/>
                   <span>{ad.likes.length}</span>
                 </div>
+                <div className='hover:bg-orange-400  border border-black rounded'>
                 <button
                   onClick={() => handleUpdate(ad._id,ad,type)}
-                  className="px-4 py-2 border border-gray-400 rounded hover:bg-gray-200"
+                  className="px-4 py-2 text-black bg-transparent   hover:text-white"
                 >
                   Edit
                 </button>
+                </div>
+                <div className='hover:bg-red-500  border border-black rounded'>
                 <button
                   onClick={() => handleDelete(ad._id)}
-                  className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
+                  className="px-4 py-2 text-black bg-transparent   hover:text-white"
+                  style={{ backgroundColor: 'white', color: 'black', borderColor: 'black' }}
                 >
                   Delete
                 </button>
+                </div>
               </div>
             </li>
           ))
@@ -157,13 +162,15 @@ const handleUpdate = (adId,adData,type) => {
     </div>
 );  return (
     <div>
-        <Nav/>
-      <div className="w-screen ">
-      <h1 className="text-2xl font-bold mb-4">Your Ads</h1>
+        <Nav showSearchBar={false} showlocationBar={false}/>
+      <div className="">
+      <div className='px-4 py-4'><h1 className="text-2xl font-bold">Your Ads</h1></div>
+      <div className='pr-4'>
       {renderAdList(adsData.mobileAds, 'Mobile')}
       {renderAdList(adsData.vehicleAds, 'Vehicle')}
       {renderAdList(adsData.jobAds, 'Job')}
       {renderAdList(adsData.serviceAds, 'Service')}
+      </div>
     </div>
     </div>
   )

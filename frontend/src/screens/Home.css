@@ -1,0 +1,14 @@
+/* Custom styles for PrimeReact Carousel arrows */
+.p-carousel-prev,
+.p-carousel-next {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Optionally, you can style the arrows themselves */
+.p-carousel-prev-icon,
+.p-carousel-next-icon {
+  color: #000; /* Set the color of the arrow icons */
+  font-size: 1.5rem; /* Adjust the size of the arrow icons */
+}

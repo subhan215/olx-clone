@@ -27,7 +27,8 @@ function App() {
         <Route path = "my-ads" element = {<AllUserAds/>}/>
         <Route path="update-vehicle-ad/:adId" element={<VehicleAd />} />
         <Route path="update-mobile-ad/:adId" element={<MobileAd />} />
-
+        <Route path="update-job-ad/:adId" element={<JobsAd/>} />
+        <Route path="update-service-ad/:adId" element={<ServiceAd/>} />
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>
           <Route path='mobile' element = {<MobileAd />}/>

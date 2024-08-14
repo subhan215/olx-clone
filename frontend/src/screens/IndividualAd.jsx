@@ -6,6 +6,7 @@ import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 import { getCookie } from "../cookies/getCookie";
 import { getAllPosts } from "../functions/allPosts";
 import { verifyToken } from "../functions/verifyToken";
+import Nav from '../components/Navbar/Nav';
 
 const IndividualAd = () => {
     const navigate = useNavigate();
@@ -45,8 +46,8 @@ const IndividualAd = () => {
                 } else {
                     console.error(data.message);
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (error) {
+                console.error('Error fetching transaction:', error);
             }
         };
         fetchTransaction();
@@ -118,48 +119,6 @@ const IndividualAd = () => {
         }
     };
 
-    const renderImages = () => (
-        adData && adData.imagesURL ? (
-            <Carousel>
-                {adData.imagesURL.map((url, index) => (
-                    <Carousel.Item key={index}>
-                        <img src={url} alt={`Slide ${index}`} className="d-block w-100" />
-                    </Carousel.Item>
-                ))}
-            </Carousel>
-        ) : null
-    );
-
-    const renderDetails = () => {
-        const details = [
-            { label: 'Category', value: adData.category },
-            { label: 'Brand', value: adData.brand },
-            { label: 'Condition', value: adData.condition },
-            { label: 'Salary From', value: adData.salaryFrom },
-            { label: 'Salary To', value: adData.salaryTo },
-            { label: 'Career Level', value: adData.careerLevel },
-            { label: 'Salary Period', value: adData.salaryPeriod },
-            { label: 'Position Type', value: adData.positionType },
-            { label: 'Make', value: adData.make },
-            { label: 'Price', value: adData.price },
-            { label: 'Owner Name', value: adData.ownerName },
-            { label: 'Mobile No', value: adData.mobileNo },
-            { label: 'Location', value: `${adData.city}, ${adData.province}` },
-        ].filter(detail => detail.value);
-
-        return (
-            <Card>
-                <Card.Header>Details</Card.Header>
-                <ListGroup variant="flush">
-                    {details.map((detail, index) => (
-                        <ListGroup.Item key={index}>
-                            <strong>{detail.label}:</strong> {detail.value}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </Card>
-        );
-    };
     const handleChat = async (adId, adCategory, createdBy) => {
         if (createdBy === user._id) {
             alert("You can't create an ad with yourself!");
@@ -209,95 +168,126 @@ const IndividualAd = () => {
             console.log(error);
         }
     };
-    return (
-        <div className="container mt-5">
-            <div>
-            {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
-                            <Button
-                                variant="primary"
-                                className="mt-3 bg-blue-500 text-white"
-                                onClick={() => handleStatusUpdate('In Progress')}
-                            >
-                                Mark as In Progress
-                            </Button>
-                        )}
-                        {(user?._id == transaction?.seller || user?._id == transaction?.buyer) && <p>{transactionStatus}</p>}
-                {(transactionStatus && user._id !== adData.createdBy) ? (
-                    <>
-                        
-                        {transactionStatus.toLowerCase() === 'in progress' && user?._id == transaction?.buyer && (
-                            <Button
-                                variant="primary"
-                                className="mt-3 bg-blue-500 text-white"
-                                onClick={() => handleStatusUpdate('Completed')}
-                            >
-                                Mark as Completed
-                            </Button>
-                        )}
 
-                        {transactionStatus.toLowerCase() === 'completed' && !transaction?.rating && user._id !== adData.createdBy && (
-                            <div className="mt-2">
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="5"
-                                    value={rating}
-                                    onChange={(e) => setRating(e.target.value)}
-                                    placeholder="Rate (1-5)"
-                                    className="border border-gray-300 p-2 rounded mr-2"
-                                />
-                                <Button
-                                    variant="warning"
-                                    className="bg-yellow-500 text-white"
-                                    onClick={handleRating}
-                                >
-                                    Submit Rating
-                                </Button>
-                            </div>
-                        )}
-                        {transaction?.rating && (
-                            <p>Rating: {transaction.rating}</p>
-                        )}
-                    </>
-                ) : (
-                    adData.createdBy !== user._id && (
+    const renderImages = () => (
+        adData && adData.imagesURL ? (
+            <Carousel className="h-full">
+                {adData.imagesURL.map((url, index) => (
+                    <Carousel.Item key={index}>
+                        <img
+                            src={url}
+                            alt={`Slide ${index}`}
+                            className="object-cover w-full h-[400px] md:h-[500px] lg:h-[600px]"
+                        />
+                    </Carousel.Item>
+                ))}
+            </Carousel>
+        ) : null
+    );
+
+    const renderDetails = () => {
+        const details = [
+            { label: 'Category', value: adData.category },
+            { label: 'Brand', value: adData.brand },
+            { label: 'Condition', value: adData.condition },
+            { label: 'Salary From', value: adData.salaryFrom },
+            { label: 'Salary To', value: adData.salaryTo },
+            { label: 'Career Level', value: adData.careerLevel },
+            { label: 'Salary Period', value: adData.salaryPeriod },
+            { label: 'Position Type', value: adData.positionType },
+            { label: 'Make', value: adData.make },
+            { label: 'Price', value: adData.price },
+            { label: 'Owner Name', value: adData.ownerName },
+            { label: 'Mobile No', value: adData.mobileNo },
+            { label: 'Location', value: `${adData.city}, ${adData.province}` },
+        ].filter(detail => detail.value);
+
+        return (
+            <Card className="bg-white shadow-md rounded-md">
+                <Card.Header className="bg-orange-400 text-white">Details</Card.Header>
+                <ListGroup variant="flush">
+                    {details.map((detail, index) => (
+                        <ListGroup.Item key={index} className="py-2 px-3">
+                            <strong>{detail.label}:</strong> {detail.value}
+                        </ListGroup.Item>
+                    ))}
+                </ListGroup>
+            </Card>
+        );
+    };
+
+    return (
+        <>
+            <Nav showBechDay={false} showSearchBar={false} showlocationBar={false} />
+            <div className="max-w-7xl mx-auto p-5 mt-5">
+                <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
+                    <div className="flex-1">
+                        {renderImages()}
+                    </div>
+                    <div className="flex-none md:w-1/3 bg-white p-4 rounded-lg shadow-md">
+                        <h1 className="text-xl font-semibold mb-2">{adData.adTitle}</h1>
+                        {adData.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData.price}`}</h3>}
+                        <p className="text-gray-600 mb-4">{adData.city}, {adData.province}</p>
+                        <div className="bg-white p-4 rounded-lg shadow-md">
+                            <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
+                            <p className="text-base mb-2">Phone: {adData.mobileNo}</p>
+                            <Button
+                                variant="primary"
+                                className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
+                                onClick={() => handleChat(adData._id, adData.category, adData.createdBy)}
+                            >
+                                Contact Seller
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+                <Card className="bg-white shadow-md rounded-md mt-4">
+                    <Card.Header>Description</Card.Header>
+                    <Card.Body>
+                        <Card.Text>{adData.description}</Card.Text>
+                    </Card.Body>
+                </Card>
+                <div className="mt-4">{renderDetails()}</div>
+                <Alert variant="success" className="mt-4">
+                    Transaction Status: {transactionStatus || 'No transaction yet'}
+                </Alert>
+                {transactionStatus === 'Completed' && (
+                    <div className="mt-4">
+                        <Card className="bg-white shadow-md rounded-md">
+                            <Card.Header>Rate this Transaction</Card.Header>
+                            <Card.Body>
+                                <div className="flex items-center">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="5"
+                                        value={rating}
+                                        onChange={(e) => setRating(e.target.value)}
+                                        className="form-control mr-3"
+                                    />
+                                    <Button
+                                        onClick={handleRating}
+                                        className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
+                                    >
+                                        Submit Rating
+                                    </Button>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                )}
+                {user._id !== adData.createdBy && transactionStatus === null && (
+                    <div className="mt-4">
                         <Button
-                            variant="primary"
-                            className="mt-3 bg-blue-500 text-white"
                             onClick={handleCreateTransaction}
+                            className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
                         >
                             Create Transaction
                         </Button>
-                    )
+                    </div>
                 )}
             </div>
-
-            <div className='adNameImagesDiv'>
-                <h1 className="mb-3">{adData.adTitle}</h1>
-                {adData.price && <h3 className="text-success mb-4">Rs {adData.price}</h3>}
-                {renderImages()}
-            </div>
-            <div className="mt-4">{renderDetails()}</div>
-            <Card className="mt-4">
-                <Card.Header>Description</Card.Header>
-                <Card.Body>
-                    <Card.Text>{adData.description}</Card.Text>
-                </Card.Body>
-            </Card>
-            <Alert variant="info" className="mt-4">
-                <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
-            </Alert>
-            <Button
-                variant="primary"
-                className="mt-3"
-                onClick={() => { handleChat(adData._id, adData.category, adData.createdBy); }}
-            >
-                Contact Seller
-            </Button>
-            <div>
-                <p>{adData.userRating}</p>
-            </div>
-        </div>
+        </>
     );
 };
 
