@@ -248,44 +248,65 @@ const IndividualAd = () => {
                     </Card.Body>
                 </Card>
                 <div className="mt-4">{renderDetails()}</div>
-                <Alert variant="success" className="mt-4">
-                    Transaction Status: {transactionStatus || 'No transaction yet'}
-                </Alert>
-                {transactionStatus === 'Completed' && (
-                    <div className="mt-4">
-                        <Card className="bg-white shadow-md rounded-md">
-                            <Card.Header>Rate this Transaction</Card.Header>
-                            <Card.Body>
-                                <div className="flex items-center">
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="5"
-                                        value={rating}
-                                        onChange={(e) => setRating(e.target.value)}
-                                        className="form-control mr-3"
-                                    />
-                                    <Button
-                                        onClick={handleRating}
-                                        className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
-                                    >
-                                        Submit Rating
-                                    </Button>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </div>
-                )}
-                {user._id !== adData.createdBy && transactionStatus === null && (
-                    <div className="mt-4">
+                {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('In Progress')}
+                            >
+                                Mark as In Progress
+                            </Button>
+                        )}
+                        {(user?._id == transaction?.seller || user?._id == transaction?.buyer) && <p>{transactionStatus}</p>}
+                {(transactionStatus && user._id !== adData.createdBy) ? (
+                    <>
+                        
+                        {transactionStatus.toLowerCase() === 'in progress' && user?._id == transaction?.buyer && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('Completed')}
+                            >
+                                Mark as Completed
+                            </Button>
+                        )}
+
+                        {transactionStatus.toLowerCase() === 'completed' && !transaction?.rating && user._id !== adData.createdBy && (
+                            <div className="mt-2">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="5"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                    placeholder="Rate (1-5)"
+                                    className="border border-gray-300 p-2 rounded mr-2"
+                                />
+                                <Button
+                                    variant="warning"
+                                    className="bg-yellow-500 text-white"
+                                    onClick={handleRating}
+                                >
+                                    Submit Rating
+                                </Button>
+                            </div>
+                        )}
+                        {transaction?.rating && (
+                            <p>Rating: {transaction.rating}</p>
+                        )}
+                    </>
+                ) : (
+                    adData.createdBy !== user._id && (
                         <Button
+                            variant="primary"
+                            className="mt-3 bg-blue-500 text-white"
                             onClick={handleCreateTransaction}
-                            className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
                         >
                             Create Transaction
                         </Button>
-                    </div>
+                    )
                 )}
+                <div>user rating: {adData?.userRating}</div>
             </div>
         </>
     );
