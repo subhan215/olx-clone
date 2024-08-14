@@ -54,7 +54,15 @@ const mobileSchema = new Schema(
      likes: [{
        type:Schema.Types.ObjectId,
       ref:'user'
-     }]
+     }], 
+     completed: {
+      type: Boolean , 
+      default: false
+     }, 
+     userRating: {
+      type: Number , 
+      
+     }
   },
   { timestamps: true }
 );

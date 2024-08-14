@@ -8,10 +8,10 @@ const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary");
 
 async function allPosts(req, res) {
   try {
-    const vehiclesAds = await Vehicle.find({})
-    const mobileAds = await Mobile.find({})
-    const jobAds = await Job.find({})
-    const serviceAds = await Service.find({})
+    const vehiclesAds = await Vehicle.find({completed: false})
+    const mobileAds = await Mobile.find({completed: false})
+    const jobAds = await Job.find({completed: false})
+    const serviceAds = await Service.find({completed: false})
     return res.status(200).json({
       message: "Ads successfully fetched",
       success: true,
@@ -50,6 +50,12 @@ async function postService(req, res) {
       console.log("loop", cloudinaryURL)
       cloudinaryUrls.push(cloudinaryURL.url)
     }
+    let user = await User.findById(req.body.createdBy)
+    let totalRating= 0
+    for(let i = 0 ; i < user.sellerRating.length ; i++) {
+      totalRating += user.sellerRating[i].rating
+    }
+    totalRating /= user.sellerRating.length
     const service = await Service.create({
       category: req.body.category,
       adTitle: req.body.adTitle,
@@ -59,7 +65,8 @@ async function postService(req, res) {
       ownerName: req.body.ownerName,
       mobileNo: req.body.phoneNo,
       imagesURL: cloudinaryUrls,
-      createdBy: req.body.createdBy
+      createdBy: req.body.createdBy , 
+      userRating: totalRating
     })
 
 
@@ -113,6 +120,12 @@ async function postJob(req, res) {
       console.log("loop", cloudinaryURL)
       cloudinaryUrls.push(cloudinaryURL.url)
     }
+    let user = await User.findById(req.body.createdBy)
+    let totalRating= 0
+    for(let i = 0 ; i < user.sellerRating.length ; i++) {
+      totalRating += user.sellerRating[i].rating
+    }
+    totalRating /= user.sellerRating.length
     // Check if user already exists
     const job = await Job.create({
       category: req.body.category,
@@ -131,7 +144,8 @@ async function postJob(req, res) {
       ownerName: req.body.ownerName,
       mobileNo: req.body.phoneNo,
       imagesURL: cloudinaryUrls,
-      createdBy: req.body.createdBy
+      createdBy: req.body.createdBy , 
+      userRating: totalRating
     })
 
 
@@ -220,10 +234,17 @@ async function postVehicle(req, res) {
         message: "Vehicle Ad updated successfully!"
       });
     } else {
+      let user = await User.findById(req.body.createdBy)
+    let totalRating= 0
+    for(let i = 0 ; i < user.sellerRating.length ; i++) {
+      totalRating += user.sellerRating[i].rating
+    }
+    totalRating /= user.sellerRating.length
       // Create a new Vehicle Ad
       const vehicle = await Vehicle.create({
         category, make, adTitle, description, city, province, price: Number(price),
-        ownerName, mobileNo: phoneNo, imagesURL: cloudinaryUrls, createdBy
+        ownerName, mobileNo: phoneNo, imagesURL: cloudinaryUrls, createdBy , 
+        userRating: totalRating
       });
 
       if (!vehicle) {
@@ -355,6 +376,12 @@ async function postMobile(req, res) {
         message: "Mobile Ad updated successfully!"
       });
     } else {
+      let user = await User.findById(req.body.createdBy)
+      let totalRating= 0
+      for(let i = 0 ; i < user.sellerRating.length ; i++) {
+        totalRating += user.sellerRating[i].rating
+      }
+      totalRating /= user.sellerRating.length
       const mobile = await Mobile.create({
         category: req.body.category,
         brand: req.body.brand,
@@ -367,7 +394,8 @@ async function postMobile(req, res) {
         ownerName: req.body.ownerName,
         mobileNo: req.body.phoneNo,
         imagesURL: cloudinaryUrls,
-        createdBy: req.body.createdBy
+        createdBy: req.body.createdBy , 
+        userRating: totalRating
       });
 
       if (!mobile) {
@@ -487,11 +515,40 @@ async function postLike(req, res) {
     message: "Can't fetch ad!"
   })
 }
+const getSpecificAd = async (req , res) => {
+  console.log(req.params.adId)
+  const {adId} = req.params 
+   if(!adId) {
+    return res.status(400).json({
+      success: false , 
+      message: "adId is missing"
+    })
+   }
+   let mobileAd = await Mobile.findById(adId)
+   let vehicleAd = await Vehicle.findById(adId)
+   let serviceAd = await Service.findById(adId)
+   let jobAd = await Job.findById(adId)
+   if(vehicleAd || mobileAd || serviceAd || jobAd) {
+    let ad = mobileAd ? mobileAd : vehicleAd ? vehicleAd : serviceAd ? serviceAd : jobAd
+    return res.status(200).json({
+      success: true , 
+       message: "ad fetched successfully!" , 
+       ad
+    })
+   }
+   else {
+    return res.status(400).json({
+      success: false , 
+       message: "ad is missing!"
+    })
+   }
+} 
 module.exports = {
   postVehicle,
   postMobile,
   postJob,
   postService,
   allPosts,
-  postLike
+  postLike , 
+  getSpecificAd
 }

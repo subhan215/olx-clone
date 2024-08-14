@@ -1,9 +1,10 @@
 const { Router } = require("express");
 const { upload } = require("../midddlewares/multer");
-const { postVehicle, postMobile, postJob, postService, allPosts , postLike } = require("../controllers/post.controllers");
+const { postVehicle, postMobile, postJob, postService, allPosts , postLike , getSpecificAd } = require("../controllers/post.controllers");
 const router = Router();
 //get all posts //
 router.get("/" , allPosts) ; 
+router.get("/:adId" , getSpecificAd)
 router.post("/vehicle", upload.fields([
     {
         name: "images",

@@ -14,6 +14,8 @@ import { Avatar } from 'primereact/avatar';
 
 import './nav.css'
 import Notifications from '../Notifications';
+import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import Transaction from '../../screens/Transactions';
 const FontAwesomeIcon = require('@fortawesome/react-fontawesome').FontAwesomeIcon;
 const faMagnifyingGlass = require('@fortawesome/free-solid-svg-icons').faMagnifyingGlass;
 const faMessage = require('@fortawesome/free-solid-svg-icons').faMessage;
@@ -83,6 +85,10 @@ function Nav() {
   const turnNotificationsToOff = () => {
     setShowNotifications(false)
   }
+ ;
+
+  const [showTransactions, setShowTransactions] = useState(false);
+  const turnTransactionsToOff = () => setShowTransactions(false)
 
   return (
     <>
@@ -136,6 +142,12 @@ function Nav() {
             <FontAwesomeIcon onClick={handleMenuToggle} size='2x' icon={faCircleUser} className="text-black hover:cursor-pointer"/>
             </div>
             <FontAwesomeIcon onClick={handleInboxClick} icon={faMessage} size="2x" className="text-black hover:cursor-pointer" />
+            <FontAwesomeIcon
+                            icon={faExchangeAlt}
+                            size="2x"
+                            className="text-black hover:cursor-pointer"
+                            onClick={() => setShowTransactions(true)}
+                        />
             <FontAwesomeIcon icon={faBell} size="2x" className="text-black hover:cursor-pointer" onClick={()=> setShowNotifications(true)}/>
           </div>
      
@@ -149,6 +161,7 @@ function Nav() {
       </nav>
     </div>
     {showNotifications && <Notifications turnNotificationsToOff = {turnNotificationsToOff}/>}
+    {showTransactions && <Transaction turnTransactionsToOff={turnTransactionsToOff} />}
     </>
   );
 }

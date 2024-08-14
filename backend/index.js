@@ -13,6 +13,7 @@ const userRoute = require("./src/routes/user.routes");
 const postRoute = require("./src/routes/post.routes");
 const chatRoute = require("./src/routes/chat.routes")
 const socketIo = require('socket.io');
+const transactionRoute = require("./src/routes/transaction.routes");
 
 connectMongoDb(`${process.env.MONGODB_URI}khareedoFarokht`);
 app.use(express.urlencoded({ extended: false }));
@@ -31,6 +32,7 @@ app.use(express.static(path.resolve("./public")));
 app.use("/api/v1/users",userRoute)
 app.use("/api/v1/posts",postRoute)
 app.use("/api/v1/chat",chatRoute)
+app.use("/api/v1/transaction",transactionRoute)
 const io = socketIo(server , {cors: {
   origin: 'http://localhost:3000'
 } })

@@ -208,8 +208,8 @@ const Home = () => {
       }
     }
     return (<>
-     
-        <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
+        {
+        !ad.completed &&<div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
           <div>
             <FontAwesomeIcon icon={faHeart} style={ad.likes.includes(user._id) ? {color: "red"} : "" } onClick={handleLike}/>
           </div>
@@ -238,6 +238,7 @@ const Home = () => {
         
       </NavLink>
       </div>
+  }
       </>);
   };
 

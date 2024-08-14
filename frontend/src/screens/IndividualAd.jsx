@@ -1,81 +1,123 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Carousel, Alert, Card, ListGroup, Button } from 'react-bootstrap';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from "react-redux";
+import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 import { getCookie } from "../cookies/getCookie";
 import { getAllPosts } from "../functions/allPosts";
 import { verifyToken } from "../functions/verifyToken";
-import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 
 const IndividualAd = () => {
-    const navigate=useNavigate()
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const token = getCookie("token");
+    const user = useSelector((state) => state.userData.data);
+    const adData = useSelector((state) => state.individualAd.data);
+
+    const [transactionStatus, setTransactionStatus] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [transaction, setTransaction] = useState(null); // Store full transaction details
+
     useEffect(() => {
         getAllPosts(dispatch);
         if (token) {
-        verifyToken(dispatch);
+            verifyToken(dispatch);
         }
     }, [token, dispatch]);
-    const user = useSelector((state) => state.userData.data);
-    console.log(user)
-    const adData = useSelector((state) => state.individualAd.data);
-    const handleChat= async (adId , adCategory , createdBy)=>{
-        if(createdBy == user._id) {
-            alert("You can't create an ad with yourself!")
-            return 
-        }
-        try {
-            const response = await fetch('http://localhost:8000/api/v1/chat/new',{
-              headers: {
-                "Content-Type": "application/json",
-              },
-              method: "POST",
-              body: JSON.stringify({ 
-                adId:adId,
-                user:user._id , 
-                createdBy
-              }),
-            })
-            const data = await response.json()
-            console.log(data)
-            if(data.success){
-                dispatch(setChat(data.chat))
-                dispatch(setChatId(data.chat._id))
-                dispatch(setChatMessages(data.chat.messages))
-                try {
-                    console.log("seen status hit")
-                    const response = await fetch(`http://localhost:8000/api/v1/chat/${data.chat._id}`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        method: "POST",
-                        body: JSON.stringify({ userId: user._id }),
 
-                    });
-                    const data1 = await response.json();
-                    console.log(data1.messages);
-                    console.log(data1)
-                    if (data1.success) {
-                        dispatch(setChatMessages(data1.messages));
-
-                    } else {
-                        alert(data1.message);
+    useEffect(() => {
+        const fetchTransaction = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/transaction/getSpecificTransaction', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'PUT',
+                    body: JSON.stringify({ adId: adData._id }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    setTransactionStatus(data.t.status);
+                    setTransaction(data.t); // Save full transaction details
+                    if (data.t.rating) {
+                        setRating(data.t.rating); // Set rating if already provided
                     }
-                } catch (error) {
-                    console.log(error);
+                } else {
+                    console.error(data.message);
                 }
-              navigate(`/chat`, { state: { user } }) //isko change karna hoga
-            }else{
-              alert(data.message)
+            } catch (err) {
+                console.error(err);
             }
-            
+        };
+        fetchTransaction();
+    }, [adData._id]);
+
+    const handleStatusUpdate = async (newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/transaction/${transaction._id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus, userId: user._id }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                setTransactionStatus(newStatus);
+            } else {
+                console.error(result.message);
+            }
         } catch (error) {
-          console.log(error)
+            console.error('Error updating transaction status:', error);
         }
-      }
+    };
+
+    const handleRating = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/transaction/${transaction._id}/rate`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating, userId: user._id }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                setRating(rating); // Update rating in state
+            } else {
+                console.error(result.message);
+            }
+        } catch (error) {
+            console.error('Error updating transaction rating:', error);
+        }
+    };
+
+    const handleCreateTransaction = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/transaction/create', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    adId: adData._id,
+                    sellerId: adData.createdBy,
+                    buyerId: user._id,
+                    adTitle: adData.adTitle,
+                }),
+            });
+            const data = await response.json();
+            if (data.success) {
+                setTransaction(data.transaction); // Store the created transaction
+                setTransactionStatus(data.transaction.status);
+            } else {
+                console.error(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const renderImages = () => (
         adData && adData.imagesURL ? (
             <Carousel>
@@ -118,13 +160,122 @@ const IndividualAd = () => {
             </Card>
         );
     };
+    const handleChat = async (adId, adCategory, createdBy) => {
+        if (createdBy === user._id) {
+            alert("You can't create an ad with yourself!");
+            return;
+        }
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/chat/new', {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    adId: adId,
+                    user: user._id,
+                    createdBy,
+                }),
+            });
+            const data = await response.json();
+            if (data.success) {
+                dispatch(setChat(data.chat));
+                dispatch(setChatId(data.chat._id));
+                dispatch(setChatMessages(data.chat.messages));
 
+                try {
+                    const response = await fetch(`http://localhost:8000/api/v1/chat/${data.chat._id}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        method: "POST",
+                        body: JSON.stringify({ userId: user._id }),
+                    });
+                    const data1 = await response.json();
+                    if (data1.success) {
+                        dispatch(setChatMessages(data1.messages));
+                    } else {
+                        alert(data1.message);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
+                navigate(`/chat`, { state: { user } });
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="container mt-5">
+            <div>
+            {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('In Progress')}
+                            >
+                                Mark as In Progress
+                            </Button>
+                        )}
+                        {(user?._id == transaction?.seller || user?._id == transaction?.buyer) && <p>{transactionStatus}</p>}
+                {(transactionStatus && user._id !== adData.createdBy) ? (
+                    <>
+                        
+                        {transactionStatus.toLowerCase() === 'in progress' && user?._id == transaction?.buyer && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('Completed')}
+                            >
+                                Mark as Completed
+                            </Button>
+                        )}
+
+                        {transactionStatus.toLowerCase() === 'completed' && !transaction?.rating && user._id !== adData.createdBy && (
+                            <div className="mt-2">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="5"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                    placeholder="Rate (1-5)"
+                                    className="border border-gray-300 p-2 rounded mr-2"
+                                />
+                                <Button
+                                    variant="warning"
+                                    className="bg-yellow-500 text-white"
+                                    onClick={handleRating}
+                                >
+                                    Submit Rating
+                                </Button>
+                            </div>
+                        )}
+                        {transaction?.rating && (
+                            <p>Rating: {transaction.rating}</p>
+                        )}
+                    </>
+                ) : (
+                    adData.createdBy !== user._id && (
+                        <Button
+                            variant="primary"
+                            className="mt-3 bg-blue-500 text-white"
+                            onClick={handleCreateTransaction}
+                        >
+                            Create Transaction
+                        </Button>
+                    )
+                )}
+            </div>
+
             <div className='adNameImagesDiv'>
-            <h1 className="mb-3">{adData.adTitle}</h1>
-            {adData.price &&<h3 className="text-success mb-4">Rs {adData.price}</h3>}
-            {renderImages()}
+                <h1 className="mb-3">{adData.adTitle}</h1>
+                {adData.price && <h3 className="text-success mb-4">Rs {adData.price}</h3>}
+                {renderImages()}
             </div>
             <div className="mt-4">{renderDetails()}</div>
             <Card className="mt-4">
@@ -136,7 +287,16 @@ const IndividualAd = () => {
             <Alert variant="info" className="mt-4">
                 <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
             </Alert>
-            <Button variant="primary" className="mt-3" onClick={()=>{handleChat(adData._id,adData.category , adData.createdBy)}}>Contact Seller</Button>
+            <Button
+                variant="primary"
+                className="mt-3"
+                onClick={() => { handleChat(adData._id, adData.category, adData.createdBy); }}
+            >
+                Contact Seller
+            </Button>
+            <div>
+                <p>{adData.userRating}</p>
+            </div>
         </div>
     );
 };

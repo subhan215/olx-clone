@@ -11,11 +11,14 @@ import { setChatMessages } from '../../redux/slices/chatsData';
 import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons/faCheckSquare';
+import { NavLink } from 'react-router-dom';
+import { setIndividualAdData } from '../../redux/slices/individualAd';
 const socket = io('http://localhost:8000');
 const ChatDetail = () => {
   let messages = useSelector((state) => state.chatData.messages) || [];
   let chatId = useSelector((state)=> state.chatData.selectedChatId)
   let chat = useSelector((state)=> state.chatData.chats)
+  let chatRedux = useSelector((state) => state?.chatData?.selectedChat)
   console.log(chatId)
   console.log(messages)
   const dispatch = useDispatch();
@@ -70,10 +73,28 @@ const ChatDetail = () => {
       }, 500);
 
     } , [socket , dispatch]) 
-    
+    const addAdDataToRedux = async (adId) => {
+      console.log(adId)
+      try {
+          const response = await fetch(`http://localhost:8000/api/v1/posts/${adId}`);
+          const result = await response.json();
+          console.log(result)
+          if (result.success) {
+              dispatch(setIndividualAdData({ payload: result.ad }))
+          }
+      } catch (error) {
+          console.error("Error updating transaction rating:", error);
+      }
+  }
   
   return (
     <div className="flex flex-col h-full bg-gray-100 p-4">
+      
+      <NavLink to="/individualAd"  onClick={()=> addAdDataToRedux(chatRedux.ad.adId)}>
+      <button>
+          Go to Ad
+      </button>
+      </NavLink>
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto flex flex-col space-y-4">
       {messages.length === 0 ? (
