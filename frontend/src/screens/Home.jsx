@@ -17,7 +17,9 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setNotifications } from "../redux/slices/notifications";
 import './Home.css'
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const token = getCookie("token");
   const ads = useSelector((state) => state.adsData.data);
@@ -220,14 +222,19 @@ const Home = () => {
         console.log(err);
       }
     }
+    // const handleViewAllClick =(type)=>{
+    //   if(type === 'Mobile Phones'){
+    //     navigate('/view-all', { state: { user,mobileAds } })
+    //   }
+    // }
     return (<>
      
         <div className="rounded-lg overflow-hidden p-4 m-2 bg-white border border-black ">
           <div className="m-2">
-            <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? {color: "red"} : "" } onClick={handleLike}/>
+            <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? {color: "red"} : {color: "gray"} } onClick={handleLike}/>
           </div>
           <NavLink to="/individualAd"  onClick={addAdDataToRedux} className="block no-underline text-black">
-          <div className=" rounded-lg h-48 bg-gray-200 flex items-center justify-center">
+          <div className=" rounded-lg h-48 bg-gray-100 flex items-center justify-center">
             {ad?.imagesURL?.length > 0 ? (
               <img
                 src={ad.imagesURL[0]}
@@ -236,11 +243,11 @@ const Home = () => {
               />
             ) : (
               <div className="h-full flex items-center justify-center">
-                <span>No Image Available</span>
+                <span className="font-semibold">No Image Available</span>
               </div>
             )}
           </div>
-          <div className="p-4 mt-2 bg-white border-t border-black ">
+          <div className="p-2 mt-4 bg-white border-t border-gray-500 ">
 
             {/* <h4 className="text-lg font-semibold mb-2">{ad.brand}</h4> */}
             <h3 className="text-lg font-bold mb-4">{croppedTitle}</h3>
@@ -263,10 +270,11 @@ const Home = () => {
         <Nav />
         <Categories />
 
-        <div className="p-4">
+        <div className="flex justify-between p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
             Mobile Phones
           </p>
+          <p className="mr-10 mt-4 bg-gray-200 p-2 rounded-full text-gray-700 hover:bg-orange-300 text-xl font-semibold" onClick={()=>navigate('/view-all', { state: { user,mobileAds } })} >View All</p>
         </div>
         <div className=" ">
           {mobileAds[0]?.ads?.length > 0 ? (
@@ -282,8 +290,9 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-4">
+        <div className="flex justify-between p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Cars</p>
+          <p className="mr-10 mt-4 bg-gray-200 p-2 rounded-full text-gray-700 hover:bg-orange-300 text-xl font-semibold">View All</p>
         </div>
         <div className="">
           {vehicleAds[0]?.ads?.length > 0 ? (
@@ -299,10 +308,11 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-4">
+        <div className="flex justify-between p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
             Services
           </p>
+          <p className="mr-10 mt-4 bg-gray-200 p-2 rounded-full text-gray-700 hover:bg-orange-300 text-xl font-semibold">View All</p>
         </div>
         {serviceAds[0]?.ads?.length > 0 ? (
             <Carousel
@@ -315,8 +325,9 @@ const Home = () => {
           ) : (
             <div>No ads available</div>
           )}
-        <div className="p-4">
+        <div className="flex justify-between p-4">
           <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">Jobs</p>
+          <p className="mr-10 mt-4 bg-gray-200 p-2 rounded-full text-gray-700 hover:bg-orange-300 text-xl font-semibold">View All</p>
         </div>
         {jobAds[0]?.ads?.length > 0 ? (
             <Carousel 

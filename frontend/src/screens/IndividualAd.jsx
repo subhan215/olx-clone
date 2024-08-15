@@ -74,6 +74,7 @@ const IndividualAd = () => {
     };
 
     const renderImages = () => (
+
         adData && adData.imagesURL ? (
             <Carousel className="h-full">
                 {adData.imagesURL.map((url, index) => (
@@ -86,7 +87,9 @@ const IndividualAd = () => {
                     </Carousel.Item>
                 ))}
             </Carousel>
-        ) : null
+        ) : (
+            <div>No images</div>
+        )
     );
 
     const renderDetails = () => {
@@ -107,54 +110,83 @@ const IndividualAd = () => {
         ].filter(detail => detail.value);
 
         return (
-            <Card className="bg-white shadow-md rounded-md">
-                <Card.Header className="bg-orange-400 text-white">Details</Card.Header>
-                <ListGroup variant="flush">
-                    {details.map((detail, index) => (
-                        <ListGroup.Item key={index} className="py-2 px-3">
-                            <strong>{detail.label}:</strong> {detail.value}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </Card>
+            // <Card className="bg-white shadow-md rounded-md">
+            //     <Card.Header className="bg-orange-400 text-white">Details</Card.Header>
+            //     <ListGroup variant="flush">
+            //         {details.map((detail, index) => (
+            //             <ListGroup.Item key={index} className="py-2 px-3">
+            //                 <strong>{detail.label}:</strong> {detail.value}
+            //             </ListGroup.Item>
+            //         ))}
+            //     </ListGroup>
+            // </Card>
+            <div className="bg-white  rounded border border-black">
+            <div className="bg-white text-black font-bold p-4 rounded-t-md border-b border-black">Details</div>
+            <ul className="p-4">
+                {details.map((detail, index) => (
+                    <li key={index} className="py-2 ">
+                        <strong>{detail.label}:</strong> {detail.value}
+                    </li>
+                ))}
+            </ul>
+        </div>
         );
     };
 
     return (
         <>
             <Nav showBechDay={false}  showSearchBar={false} showlocationBar={false}/>
-            <div className="max-w-7xl mx-auto p-5 mt-5">
-                <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
-                    <div className="flex-1">
-                        {renderImages()}
-                    </div>
-                    <div className="flex-none md:w-1/3 bg-white p-4 rounded-lg shadow-md">
-                        <h1 className="text-xl font-semibold mb-2">{adData.adTitle}</h1>
-                        {adData.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData.price}`}</h3>}
-                        <p className="text-gray-600 mb-4">{adData.city}, {adData.province}</p>
-                        <div className="bg-white p-4 rounded-lg shadow-md">
-                            <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
-                            <p className="text-base mb-2">Phone: {adData.mobileNo}</p>
-                            <Button
-                                variant="primary"
-                                className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
-                                onClick={() => handleChat(adData._id, adData.category, adData.createdBy)}
-                            >
-                                Contact Seller
-                            </Button>
+
+           <div className='px-20 py-4'>
+                <div className="max-w-7xl mx-auto px-16 py-5 mt-5 rounded-2xl border border-black bg-gray-200">
+                    <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
+                        <div className="flex-1">
+                            {renderImages()}
+                        </div>
+                        <div className="flex-none md:w-1/3">
+                            {/* Ad Title, Price, City, Province Section */}
+                            <div className="bg-white p-4 rounded-xl border border-black  mb-4">
+                                <h1 className="text-xl font-semibold mb-2">{adData.adTitle}</h1>
+                                {adData.price && (
+                                    <h3 className="text-gray-800 text-2xl mb-4">
+                                        {`Rs ${adData.price}`}
+                                    </h3>
+                                )}
+                                <p className="text-gray-600 mb-4">
+                                    {adData.city}, {adData.province}
+                                </p>
+                            </div>
+
+                            {/* Contact Information Section */}
+                            <div className="bg-white p-4 rounded border border-black">
+                                <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
+                                <p className="text-base mb-2">Phone: {adData.mobileNo}</p>
+                                <button
+                                    className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-500"
+                                    onClick={() => handleChat(adData._id, adData.category, adData.createdBy)}
+                                >
+                                    Contact Seller
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Description Section */}
+                    <div className="bg-white border border-black rounded mt-4 p-4">
+                        <h2 className="text-xl font-semibold mb-2">Description</h2>
+                        <p>{adData.description}</p>
+                    </div>
+
+                    {/* Details Section */}
+                    <div className="mt-4">
+                        {renderDetails()}
+                    </div>
+
+                    {/* Alert Section
+                    <div className="mt-4 bg-blue-100 text-blue-800 p-4 rounded-md">
+                        <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
+                    </div> */}
                 </div>
-                <Card className="bg-white shadow-md rounded-md mt-4">
-                    <Card.Header>Description</Card.Header>
-                    <Card.Body>
-                        <Card.Text>{adData.description}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <div className="mt-4">{renderDetails()}</div>
-                <Alert variant="info" className="mt-4">
-                    <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
-                </Alert>
             </div>
         </>
     );

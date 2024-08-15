@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 function Categories() {
   return (
-    <div className="bg-white border-b border-black mb-4  pb-4 ">
+    <div className="bg-white border-b border-gray-300 mb-4  pb-4 ">
       
       <div className='p-2'>
             <p className='ml-10 mt-4 text-gray-700 text-3xl font-bold '>All Categories</p>

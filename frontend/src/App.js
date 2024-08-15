@@ -12,6 +12,7 @@ import Chat from './screens/Chat';
 import ChatDetail from './components/ChatDetail/ChatDetail';
 import UpdateProfile from './screens/UpdateProfile'
 import AllUserAds from './screens/AllUserAds';
+import ViewAll from './screens/ViewAll';
 //import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="update-mobile-ad/:adId" element={<MobileAd />} />
         <Route path="update-job-ad/:adId" element={<JobsAd/>} />
         <Route path="update-service-ad/:adId" element={<ServiceAd/>} />
+        <Route path="view-all" element={<ViewAll/>} />
         <Route path='sell'>
           <Route path='vehicle' element = {<VehicleAd />}/>
           <Route path='mobile' element = {<MobileAd />}/>
@@ -37,6 +39,7 @@ function App() {
         </Route>
         <Route path='individualAd' element = {<IndividualAd />}/>
       </Routes>
+      
     </div>
   );
 }
