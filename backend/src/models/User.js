@@ -33,7 +33,17 @@ const userSchema = new Schema(
     } , 
     phoneNo: {
       type: String
-    }
+    } 
+     ,
+    sellerRating: [{
+      rating: {
+        type: Number , 
+      } , 
+      userId: {
+        type: Schema.Types.ObjectId , 
+        ref: 'user'
+      }
+    }] 
   },
   { timestamps: true }
 );

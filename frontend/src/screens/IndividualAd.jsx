@@ -1,19 +1,23 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Carousel, Alert, Card, ListGroup, Button } from 'react-bootstrap';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from "react-redux";
+import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 import { getCookie } from "../cookies/getCookie";
 import { getAllPosts } from "../functions/allPosts";
 import { verifyToken } from "../functions/verifyToken";
-import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 import Nav from '../components/Navbar/Nav';
 
 const IndividualAd = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const token = getCookie("token");
+    const user = useSelector((state) => state.userData.data);
+    const adData = useSelector((state) => state.individualAd.data);
+
+    const [transactionStatus, setTransactionStatus] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [transaction, setTransaction] = useState(null); // Store full transaction details
 
     useEffect(() => {
         getAllPosts(dispatch);
@@ -22,8 +26,98 @@ const IndividualAd = () => {
         }
     }, [token, dispatch]);
 
-    const user = useSelector((state) => state.userData.data);
-    const adData = useSelector((state) => state.individualAd.data);
+    useEffect(() => {
+        const fetchTransaction = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/transaction/getSpecificTransaction', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'PUT',
+                    body: JSON.stringify({ adId: adData._id }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    setTransactionStatus(data.t.status);
+                    setTransaction(data.t); // Save full transaction details
+                    if (data.t.rating) {
+                        setRating(data.t.rating); // Set rating if already provided
+                    }
+                } else {
+                    console.error(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching transaction:', error);
+            }
+        };
+        fetchTransaction();
+    }, [adData._id]);
+
+    const handleStatusUpdate = async (newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/transaction/${transaction._id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus, userId: user._id }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                setTransactionStatus(newStatus);
+            } else {
+                console.error(result.message);
+            }
+        } catch (error) {
+            console.error('Error updating transaction status:', error);
+        }
+    };
+
+    const handleRating = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/transaction/${transaction._id}/rate`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating, userId: user._id }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                setRating(rating); // Update rating in state
+            } else {
+                console.error(result.message);
+            }
+        } catch (error) {
+            console.error('Error updating transaction rating:', error);
+        }
+    };
+
+    const handleCreateTransaction = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/transaction/create', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    adId: adData._id,
+                    sellerId: adData.createdBy,
+                    buyerId: user._id,
+                    adTitle: adData.adTitle,
+                }),
+            });
+            const data = await response.json();
+            if (data.success) {
+                setTransaction(data.transaction); // Store the created transaction
+                setTransactionStatus(data.transaction.status);
+            } else {
+                console.error(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const handleChat = async (adId, adCategory, createdBy) => {
         if (createdBy === user._id) {
@@ -39,7 +133,7 @@ const IndividualAd = () => {
                 body: JSON.stringify({
                     adId: adId,
                     user: user._id,
-                    createdBy
+                    createdBy,
                 }),
             });
             const data = await response.json();
@@ -47,6 +141,7 @@ const IndividualAd = () => {
                 dispatch(setChat(data.chat));
                 dispatch(setChatId(data.chat._id));
                 dispatch(setChatMessages(data.chat.messages));
+
                 try {
                     const response = await fetch(`http://localhost:8000/api/v1/chat/${data.chat._id}`, {
                         headers: {
@@ -64,6 +159,7 @@ const IndividualAd = () => {
                 } catch (error) {
                     console.log(error);
                 }
+
                 navigate(`/chat`, { state: { user } });
             } else {
                 alert(data.message);
@@ -135,39 +231,26 @@ const IndividualAd = () => {
 
     return (
         <>
-            <Nav showBechDay={false}  showSearchBar={false} showlocationBar={false}/>
-
-           <div className='px-20 py-4'>
-                <div className="max-w-7xl mx-auto px-16 py-5 mt-5 rounded-2xl border border-black bg-gray-200">
-                    <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
-                        <div className="flex-1">
-                            {renderImages()}
-                        </div>
-                        <div className="flex-none md:w-1/3">
-                            {/* Ad Title, Price, City, Province Section */}
-                            <div className="bg-white p-4 rounded-xl border border-black  mb-4">
-                                <h1 className="text-xl font-semibold mb-2">{adData.adTitle}</h1>
-                                {adData.price && (
-                                    <h3 className="text-gray-800 text-2xl mb-4">
-                                        {`Rs ${adData.price}`}
-                                    </h3>
-                                )}
-                                <p className="text-gray-600 mb-4">
-                                    {adData.city}, {adData.province}
-                                </p>
-                            </div>
-
-                            {/* Contact Information Section */}
-                            <div className="bg-white p-4 rounded border border-black">
-                                <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
-                                <p className="text-base mb-2">Phone: {adData.mobileNo}</p>
-                                <button
-                                    className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-500"
-                                    onClick={() => handleChat(adData._id, adData.category, adData.createdBy)}
-                                >
-                                    Contact Seller
-                                </button>
-                            </div>
+            <Nav showBechDay={false} showSearchBar={false} showlocationBar={false} />
+            <div className="max-w-7xl mx-auto p-5 mt-5">
+                <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
+                    <div className="flex-1">
+                        {renderImages()}
+                    </div>
+                    <div className="flex-none md:w-1/3 bg-white p-4 rounded-lg shadow-md">
+                        <h1 className="text-xl font-semibold mb-2">{adData.adTitle}</h1>
+                        {adData.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData.price}`}</h3>}
+                        <p className="text-gray-600 mb-4">{adData.city}, {adData.province}</p>
+                        <div className="bg-white p-4 rounded-lg shadow-md">
+                            <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
+                            <p className="text-base mb-2">Phone: {adData.mobileNo}</p>
+                            <Button
+                                variant="primary"
+                                className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
+                                onClick={() => handleChat(adData._id, adData.category, adData.createdBy)}
+                            >
+                                Contact Seller
+                            </Button>
                         </div>
                     </div>
 
@@ -187,6 +270,72 @@ const IndividualAd = () => {
                         <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
                     </div> */}
                 </div>
+                <Card className="bg-white shadow-md rounded-md mt-4">
+                    <Card.Header>Description</Card.Header>
+                    <Card.Body>
+                        <Card.Text>{adData.description}</Card.Text>
+                    </Card.Body>
+                </Card>
+                <div className="mt-4">{renderDetails()}</div>
+                {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('In Progress')}
+                            >
+                                Mark as In Progress
+                            </Button>
+                        )}
+                        {(user?._id == transaction?.seller || user?._id == transaction?.buyer) && <p>{transactionStatus}</p>}
+                {(transactionStatus && user._id !== adData.createdBy) ? (
+                    <>
+                        
+                        {transactionStatus.toLowerCase() === 'in progress' && user?._id == transaction?.buyer && (
+                            <Button
+                                variant="primary"
+                                className="mt-3 bg-blue-500 text-white"
+                                onClick={() => handleStatusUpdate('Completed')}
+                            >
+                                Mark as Completed
+                            </Button>
+                        )}
+
+                        {transactionStatus.toLowerCase() === 'completed' && !transaction?.rating && user._id !== adData.createdBy && (
+                            <div className="mt-2">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="5"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                    placeholder="Rate (1-5)"
+                                    className="border border-gray-300 p-2 rounded mr-2"
+                                />
+                                <Button
+                                    variant="warning"
+                                    className="bg-yellow-500 text-white"
+                                    onClick={handleRating}
+                                >
+                                    Submit Rating
+                                </Button>
+                            </div>
+                        )}
+                        {transaction?.rating && (
+                            <p>Rating: {transaction.rating}</p>
+                        )}
+                    </>
+                ) : (
+                    adData.createdBy !== user._id && (
+                        <Button
+                            variant="primary"
+                            className="mt-3 bg-blue-500 text-white"
+                            onClick={handleCreateTransaction}
+                        >
+                            Create Transaction
+                        </Button>
+                    )
+                )}
+                <div>user rating: {adData?.userRating}</div>
             </div>
         </>
     );

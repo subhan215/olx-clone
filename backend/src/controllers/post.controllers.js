@@ -8,10 +8,10 @@ const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary");
 
 async function allPosts(req, res) {
   try {
-    const vehiclesAds = await Vehicle.find({})
-    const mobileAds = await Mobile.find({})
-    const jobAds = await Job.find({})
-    const serviceAds = await Service.find({})
+    const vehiclesAds = await Vehicle.find({completed: false})
+    const mobileAds = await Mobile.find({completed: false})
+    const jobAds = await Job.find({completed: false})
+    const serviceAds = await Service.find({completed: false})
     return res.status(200).json({
       message: "Ads successfully fetched",
       success: true,
@@ -50,21 +50,25 @@ async function postService(req, res) {
     });
   }
 
+  console.log("service", createdBy);
+
   try {
     let cloudinaryUrls = [];
 
     if (req?.files?.images?.length > 0) {
       for (let i = 0; i < req.files.images.length; i++) {
         let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path);
+        console.log("loop", cloudinaryURL);
         cloudinaryUrls.push(cloudinaryURL.url);
       }
     }
 
     const adId = req.params.adId;
+    let service;
 
     if (adId) {
       // Update existing service ad
-      const service = await Service.findByIdAndUpdate(
+      service = await Service.findByIdAndUpdate(
         adId,
         {
           category,
@@ -93,8 +97,12 @@ async function postService(req, res) {
         message: "Service ad updated successfully!"
       });
     } else {
+      // Calculate the seller's average rating
+      let user = await User.findById(createdBy);
+      let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+
       // Create a new service ad
-      const service = await Service.create({
+      service = await Service.create({
         category,
         adTitle,
         description,
@@ -103,7 +111,8 @@ async function postService(req, res) {
         ownerName,
         mobileNo: phoneNo,
         imagesURL: cloudinaryUrls,
-        createdBy
+        createdBy,
+        userRating: totalRating
       });
 
       if (!service) {
@@ -126,73 +135,35 @@ async function postService(req, res) {
       message: "Internal server error."
     });
   }
-  // if (!req.body.adTitle ||
-  //   !req.body.description || !req.body.city ||
-  //   !req.body.province ||
-  //   !req.body.ownerName || !req.body.phoneNo ||
-  //   !req.body.category || !req.body.createdBy) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Provide complete details!"
-  //   })
-  // }
-  // console.log("service", req.body.createdBy)
-  // try {
-  //   let cloudinaryUrls = []
-  //   for (let i = 0; i < req?.files?.images?.length; i++) {
-  //     let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
-  //     console.log("loop", cloudinaryURL)
-  //     cloudinaryUrls.push(cloudinaryURL.url)
-  //   }
-  //   const service = await Service.create({
-  //     category: req.body.category,
-  //     adTitle: req.body.adTitle,
-  //     description: req.body.description,
-  //     city: req.body.city,
-  //     province: req.body.province,
-  //     ownerName: req.body.ownerName,
-  //     mobileNo: req.body.phoneNo,
-  //     imagesURL: cloudinaryUrls,
-  //     createdBy: req.body.createdBy
-  //   })
-
-
-
-
-  //   // Create a new Vehicle A ///
-
-  //   if (!service) {
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: "Internal server error while creating account."
-  //     });
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     service: service,
-  //     message: "Service Ad created succesfully!"
-  //   });
-  // }
-  // catch (error) {
-  //   console.error("Error during creating service:", error);
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: "Internal server error."
-  //   });
-  // }
-
 }
 
 async function postJob(req, res) {
-  if (!req.body.category || !req.body.hiringPersonOrCompany
-    || !req.body.companyName || !req.body.typeOfAd ||
-    !req.body.salaryFrom || !req.body.salaryTo ||
-    !req.body.salaryPeriod || !req.body.careerLevel ||
-    !req.body.positionType || !req.body.adTitle ||
-    !req.body.description || !req.body.city ||
-    !req.body.province ||
-    !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
+  const {
+    category,
+    hiringPersonOrCompany,
+    companyName,
+    typeOfAd,
+    salaryFrom,
+    salaryTo,
+    salaryPeriod,
+    careerLevel,
+    positionType,
+    adTitle,
+    description,
+    city,
+    province,
+    ownerName,
+    phoneNo,
+    createdBy
+  } = req.body;
+
+  // Check if all required fields are provided
+  if (
+    !category || !hiringPersonOrCompany || !companyName || !typeOfAd ||
+    !salaryFrom || !salaryTo || !salaryPeriod || !careerLevel ||
+    !positionType || !adTitle || !description || !city ||
+    !province || !ownerName || !phoneNo || !createdBy
+  ) {
     return res.status(400).json({
       success: false,
       message: "Provide complete details!"
@@ -201,6 +172,8 @@ async function postJob(req, res) {
 
   try {
     let cloudinaryUrls = [];
+
+    // Upload images if provided
     if (req.files && req.files.images) {
       for (let i = 0; i < req.files.images.length; i++) {
         let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path);
@@ -208,25 +181,30 @@ async function postJob(req, res) {
       }
     }
 
-    const {adId} = req.params
+    // Calculate the seller's average rating
+    let user = await User.findById(createdBy);
+    let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+
+    const adId = req.params.adId;
     const adData = {
-      category: req.body.category,
-      hiringPersonOrCompany: req.body.hiringPersonOrCompany,
-      companyName: req.body.companyName,
-      typeOfAd: req.body.typeOfAd,
-      salaryFrom: Number(req.body.salaryFrom),
-      salaryTo: Number(req.body.salaryTo),
-      salaryPeriod: req.body.salaryPeriod,
-      careerLevel: req.body.careerLevel,
-      positionType: req.body.positionType,
-      adTitle: req.body.adTitle,
-      description: req.body.description,
-      province: req.body.province,
-      city: req.body.city,
-      ownerName: req.body.ownerName,
-      mobileNo: req.body.phoneNo,
+      category,
+      hiringPersonOrCompany,
+      companyName,
+      typeOfAd,
+      salaryFrom: Number(salaryFrom),
+      salaryTo: Number(salaryTo),
+      salaryPeriod,
+      careerLevel,
+      positionType,
+      adTitle,
+      description,
+      province,
+      city,
+      ownerName,
+      mobileNo: phoneNo,
       imagesURL: cloudinaryUrls,
-      createdBy: req.body.createdBy
+      createdBy,
+      userRating: totalRating
     };
 
     let job;
@@ -243,11 +221,11 @@ async function postJob(req, res) {
       }
       return res.status(200).json({
         success: true,
-        job: job,
+        job,
         message: "Job Ad updated successfully!"
       });
     } else {
-      // Create new job ad
+      // Create a new job ad
       console.log("Creating a new job ad.");
       job = await Job.create(adData);
       if (!job) {
@@ -258,7 +236,7 @@ async function postJob(req, res) {
       }
       return res.status(200).json({
         success: true,
-        job: job,
+        job,
         message: "Job Ad created successfully!"
       });
     }
@@ -269,70 +247,6 @@ async function postJob(req, res) {
       message: "Internal server error."
     });
   }
-  // if (!req.body.category || !req.body.hiringPersonOrCompany
-  //   || !req.body.companyName || !req.body.typeOfAd ||
-  //   !req.body.salaryFrom || !req.body.salaryTo ||
-  //   !req.body.salaryPeriod || !req.body.careerLevel ||
-  //   !req.body.positionType || !req.body.adTitle ||
-  //   !req.body.description || !req.body.city ||
-  //   !req.body.province ||
-  //   !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Provide complete details!"
-  //   })
-  // }
-  // console.log("job", req.body.createdBy)
-
-  // try {
-  //   let cloudinaryUrls = []
-  //   for (let i = 0; i < req?.files?.images?.length; i++) {
-  //     let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
-  //     console.log("loop", cloudinaryURL)
-  //     cloudinaryUrls.push(cloudinaryURL.url)
-  //   }
-  //   // Check if user already exists
-  //   const job = await Job.create({
-  //     category: req.body.category,
-  //     hiringPersonOrCompany: req.body.hiringPersonOrCompany,
-  //     companyName: req.body.companyName,
-  //     typeOfAd: req.body.typeOfAd,
-  //     salaryFrom: Number(req.body.salaryFrom),
-  //     salaryTo: Number(req.body.salaryTo),
-  //     salaryPeriod: Number(req.body.salaryPeriod),
-  //     careerLevel: req.body.careerLevel,
-  //     positionType: req.body.positionType,
-  //     adTitle: req.body.adTitle,
-  //     description: req.body.description,
-  //     province: req.body.province,
-  //     city: req.body.city,
-  //     ownerName: req.body.ownerName,
-  //     mobileNo: req.body.phoneNo,
-  //     imagesURL: cloudinaryUrls,
-  //     createdBy: req.body.createdBy
-  //   })
-
-  //  if (!job) {
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: "Internal server error while creating account."
-  //     });
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     job: job,
-  //     message: "Job Ad created succesfully!"
-  //   });
-  // }
-  // catch (error) {
-  //   console.error("Error during creating job:", error);
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: "Internal server error."
-  //   });
-  // }
-
 }
 
 async function postVehicle(req, res) {
@@ -393,10 +307,17 @@ async function postVehicle(req, res) {
         message: "Vehicle Ad updated successfully!"
       });
     } else {
+      let user = await User.findById(req.body.createdBy)
+    let totalRating= 0
+    for(let i = 0 ; i < user.sellerRating.length ; i++) {
+      totalRating += user.sellerRating[i].rating
+    }
+    totalRating /= user.sellerRating.length
       // Create a new Vehicle Ad
       const vehicle = await Vehicle.create({
         category, make, adTitle, description, city, province, price: Number(price),
-        ownerName, mobileNo: phoneNo, imagesURL: cloudinaryUrls, createdBy
+        ownerName, mobileNo: phoneNo, imagesURL: cloudinaryUrls, createdBy , 
+        userRating: totalRating
       });
 
       if (!vehicle) {
@@ -528,6 +449,12 @@ async function postMobile(req, res) {
         message: "Mobile Ad updated successfully!"
       });
     } else {
+      let user = await User.findById(req.body.createdBy)
+      let totalRating= 0
+      for(let i = 0 ; i < user.sellerRating.length ; i++) {
+        totalRating += user.sellerRating[i].rating
+      }
+      totalRating /= user.sellerRating.length
       const mobile = await Mobile.create({
         category: req.body.category,
         brand: req.body.brand,
@@ -540,7 +467,8 @@ async function postMobile(req, res) {
         ownerName: req.body.ownerName,
         mobileNo: req.body.phoneNo,
         imagesURL: cloudinaryUrls,
-        createdBy: req.body.createdBy
+        createdBy: req.body.createdBy , 
+        userRating: totalRating
       });
 
       if (!mobile) {
@@ -660,11 +588,40 @@ async function postLike(req, res) {
     message: "Can't fetch ad!"
   })
 }
+const getSpecificAd = async (req , res) => {
+  console.log(req.params.adId)
+  const {adId} = req.params 
+   if(!adId) {
+    return res.status(400).json({
+      success: false , 
+      message: "adId is missing"
+    })
+   }
+   let mobileAd = await Mobile.findById(adId)
+   let vehicleAd = await Vehicle.findById(adId)
+   let serviceAd = await Service.findById(adId)
+   let jobAd = await Job.findById(adId)
+   if(vehicleAd || mobileAd || serviceAd || jobAd) {
+    let ad = mobileAd ? mobileAd : vehicleAd ? vehicleAd : serviceAd ? serviceAd : jobAd
+    return res.status(200).json({
+      success: true , 
+       message: "ad fetched successfully!" , 
+       ad
+    })
+   }
+   else {
+    return res.status(400).json({
+      success: false , 
+       message: "ad is missing!"
+    })
+   }
+} 
 module.exports = {
   postVehicle,
   postMobile,
   postJob,
   postService,
   allPosts,
-  postLike
+  postLike , 
+  getSpecificAd
 }
