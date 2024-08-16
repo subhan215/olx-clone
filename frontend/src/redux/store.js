@@ -7,6 +7,7 @@ import chatReducer from './slices/chatsData'
 import individualAdReducer  from './slices/individualAd'
 import notificationsReducer from './slices/notifications'
 import transactionReducer from './slices/transactions'
+import viewAllReducer from './slices/viewAll'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     searchFilter:  searchReducer , 
     individualAd: individualAdReducer , 
     notifications: notificationsReducer , 
-    transactions: transactionReducer
+    transactions: transactionReducer , 
+    viewAll : viewAllReducer
   },
 })

@@ -6,7 +6,7 @@ import { setCookie } from "../cookies/setCookie";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
 import { getCookie } from "../cookies/getCookie";
 import Nav from "../components/Navbar/Nav";
-import { verifyToken } from "../functions/verifyToken";
+import { verifyToken } from "../functions/handlesUser/verifyToken";
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

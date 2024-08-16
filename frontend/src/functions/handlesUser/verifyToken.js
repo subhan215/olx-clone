@@ -1,5 +1,5 @@
-import { getCookie } from "../cookies/getCookie";
-import { setUserDataWithRedux } from "../redux/slices/userData";
+import { getCookie } from "../../cookies/getCookie";
+import { setUserDataWithRedux } from "../../redux/slices/userData";
 
 
 const verifyToken = async (dispatch) => {

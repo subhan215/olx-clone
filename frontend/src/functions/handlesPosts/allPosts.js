@@ -1,4 +1,5 @@
-import { setAdsDataWithRedux } from "../redux/slices/adsData"
+import { setAdsDataWithRedux } from "../../redux/slices/adsData"
+
 
 const getAllPosts = async (dispatch) => {
      try {

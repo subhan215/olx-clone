@@ -13,6 +13,8 @@ import ChatDetail from './components/ChatDetail/ChatDetail';
 import UpdateProfile from './screens/UpdateProfile'
 import AllUserAds from './screens/AllUserAds';
 import ViewAll from './screens/ViewAll';
+import PostAd from './screens/postAd';
+
 //import './App.css';
 
 function App() {
@@ -20,7 +22,7 @@ function App() {
     <div className="App">
       <Routes >
         <Route path = "signin" element = {<SignIn />}/>
-        <Route path = "home" element = {<Home />}/>
+        <Route path = "/" element = {<Home />} />
         <Route path = "signup" element = {<SignUp />}/>
         <Route path = "profile" element = {<Profile/>}/>
         <Route path = "chat" element = {<Chat/>}/>
@@ -38,6 +40,7 @@ function App() {
           <Route path='service' element = {<ServiceAd />}/>
         </Route>
         <Route path='individualAd' element = {<IndividualAd />}/>
+        <Route path='post' element = {<PostAd />}/>
       </Routes>
       
     </div>

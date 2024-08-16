@@ -100,12 +100,14 @@ const handleUpdate = (adId,adData,type) => {
   };
 
   const renderAdList = (ads, type) => (
-    <div className=" w-full">
-      <div className='p-4'><h2 className="text-xl font-semibold text-gray-700 mb-2">{type} Ads</h2></div>
+    <div className="w-full">
+      <div className="p-4">
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">{type} Ads</h2>
+      </div>
       <ul className="list-none">
         {ads.length > 0 ? (
           ads.map((ad) => (
-            <li key={ad._id} className="border p-4  flex items-center justify-between w-full">
+            <li key={ad._id} className="border p-4 flex items-center justify-between w-full">
               <div className="flex items-center w-full">
                 <img
                   src={ad.imagesURL[0] || 'placeholder.jpg'}
@@ -113,44 +115,39 @@ const handleUpdate = (adId,adData,type) => {
                   className="w-20 h-20 object-cover rounded mr-4"
                 />
                 <div className="flex-grow">
-                  <span className="text-lg font-bold">{ad.adTitle} - </span><span className=''>in {type}</span>
+                  <span className="text-lg font-bold">{ad.adTitle} - </span>
+                  <span className="text-gray-600">in {type}</span>
                   <p className="text-gray-600">Rs {ad.price}</p>
                   <p className="text-gray-600">Posted on {formatDate(ad.createdAt)}</p>
+                  <p className={`text-sm ${ad.completed ? 'text-green-600' : 'text-red-600'}`}>
+                    {ad.completed ? 'Completed' : 'Not Completed'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-8">
-                {/* <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faEye} />
-                  <span>{ad.views || 0}</span>
-                </div>
                 <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faPhone} />
-                  <span>{ad.tel || 0}</span>
-                </div> */}
-                <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faCommentDots} size='xl' style={{color: "orange"}}/>
+                  <FontAwesomeIcon icon={faCommentDots} size="xl" style={{ color: "orange" }} />
                   <span>{ad.chatCount || 0}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <FontAwesomeIcon icon={faHeart} size='xl' style={{color: "red"}}/>
+                  <FontAwesomeIcon icon={faHeart} size="xl" style={{ color: "red" }} />
                   <span>{ad.likes.length}</span>
                 </div>
-                <div className='hover:bg-orange-400  border border-black rounded'>
-                <button
-                  onClick={() => handleUpdate(ad._id,ad,type)}
-                  className="px-4 py-2 text-black bg-transparent   hover:text-white"
-                >
-                  Edit
-                </button>
+                <div className="hover:bg-orange-400 border border-black rounded">
+                  <button
+                    onClick={() => handleUpdate(ad._id, ad, type)}
+                    className="px-4 py-2 text-black bg-transparent hover:text-white"
+                  >
+                    Edit
+                  </button>
                 </div>
-                <div className='hover:bg-red-500  border border-black rounded'>
-                <button
-                  onClick={() => handleDelete(ad._id)}
-                  className="px-4 py-2 text-black bg-transparent   hover:text-white"
-                  style={{ backgroundColor: 'white', color: 'black', borderColor: 'black' }}
-                >
-                  Delete
-                </button>
+                <div className="hover:bg-red-500 border border-black rounded">
+                  <button
+                    onClick={() => handleDelete(ad._id)}
+                    className="px-4 py-2 text-black bg-transparent hover:text-white"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </li>
@@ -160,7 +157,8 @@ const handleUpdate = (adId,adData,type) => {
         )}
       </ul>
     </div>
-);  return (
+  );
+    return (
     <div>
         <Nav showSearchBar={false} showlocationBar={false}/>
       <div className="">

@@ -4,8 +4,8 @@ import { Carousel, Alert, Card, ListGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { setChat, setChatId, setChatMessages } from '../redux/slices/chatsData';
 import { getCookie } from "../cookies/getCookie";
-import { getAllPosts } from "../functions/allPosts";
-import { verifyToken } from "../functions/verifyToken";
+import { getAllPosts } from "../functions/handlesPosts/allPosts";
+import { verifyToken } from "../functions/handlesUser/verifyToken";
 import Nav from '../components/Navbar/Nav';
 
 const IndividualAd = () => {
@@ -254,17 +254,7 @@ const IndividualAd = () => {
                         </div>
                     </div>
 
-                    {/* Description Section */}
-                    <div className="bg-white border border-black rounded mt-4 p-4">
-                        <h2 className="text-xl font-semibold mb-2">Description</h2>
-                        <p>{adData.description}</p>
-                    </div>
-
-                    {/* Details Section */}
-                    <div className="mt-4">
-                        {renderDetails()}
-                    </div>
-
+                    
                     {/* Alert Section
                     <div className="mt-4 bg-blue-100 text-blue-800 p-4 rounded-md">
                         <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}

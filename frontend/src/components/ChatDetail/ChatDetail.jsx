@@ -4,8 +4,7 @@ import { useEffect } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
 import { formatDistanceToNow } from 'date-fns';
 import { getCookie } from "../../cookies/getCookie";
-import { getAllPosts } from "../../functions/allPosts";
-import { verifyToken } from "../../functions/verifyToken";
+import { verifyToken } from "../../functions/handlesUser/verifyToken";
 import { io } from 'socket.io-client';
 import { setChatMessages } from '../../redux/slices/chatsData';
 import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons/faCheckSquare';
 import { NavLink } from 'react-router-dom';
 import { setIndividualAdData } from '../../redux/slices/individualAd';
+import { getAllPosts } from '../../functions/handlesPosts/allPosts';
 const socket = io('http://localhost:8000');
 const ChatDetail = () => {
   let messages = useSelector((state) => state.chatData.messages) || [];

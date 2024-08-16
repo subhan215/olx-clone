@@ -4,9 +4,9 @@ import "../../App.css";
 import { Dropdown } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useDispatch, useSelector } from "react-redux";
-import { verifyToken } from "../../functions/verifyToken";
+import { verifyToken } from "../../functions/handlesUser/verifyToken";
 import { getCookie } from "../../cookies/getCookie";
-import { getAllPosts } from "../../functions/allPosts";
+import { getAllPosts } from "../../functions/handlesPosts/allPosts";
 import { useLocation } from "react-router-dom";
 const VehicleAd = () => {
   //ye agar update ad ki request hogi tu ismay data hoga

@@ -4,16 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserDataWithRedux } from "../redux/slices/userData";
 import Nav from "../components/Navbar/Nav";
 import { setAdsDataWithRedux } from "../redux/slices/adsData";
-import { getAllPosts } from "../functions/allPosts";
+import { getAllPosts } from "../functions/handlesPosts/allPosts";
 import Categories from "../components/Categories/Categories";
 import { PrimeReactProvider } from "primereact/api";
 import { Carousel } from "primereact/carousel";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { setIndividualAdData } from "../redux/slices/individualAd";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setNotifications } from "../redux/slices/notifications";
 import './Home.css'
+import { handleLike } from "../functions/handlesPosts/handleLike";
 const Home = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch();
@@ -189,35 +190,14 @@ const Home = () => {
       dispatch(setIndividualAdData({ payload: ad }));
     }
 
-    const handleLike = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/posts/${ad._id}/like`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({ userId: user._id }),
-          }
-        );
-        let data = await response.json();
-        if (data.success) {
-          getAllPosts(dispatch);
-        } else {
-          alert(data.message);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    
 
     return (
       !ad.completed && (
         <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
           <div className="rounded-lg overflow-hidden p-4 m-2 bg-white border border-black">
             <div className="m-2">
-              <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? { color: "red" } : {}} onClick={handleLike} />
+              <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? { color: "red" } : {}} onClick={()=> handleLike(dispatch , ad , user)} />
             </div>
             <NavLink to="/individualAd" onClick={addAdDataToRedux} className="block no-underline text-black">
               <div className="rounded-lg h-48 bg-gray-200 flex items-center justify-center">

@@ -4,10 +4,10 @@ import { Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useSelector,useDispatch } from "react-redux";
 import { getCookie } from "../../cookies/getCookie";
-import { getAllPosts } from "../../functions/allPosts";
-import { verifyToken } from "../../functions/verifyToken";
+import { verifyToken } from "../../functions/handlesUser/verifyToken";
 import { useLocation } from "react-router-dom";
 import Nav from "../../components/Navbar/Nav";
+import { getAllPosts } from "../../functions/handlesPosts/allPosts";
 const JobsAd = () => {
   //ye agar update ad ki request hogi tu ismay data hoga
   const location = useLocation();
