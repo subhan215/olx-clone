@@ -1,19 +1,23 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../App.css";
-import { Dropdown } from "react-bootstrap";
+import { Alert, Dropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getCookie } from "../../cookies/getCookie";
 import { verifyToken } from "../../functions/handlesUser/verifyToken";
 import { useLocation } from "react-router-dom";
 import Nav from "../../components/Navbar/Nav";
 import { getAllPosts } from "../../functions/handlesPosts/allPosts";
+import MyAlert from "../../components/MyAlert";
 const JobsAd = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("danger"); 
   //ye agar update ad ki request hogi tu ismay data hoga
   const location = useLocation();
   const adId = location.state?.adId;
   const adData = location.state?.adData;
-  console.log(adData,adId)
+  console.log(adData, adId)
   const dispatch = useDispatch();
   const token = getCookie("token");
   useEffect(() => {
@@ -51,25 +55,32 @@ const JobsAd = () => {
     "Sales",
     "Security",
   ];
-  const [previewURL,setPreviewUrl] = useState([])
+  const cities = {
+    'Sindh': ["Karachi", "Hyderabad", "Sukkur", "Larkana", "Nawabshah", "Mirpurkhas", "Badin", "Jacobabad", "Shikarpur", "Khairpur", "Ghotki", "Dadu", "Thatta", "Tando Adam", "Tando Allahyar", "Umerkot", "Sanghar", "Tharparkar", "Kashmore", "Jamshoro"],
+    'Punjab': ["Lahore", "Faisalabad", "Rawalpindi", "Multan", "Gujranwala", "Sialkot", "Sargodha", "Bahawalpur", "Gujrat", "Sheikhupura", "Mianwali", "Sahiwal", "Rahim Yar Khan", "Kasur", "Jhelum", "Okara", "Bahawalnagar", "Chiniot", "Hafizabad", "Khanewal"],
+    'KPK': ["Peshawar", "Mardan", "Abbottabad", "Swat", "Kohat", "Dera Ismail Khan", "Haripur", "Bannu", "Mansehra", "Charsadda", "Nowshera", "Swabi", "Karak", "Buner", "Lakki Marwat", "Hangu", "Lower Dir", "Upper Dir", "Shangla", "Battagram"],
+    'Balochistan': ["Quetta", "Gwadar", "Turbat", "Khuzdar", "Sibi", "Zhob", "Chaman", "Dera Murad Jamali", "Pishin", "Nushki", "Kalat", "Jafarabad", "Mastung", "Awaran", "Bela", "Loralai", "Kharan", "Panjgur", "Lasbela", "Kohlu"],
+    "Kashmir": [ "Muzaffarabad", "Mirpur", "Rawalakot", "Bagh", "Kotli", "Pallandri", "Sudhanoti", "Bhimber", "Hattian Bala", "Hajira", "Abbaspur", "Barnala", "Sehnsa", "Chakswari", "Dadyal", "Chinari"]
+  };
+  const [previewURL, setPreviewUrl] = useState([])
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
-    category:adData?.category || "",
+    category: adData?.category || "",
     images: adData?.imagesURL || [],
-    hiringPersonOrCompany: adData?.hiringPersonOrCompany ||"",
-    companyName: adData?.companyName ||"",
-    typeOfAd: adData?.typeOfAd ||"",
-    salaryFrom: adData?.salaryFrom ||"",
-    salaryTo: adData?.salaryTo ||"",
-    careerLevel: adData?.careerLevel ||"",
-    salaryPeriod: adData?.salaryPeriod ||"",
-    positionType: adData?.positionType ||"",
-    adTitle: adData?.adTitle ||"",
-    description: adData?.description ||"",
-    city: adData?.city ||"",
-    province: adData?.province ||"" , 
-    ownerName: adData?.ownerName ||"",
-    phoneNo: adData?.mobileNo ||"",
+    hiringPersonOrCompany: adData?.hiringPersonOrCompany || "",
+    companyName: adData?.companyName || "",
+    typeOfAd: adData?.typeOfAd || "",
+    salaryFrom: adData?.salaryFrom || "",
+    salaryTo: adData?.salaryTo || "",
+    careerLevel: adData?.careerLevel || "",
+    salaryPeriod: adData?.salaryPeriod || "",
+    positionType: adData?.positionType || "",
+    adTitle: adData?.adTitle || "",
+    description: adData?.description || "",
+    city: adData?.city || "",
+    province: adData?.province || "",
+    ownerName: adData?.ownerName || "",
+    phoneNo: adData?.mobileNo || "",
   });
 
   const handleCareerSelect = (eventKey) => {
@@ -107,9 +118,9 @@ const JobsAd = () => {
     // Create a preview URL for the image
     const previewURL = URL.createObjectURL(file);
     setPreviewUrl((prevUrls) => {
-    const newPreviewUrls = [...prevUrls];
-    newPreviewUrls[index] = previewURL;
-    return newPreviewUrls;
+      const newPreviewUrls = [...prevUrls];
+      newPreviewUrls[index] = previewURL;
+      return newPreviewUrls;
     });
   };
   const handleFormSubmit = async (e) => {
@@ -134,7 +145,7 @@ const JobsAd = () => {
     postData.append("province", vehicleAdData.province);
     postData.append("ownerName", vehicleAdData.ownerName);
     postData.append("phoneNo", vehicleAdData.phoneNo);
-    postData.append("createdBy"  , user._id)
+    postData.append("createdBy", user._id)
     console.log(postData);
     try {
       const response = await fetch(
@@ -147,15 +158,14 @@ const JobsAd = () => {
       let data = await response.json();
       console.log(data);
       if (data.success) {
-        alert(adId ? "Ad updated successfully" : "Ad posted successfully");
-        //dispatch(setUserDataWithRedux({payload: data.userData}))
-        //console.log(data.userData)
-        //setCookie("token" , data.userData)
-        //navigate("/home")
-      } else {
-        alert("Failed to submit the ad");
-        alert(data.message)
+        setAlertMessage(adId ? "Ad updated successfully" : "Ad posted successfully");
+        setAlertVariant("success") 
       }
+      else {
+        setAlertMessage(data.message)
+        setAlertVariant("error")
+      }
+      setShowAlert(true)
     } catch (err) {
       console.log(err);
     }
@@ -169,332 +179,331 @@ const JobsAd = () => {
   }, [previewURL]);
   return (
     <>
-    <Nav showSearchBar={false} showlocationBar={false} showBechDay={false}/>
-    <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-8">
-      
-      {!formShow && (
-        <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          <h2>Select a Subcategory</h2>
-          {categoryData.map((cat) => (
-            <li
-              key={cat}
-              className="p-4  border border-black rounded-lg text-center cursor-pointer hover:bg-orange-300"
-              onClick={() => {
-                setFormShow(true);
-                setVehicleAdData({ ...vehicleAdData, category: cat });
-              }}
-            >
-              {cat}
-            </li>
-          ))}
-        </ul>
-      )}
-      {formShow && (
-        <form className="space-y-6" onSubmit={handleFormSubmit}>
-          <div className="py-4 border-b border-black">
-          <h3 className="text-xl font-semibold mb-4">Category  <span className="text-sm pl-24">{vehicleAdData.category}</span></h3>
-          </div>
-          <div className="upload-container border-b border-black pb-4">
-            <h3 className="text-xl font-semibold mb-4">Upload Images</h3>
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {[...Array(12)].map((_, index) => (
-                <div key={index}>
-                <input
-                  type="file"
-                  id={`file${index + 1}`}
-                  accept="image/*"
-                  onChange={(event) => handleFileChange(event, index)}
-                  className="hidden"
-                />
-                <label
-                  htmlFor={`file${index + 1}`}
-                  className="block w-full h-32 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center justify-center"
-                >
-                  {previewURL[index] ? (
-                    <img
-                      src={previewURL[index]}
-                      alt={`Preview ${index + 1}`}
-                      className="object-cover w-full h-full rounded-lg"
+ {showAlert && (
+       <MyAlert setShowAlert={setShowAlert} alertVariant= {alertVariant} alertMessage = {alertMessage}/>
+    )}
+      <Nav showSearchBar={false} showlocationBar={false} showBechDay={false} />
+      <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-8">
+
+        {!formShow && (
+          <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <h2>Select a Subcategory</h2>
+            {categoryData.map((cat) => (
+              <li
+                key={cat}
+                className="p-4  border border-black rounded-lg text-center cursor-pointer hover:bg-orange-300"
+                onClick={() => {
+                  setFormShow(true);
+                  setVehicleAdData({ ...vehicleAdData, category: cat });
+                }}
+              >
+                {cat}
+              </li>
+            ))}
+          </ul>
+        )}
+        {formShow && (
+          <form className="space-y-6" onSubmit={handleFormSubmit}>
+            <div className="py-4 border-b border-black">
+              <h3 className="text-xl font-semibold mb-4">Category  <span className="text-sm pl-24">{vehicleAdData.category}</span></h3>
+            </div>
+            <div className="upload-container border-b border-black pb-4">
+              <h3 className="text-xl font-semibold mb-4">Upload Images</h3>
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {[...Array(12)].map((_, index) => (
+                  <div key={index}>
+                    <input
+                      type="file"
+                      id={`file${index + 1}`}
+                      accept="image/*"
+                      onChange={(event) => handleFileChange(event, index)}
+                      className="hidden"
                     />
-                  ) : (
-                    <i className="upload-icon text-gray-400"></i>
-                  )}
-                </label>
-              </div>
-                
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-r border-black">
-              <label className="block text font-medium text-gray-700">Hiring Person / Company</label>
-              <div className="my-2   mr-14">
-                <p
-                  className={`cursor-pointer p-2 border border-black rounded-lg ${
-                    vehicleAdData.hiringPersonOrCompany === "Hiring as Company"
-                      ? "bg-orange-300"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() =>
-                    setVehicleAdData({
-                      ...vehicleAdData,
-                      hiringPersonOrCompany: "Hiring as Company",
-                    })
-                  }
-                >
-                  Hiring as Company
-                </p>
-                <p
-                  className={`cursor-pointer  border border-black p-2 rounded-lg ${
-                    vehicleAdData.hiringPersonOrCompany === "Hiring as Individual"
-                      ? "bg-orange-300"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() =>
-                    setVehicleAdData({
-                      ...vehicleAdData,
-                      hiringPersonOrCompany: "Hiring as Individual",
-                    })
-                  }
-                >
-                  Hiring as Individual
-                </p>
-                <p
-                  className={`cursor-pointer border border-black p-2 rounded-lg ${
-                    vehicleAdData.hiringPersonOrCompany === "Hiring as Third Party"
-                      ? "bg-orange-300"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() =>
-                    setVehicleAdData({
-                      ...vehicleAdData,
-                      hiringPersonOrCompany: "Hiring as Third Party",
-                    })
-                  }
-                >
-                  Hiring as Third Party
-                </p>
+                    <label
+                      htmlFor={`file${index + 1}`}
+                      className="block w-full h-32 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 flex items-center justify-center"
+                    >
+                      {previewURL[index] ? (
+                        <img
+                          src={previewURL[index]}
+                          alt={`Preview ${index + 1}`}
+                          className="object-cover w-full h-full rounded-lg"
+                        />
+                      ) : (
+                        <i className="upload-icon text-gray-400"></i>
+                      )}
+                    </label>
+                  </div>
+
+                ))}
               </div>
             </div>
-            <div>
-              <label className="block text font-medium text-gray-700">Company Name</label>
-              <div className="border border-black rounded-lg mt-1"><input
-                value={vehicleAdData.companyName}
-                type="text"
-                placeholder=""
-                onChange={(e) =>
-                  setVehicleAdData({ ...vehicleAdData, companyName: e.target.value })
-                }
-                className="p-3 block w-full rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
-              /></div>
-            </div>
-            <div className="border-r border-black">
-              <label className="block text  font-medium text-gray-700">Ad Type</label>
-              <div className="my-2 mr-14 ">
-                <p
-                  className={`cursor-pointer border border-black p-2 rounded-lg ${
-                    vehicleAdData.typeOfAd === "Job wanted"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border-r border-black">
+                <label className="block text font-medium text-gray-700">Hiring Person / Company</label>
+                <div className="my-2   mr-14">
+                  <p
+                    className={`cursor-pointer p-2 border border-black rounded-lg ${vehicleAdData.hiringPersonOrCompany === "Hiring as Company"
                       ? "bg-orange-300"
                       : "hover:bg-gray-100"
-                  }`}
-                  onClick={() => setVehicleAdData({...vehicleAdData , typeOfAd: "Job wanted"})}
-                >
-                  Job Wanted
-                </p>
-                <p
-                  className={`cursor-pointer border border-black p-2 rounded-lg ${
-                    vehicleAdData.typeOfAd === "Job offer"
+                      }`}
+                    onClick={() =>
+                      setVehicleAdData({
+                        ...vehicleAdData,
+                        hiringPersonOrCompany: "Hiring as Company",
+                      })
+                    }
+                  >
+                    Hiring as Company
+                  </p>
+                  <p
+                    className={`cursor-pointer  border border-black p-2 rounded-lg ${vehicleAdData.hiringPersonOrCompany === "Hiring as Individual"
                       ? "bg-orange-300"
                       : "hover:bg-gray-100"
-                  }`}
-                  onClick={() => setVehicleAdData({...vehicleAdData , typeOfAd: "Job offer"})}
-                >
-                  Job Offer
-                </p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text font-medium text-gray-700">Salary From</label>
-                <div className="border border-black mt-1 rounded-md">
-                <input
-                  value={vehicleAdData.salaryFrom}
-                  type="text"
-                  placeholder=""
-                  onChange={(e) =>
-                    setVehicleAdData({ ...vehicleAdData, salaryFrom: e.target.value })
-                  }
-                  className="p-3 block w-full rounded-md focus:ring focus:ring-indigo-300"
-                />
+                      }`}
+                    onClick={() =>
+                      setVehicleAdData({
+                        ...vehicleAdData,
+                        hiringPersonOrCompany: "Hiring as Individual",
+                      })
+                    }
+                  >
+                    Hiring as Individual
+                  </p>
+                  <p
+                    className={`cursor-pointer border border-black p-2 rounded-lg ${vehicleAdData.hiringPersonOrCompany === "Hiring as Third Party"
+                      ? "bg-orange-300"
+                      : "hover:bg-gray-100"
+                      }`}
+                    onClick={() =>
+                      setVehicleAdData({
+                        ...vehicleAdData,
+                        hiringPersonOrCompany: "Hiring as Third Party",
+                      })
+                    }
+                  >
+                    Hiring as Third Party
+                  </p>
                 </div>
               </div>
-              <div >
-                <label className="block text font-medium text-gray-700">Salary To</label>
-                <div className="border border-black mt-1 rounded-md">
-                <input
-                  value={vehicleAdData.salaryTo}
+              <div>
+                <label className="block text font-medium text-gray-700">Company Name</label>
+                <div className="border border-black rounded-lg mt-1"><input
+                  value={vehicleAdData.companyName}
                   type="text"
                   placeholder=""
                   onChange={(e) =>
-                    setVehicleAdData({ ...vehicleAdData, salaryTo: e.target.value })
+                    setVehicleAdData({ ...vehicleAdData, companyName: e.target.value })
+                  }
+                  className="p-3 block w-full rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
+                /></div>
+              </div>
+              <div className="border-r border-black">
+                <label className="block text  font-medium text-gray-700">Ad Type</label>
+                <div className="my-2 mr-14 ">
+                  <p
+                    className={`cursor-pointer border border-black p-2 rounded-lg ${vehicleAdData.typeOfAd === "Job wanted"
+                      ? "bg-orange-300"
+                      : "hover:bg-gray-100"
+                      }`}
+                    onClick={() => setVehicleAdData({ ...vehicleAdData, typeOfAd: "Job wanted" })}
+                  >
+                    Job Wanted
+                  </p>
+                  <p
+                    className={`cursor-pointer border border-black p-2 rounded-lg ${vehicleAdData.typeOfAd === "Job offer"
+                      ? "bg-orange-300"
+                      : "hover:bg-gray-100"
+                      }`}
+                    onClick={() => setVehicleAdData({ ...vehicleAdData, typeOfAd: "Job offer" })}
+                  >
+                    Job Offer
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text font-medium text-gray-700">Salary From</label>
+                  <div className="border border-black mt-1 rounded-md">
+                    <input
+                      value={vehicleAdData.salaryFrom}
+                      type="text"
+                      placeholder=""
+                      onChange={(e) =>
+                        setVehicleAdData({ ...vehicleAdData, salaryFrom: e.target.value })
+                      }
+                      className="p-3 block w-full rounded-md focus:ring focus:ring-indigo-300"
+                    />
+                  </div>
+                </div>
+                <div >
+                  <label className="block text font-medium text-gray-700">Salary To</label>
+                  <div className="border border-black mt-1 rounded-md">
+                    <input
+                      value={vehicleAdData.salaryTo}
+                      type="text"
+                      placeholder=""
+                      onChange={(e) =>
+                        setVehicleAdData({ ...vehicleAdData, salaryTo: e.target.value })
+                      }
+                      className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 mr-4 border-t border-black">
+                <label className="mt-2 block font-medium text-gray-700">Career Level</label>
+                <Dropdown onSelect={handleCareerSelect}>
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-career"
+                    className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
+                  >
+                    {vehicleAdData.careerLevel || "Select Career Level"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey="Junior">Junior</Dropdown.Item>
+                    <Dropdown.Item eventKey="Mid-Level">Mid-Level</Dropdown.Item>
+                    <Dropdown.Item eventKey="Senior">Senior</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div className="mt-2 mr-4 border-t border-black">
+                <label className="mt-2 block text font-medium text-gray-700">Salary Period</label>
+                <Dropdown onSelect={handleSalaryPeriodSelect}>
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-salary-period"
+                    className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
+                  >
+                    {vehicleAdData.salaryPeriod || "Select Salary Period"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey="Hourly">Hourly</Dropdown.Item>
+                    <Dropdown.Item eventKey="Weekly">Weekly</Dropdown.Item>
+                    <Dropdown.Item eventKey="Monthly">Monthly</Dropdown.Item>
+                    <Dropdown.Item eventKey="Yearly">Yearly</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div className="mr-4">
+                <label className="block textfont-medium text-gray-700">Position Type</label>
+                <Dropdown onSelect={handlePosTypeSelect}>
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-position-type"
+                    className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
+                  >
+                    {vehicleAdData.positionType || "Select Position Type"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey="Permanent">Permanent</Dropdown.Item>
+                    <Dropdown.Item eventKey="Contract">Contract</Dropdown.Item>
+                    <Dropdown.Item eventKey="Internship">Internship</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div className="col-span-2">
+                <label className="block text font-medium text-gray-700">Ad Title</label>
+                <div className="mt-1 border border-black rounded-md"><input
+                  value={vehicleAdData.adTitle}
+                  type="text"
+                  placeholder=""
+                  onChange={(e) =>
+                    setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
                   }
                   className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
-                />
-                </div>
+                /></div>
+              </div>
+              <div className="col-span-2">
+                <label className="block text font-medium text-gray-700">Description</label>
+                <div className="mt-1 border border-black rounded-md"><textarea
+                  value={vehicleAdData.description}
+                  rows="4"
+                  placeholder=""
+                  onChange={(e) =>
+                    setVehicleAdData({ ...vehicleAdData, description: e.target.value })
+                  }
+                  className=" p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+                ></textarea></div>
+              </div>
+              <div>
+                <label className="block text font-medium text-gray-700">Province</label>
+                <Dropdown onSelect={handleProvinceSelect}>
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-province"
+                    className="w-full text-left p-3 mt-1 rounded-md border-black  focus:ring focus:bg-orange-300 focus:ring-white"
+                  >
+                    {vehicleAdData.province || "Select Province"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey="Punjab">Punjab</Dropdown.Item>
+                    <Dropdown.Item eventKey="Sindh">Sindh</Dropdown.Item>
+                    <Dropdown.Item eventKey="Khyber Pakhtunkhwa">
+                      Khyber Pakhtunkhwa
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
+                    <Dropdown.Item eventKey="Balochistan">Kashmir</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div>
+                <label className="block text font-medium text-gray-700">City</label>
+                <Dropdown onSelect={handleCitySelect}>
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-city"
+                    className="w-full text-left p-3 mt-1 rounded-md border-black focus:ring focus:bg-orange-300 focus:ring-white"
+                  >
+                    {vehicleAdData.city || "Select City"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {vehicleAdData.province&&cities[vehicleAdData.province].map((city) => (
+                      <Dropdown.Item eventKey={city}>{city}</Dropdown.Item>
+                    ))}
+
+
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+              <div className="col-span-2">
+                <label className="block text font-medium text-gray-700">Owner Name</label>
+                <div className="mt-1 border border-black rounded-md"><input
+                  value={vehicleAdData.ownerName}
+                  type="text"
+                  placeholder=""
+                  onChange={(e) =>
+                    setVehicleAdData({ ...vehicleAdData, ownerName: e.target.value })
+                  }
+                  className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
+                /></div>
+              </div>
+              <div className="col-span-2">
+                <label className="block text font-medium text-gray-700">Phone Number</label>
+                <div className="mt-1 border border-black rounded-md"><input
+                  value={vehicleAdData.phoneNo}
+                  type="text"
+                  placeholder=""
+                  onChange={(e) =>
+                    setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
+                  }
+                  className="p-3 block w-full rounded-md focus:ring focus:ring-indigo-300"
+                /></div>
               </div>
             </div>
-            <div className="mt-2 mr-4 border-t border-black">
-              <label className="mt-2 block font-medium text-gray-700">Career Level</label>
-              <Dropdown onSelect={handleCareerSelect}>
-                <Dropdown.Toggle
-                  variant="light"
-                  id="dropdown-career"
-                  className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
-                >
-                  {vehicleAdData.careerLevel || "Select Career Level"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Junior">Junior</Dropdown.Item>
-                  <Dropdown.Item eventKey="Mid-Level">Mid-Level</Dropdown.Item>
-                  <Dropdown.Item eventKey="Senior">Senior</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+            <div className="flex justify-center mt-6">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
+              >
+                {adId ? "Update Ad" : "Post Ad"}
+              </button>
             </div>
-            <div className="mt-2 mr-4 border-t border-black">
-              <label className="mt-2 block text font-medium text-gray-700">Salary Period</label>
-              <Dropdown onSelect={handleSalaryPeriodSelect}>
-                <Dropdown.Toggle
-                  variant="light"
-                  id="dropdown-salary-period"
-                  className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
-                >
-                  {vehicleAdData.salaryPeriod || "Select Salary Period"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Hourly">Hourly</Dropdown.Item>
-                  <Dropdown.Item eventKey="Weekly">Weekly</Dropdown.Item>
-                  <Dropdown.Item eventKey="Monthly">Monthly</Dropdown.Item>
-                  <Dropdown.Item eventKey="Yearly">Yearly</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <div className="mr-4">
-              <label className="block textfont-medium text-gray-700">Position Type</label>
-              <Dropdown onSelect={handlePosTypeSelect}>
-                <Dropdown.Toggle
-                  variant="light"
-                  id="dropdown-position-type"
-                  className="w-full text-left p-3 mt-1 rounded-md border-black   focus:ring focus:bg-orange-300 focus:ring-white"
-                >
-                  {vehicleAdData.positionType || "Select Position Type"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Permanent">Permanent</Dropdown.Item>
-                  <Dropdown.Item eventKey="Contract">Contract</Dropdown.Item>
-                  <Dropdown.Item eventKey="Internship">Internship</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <div className="col-span-2">
-              <label className="block text font-medium text-gray-700">Ad Title</label>
-              <div className="mt-1 border border-black rounded-md"><input
-                value={vehicleAdData.adTitle}
-                type="text"
-                placeholder=""
-                onChange={(e) =>
-                  setVehicleAdData({ ...vehicleAdData, adTitle: e.target.value })
-                }
-                className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
-              /></div>
-            </div>
-            <div className="col-span-2">
-              <label className="block text font-medium text-gray-700">Description</label>
-              <div className="mt-1 border border-black rounded-md"><textarea
-                value={vehicleAdData.description}
-                rows="4"
-                placeholder=""
-                onChange={(e) =>
-                  setVehicleAdData({ ...vehicleAdData, description: e.target.value })
-                }
-                className=" p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
-              ></textarea></div>
-            </div>
-            <div>
-              <label className="block text font-medium text-gray-700">Province</label>
-              <Dropdown onSelect={handleProvinceSelect}>
-                <Dropdown.Toggle
-                  variant="light"
-                  id="dropdown-province"
-                  className="w-full text-left p-3 mt-1 rounded-md border-black  focus:ring focus:bg-orange-300 focus:ring-white"
-                >
-                  {vehicleAdData.province || "Select Province"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Punjab">Punjab</Dropdown.Item>
-                  <Dropdown.Item eventKey="Sindh">Sindh</Dropdown.Item>
-                  <Dropdown.Item eventKey="Khyber Pakhtunkhwa">
-                    Khyber Pakhtunkhwa
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <div>
-              <label className="block text font-medium text-gray-700">City</label>
-              <Dropdown onSelect={handleCitySelect}>
-                <Dropdown.Toggle
-                  variant="light"
-                  id="dropdown-city"
-                  className="w-full text-left p-3 mt-1 rounded-md border-black focus:ring focus:bg-orange-300 focus:ring-white"
-                >
-                  {vehicleAdData.city || "Select City"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Lahore">Lahore</Dropdown.Item>
-                  <Dropdown.Item eventKey="Karachi">Karachi</Dropdown.Item>
-                  <Dropdown.Item eventKey="Islamabad">Islamabad</Dropdown.Item>
-                  <Dropdown.Item eventKey="Peshawar">Peshawar</Dropdown.Item>
-                  <Dropdown.Item eventKey="Quetta">Quetta</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <div className="col-span-2">
-              <label className="block text font-medium text-gray-700">Owner Name</label>
-              <div className="mt-1 border border-black rounded-md"><input
-                value={vehicleAdData.ownerName}
-                type="text"
-                placeholder=""
-                onChange={(e) =>
-                  setVehicleAdData({ ...vehicleAdData, ownerName: e.target.value })
-                }
-                className="p-3 block w-full rounded-md  focus:ring focus:ring-indigo-300"
-              /></div>
-            </div>
-            <div className="col-span-2">
-              <label className="block text font-medium text-gray-700">Phone Number</label>
-              <div className="mt-1 border border-black rounded-md"><input
-                value={vehicleAdData.phoneNo}
-                type="text"
-                placeholder=""
-                onChange={(e) =>
-                  setVehicleAdData({ ...vehicleAdData, phoneNo: e.target.value })
-                }
-                className="p-3 block w-full rounded-md focus:ring focus:ring-indigo-300"
-              /></div>
-            </div>
-          </div>
-          <div className="flex justify-center mt-6">
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded transform hover:scale-105 transition duration-300 ease-in-out"
-            >
-              {adId ? "Update Ad" : "Post Ad"}
-            </button>
-          </div>
-        </form>
-      )}
-    </div>
+          </form>
+        )}
+      </div>
     </>
   );
 };

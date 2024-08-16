@@ -69,9 +69,11 @@ async function putRating(req, res) {
             updateAds(Service, t.seller),
             updateAds(Mobile, t.seller)
         ]);
-
+        let adModel = t.job ? Job: t.service ? Service : t.vehicle ? Vehicle : Mobile
+        let adId = t.job ? t.job: t.service ? St.service : t.vehicle ? t.vehicle : t.mobile
+        let ad = await adModel.findById(adId)
         // Return the updated transaction
-        return res.json({ success: true, t });
+        return res.json({ success: true, t , ad });
     } catch (error) {
         // Handle server errors
         return res.status(500).json({ success: false, error: error.message });
@@ -79,61 +81,68 @@ async function putRating(req, res) {
 }
 
 async function updateStatus(req, res) {
-    const transactionId = req.params.id;
-    const { status } = req.body;
+    const adId = req.params.id;
+    const { status, userId } = req.body;
 
-    if (!transactionId || !status) {
+    if (!adId || !status) {
         return res.status(400).json({
             success: false,
-            message: "Transaction ID or status is missing!",
+            message: "Ad ID or status is missing!",
         });
     }
-    if(!req.body.userId) {
+    if (!userId) {
         return res.status(400).json({
             success: false,
             message: "userId is missing!",
         });
     }
+
     try {
-        const t = await transaction.findByIdAndUpdate(transactionId, { status }, { new: true });
+        let t = await transaction.findOneAndUpdate(
+            {
+                $or: [
+                    { 'job': adId },
+                    { 'service': adId },
+                    { 'vehicle': adId },
+                    { 'mobile': adId }
+                ]
+            },
+            { status },
+            { new: true } // This returns the updated document
+        );
+
         if (!t) {
             return res.status(404).json({
                 success: false,
                 message: "Transaction not found!",
             });
         }
-        let adId = t.job ? t.job : t.service ? t.service : t.vehicle ? t.vehicle : t.mobile
-        if(status.toLowerCase() === "completed") {
-            const job = await Job.findById(adId)
-            const service = await Service.findById(adId)
-            const vehicle = await Vehicle.findById(adId)
-            const mobile = await Mobile.findById(adId)
-            if(job) {
-            await Job.findByIdAndUpdate(job._id , {
-                completed: true
-            })
-            }
-            if(service) {
-            await Service.findByIdAndUpdate(service._id , {
-                completed: true
-            })
-            }
-            if(vehicle) {
-            await Vehicle.findByIdAndUpdate(vehicle._id , {
-                completed: true
-            } )
-            }
-            if(mobile) {
-                await Mobile.findByIdAndUpdate(mobile._id , {
-                    completed : true
-                })
+
+        const relatedAdId = t.job || t.service || t.vehicle || t.mobile;
+        let ad = null;
+
+        if (status.toLowerCase() === "completed") {
+            // Check and update the relevant ad
+            ad = await Job.findByIdAndUpdate(relatedAdId, { completed: true }) ||
+                 await Service.findByIdAndUpdate(relatedAdId, { completed: true }) ||
+                 await Vehicle.findByIdAndUpdate(relatedAdId, { completed: true }) ||
+                 await Mobile.findByIdAndUpdate(relatedAdId, { completed: true });
+
+            if (!ad) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Ad not found!",
+                });
             }
         }
-        return res.json({ success: true, transaction: t });
+
+        return res.json({ success: true, t, ad });
     } catch (error) {
+        console.error('Error updating transaction status:', error); // Log error to console for debugging
         return res.status(500).json({ success: false, error: error.message });
     }
 }
+
 async function createOrder(req, res) {
     try {
         const { adId, sellerId, buyerId , adTitle } = req.body
@@ -163,7 +172,8 @@ async function createOrder(req, res) {
             mobile , 
             adTitle
         })
-        return res.status(201).json({ success: true, t });
+        let ad = job ? job : service  ?service : vehicle ? vehicle : mobile
+        return res.status(201).json({ success: true, t ,ad  });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }

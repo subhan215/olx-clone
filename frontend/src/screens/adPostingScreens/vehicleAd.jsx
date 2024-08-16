@@ -1,14 +1,18 @@
 import Nav from "../../components/Navbar/Nav";
 import React, { useState,useEffect } from "react";
 import "../../App.css";
-import { Dropdown } from "react-bootstrap";
+import { Alert, Dropdown } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useDispatch, useSelector } from "react-redux";
 import { verifyToken } from "../../functions/handlesUser/verifyToken";
 import { getCookie } from "../../cookies/getCookie";
 import { getAllPosts } from "../../functions/handlesPosts/allPosts";
 import { useLocation } from "react-router-dom";
+import MyAlert from "../../components/MyAlert";
 const VehicleAd = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("danger"); 
   //ye agar update ad ki request hogi tu ismay data hoga
   const location = useLocation();
   const adId = location.state?.adId;
@@ -36,6 +40,13 @@ const VehicleAd = () => {
     "Boats",
     "Tractors & Trailors",
   ];
+  const cities = {
+    'Sindh': ["Karachi", "Hyderabad", "Sukkur", "Larkana", "Nawabshah", "Mirpurkhas", "Badin", "Jacobabad", "Shikarpur", "Khairpur", "Ghotki", "Dadu", "Thatta", "Tando Adam", "Tando Allahyar", "Umerkot", "Sanghar", "Tharparkar", "Kashmore", "Jamshoro"],
+    'Punjab': ["Lahore", "Faisalabad", "Rawalpindi", "Multan", "Gujranwala", "Sialkot", "Sargodha", "Bahawalpur", "Gujrat", "Sheikhupura", "Mianwali", "Sahiwal", "Rahim Yar Khan", "Kasur", "Jhelum", "Okara", "Bahawalnagar", "Chiniot", "Hafizabad", "Khanewal"],
+    'KPK': ["Peshawar", "Mardan", "Abbottabad", "Swat", "Kohat", "Dera Ismail Khan", "Haripur", "Bannu", "Mansehra", "Charsadda", "Nowshera", "Swabi", "Karak", "Buner", "Lakki Marwat", "Hangu", "Lower Dir", "Upper Dir", "Shangla", "Battagram"],
+    'Balochistan': ["Quetta", "Gwadar", "Turbat", "Khuzdar", "Sibi", "Zhob", "Chaman", "Dera Murad Jamali", "Pishin", "Nushki", "Kalat", "Jafarabad", "Mastung", "Awaran", "Bela", "Loralai", "Kharan", "Panjgur", "Lasbela", "Kohlu"],
+    "Kashmir": ["Muzaffarabad", "Mirpur", "Rawalakot", "Bagh", "Kotli", "Pallandri", "Sudhanoti", "Bhimber", "Hattian Bala", "Hajira", "Abbaspur", "Barnala", "Sehnsa", "Chakswari", "Dadyal", "Chinari"]
+  };
   const [previewURL,setPreviewUrl] = useState([])
   const [formShow, setFormShow] = useState(false);
   const [vehicleAdData, setVehicleAdData] = useState({
@@ -110,18 +121,15 @@ const VehicleAd = () => {
       let data = await response.json()
       console.log(data)
       if(data.success) {
-        alert(adId ? "Ad updated successfully" : "Ad posted successfully");
-          //dispatch(setUserDataWithRedux({payload: data.userData}))
-          //console.log(data.userData)
-          //setCookie("token" , data.userData)
-          //navigate("/home")
-   
+
+        setAlertMessage(adId ? "Ad updated successfully" : "Ad posted successfully");
+        setAlertVariant("success") 
       }
       else {
-        alert("Failed to submit the ad");
-        alert(data.message)
+        setAlertMessage(data.message)
+        setAlertVariant("error")
       }
-      //alert(data.message)
+      setShowAlert(true)
     }
     catch(err) {
         console.log(err)
@@ -129,6 +137,9 @@ const VehicleAd = () => {
   }
   return (
     <>
+     {showAlert && (
+      <MyAlert setShowAlert={setShowAlert} alertVariant= {alertVariant} alertMessage = {alertMessage}/>
+    )}
     <Nav showSearchBar={false} showlocationBar={false} showBechDay={false}/>
     <div className="max-w-4xl mx-auto my-8 p-6 bg-white border border-black  rounded-lg mt-8">
     {!formShow && (
@@ -234,6 +245,7 @@ const VehicleAd = () => {
                     Khyber Pakhtunkhwa
                   </Dropdown.Item>
                   <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
+                  <Dropdown.Item eventKey="Balochistan">Kashmir</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -248,11 +260,10 @@ const VehicleAd = () => {
                   {vehicleAdData.city || "Select City"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item eventKey="Lahore">Lahore</Dropdown.Item>
-                  <Dropdown.Item eventKey="Karachi">Karachi</Dropdown.Item>
-                  <Dropdown.Item eventKey="Islamabad">Islamabad</Dropdown.Item>
-                  <Dropdown.Item eventKey="Peshawar">Peshawar</Dropdown.Item>
-                  <Dropdown.Item eventKey="Quetta">Quetta</Dropdown.Item>
+
+                  {vehicleAdData.province&&cities[vehicleAdData.province].map((city) => (
+                      <Dropdown.Item eventKey={city}>{city}</Dropdown.Item>
+                    ))}
                 </Dropdown.Menu>
               </Dropdown>
             </div>

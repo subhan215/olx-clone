@@ -32,7 +32,7 @@ const SignIn = () => {
             dispatch(setUserDataWithRedux({payload: data.userData}))
             console.log(data.userData)
             setCookie("token" , data.userData)
-            navigate("/home")
+            navigate("/")
 
         }
         else {

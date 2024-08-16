@@ -15,7 +15,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setNotifications } from "../redux/slices/notifications";
 import './Home.css'
 import { handleLike } from "../functions/handlesPosts/handleLike";
+import { Alert } from "react-bootstrap";
+import { setCookie } from "../cookies/setCookie";
+
 const Home = () => {
+ 
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const token = getCookie("token");
@@ -188,6 +192,7 @@ const Home = () => {
 
     const addAdDataToRedux = () => {
       dispatch(setIndividualAdData({ payload: ad }));
+      setCookie("ad" , ad, 2)
     }
 
     
@@ -229,6 +234,7 @@ const Home = () => {
 
   return (
     <PrimeReactProvider>
+     
       {!filterBool ? (
         <div>
           <Nav />
