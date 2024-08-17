@@ -125,7 +125,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
 
   const renderAdList = (ads, type) => (
     <div className="w-full">
-      <div className="p-4">
+      <div className="px-4">
         <h2 className="text-xl font-semibold text-gray-700 mb-2">{type} Ads</h2>
       </div>
       <ul className="list-none">
@@ -137,7 +137,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
               onClick={() => addAdDataToRedux(ad)} 
               className="no-underline text-gray-700 hover:text-gray-900"
             >
-              <li className="border p-4 flex items-center justify-between w-full relative hover:bg-gray-100 transition-colors duration-200">
+              <li className="border p-4 flex items-center justify-between w-full relative transition-colors duration-200 rounded">
                 {/* Heart Icon */}
                 <div 
                   className="absolute top-2 right-2"
@@ -183,15 +183,15 @@ const [maxPrice, setMaxPrice] = useState(10000000);
   return (
     <div>
       <Nav showBechDay = {false} showSearchBar = {false} showlocationBar = {false}/>
-      <div className="container mx-auto flex flex-col lg:flex-row p-4">
-        <div className="w-full lg:w-1/4 p-4 bg-gray-50 rounded-lg shadow-md">
+      <div className="container bg-white  mx-auto flex flex-col lg:flex-row my-4">
+        <div className="w-full lg:w-1/4 border border-black px-4 py-2 bg-orange-100 rounded-lg ">
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-4">Categories</h2>
             <ul className="space-y-2">
               {categoryData[specificType].map((cat) => (
                 <li 
                   key={cat} 
-                  className="cursor-pointer hover:text-green-600"
+                  className="cursor-pointer hover:text-orange-400"
                   onClick={() => setCategory(cat)}>
                   {cat}
                 </li>
@@ -204,7 +204,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
               {provinces.map((pro) => (
                 <li 
                   key={pro} 
-                  className="cursor-pointer hover:text-green-600"
+                  className="cursor-pointer hover:text-orange-400"
                   onClick={() => setProvince(pro)}>
                   {pro}
                 </li>
@@ -215,7 +215,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
                 {cities[province].map((cit) => (
                   <li 
                     key={cit} 
-                    className="cursor-pointer hover:text-green-600"
+                    className="cursor-pointer hover:text-orange-400"
                     onClick={() => setCity(cit)}>
                     {cit}
                   </li>
@@ -226,18 +226,18 @@ const [maxPrice, setMaxPrice] = useState(10000000);
           {(specificType === 'Vehicle' || specificType === 'Mobile' || specificType === 'Service') && (
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-4">Price</h2>
-            <div className="bg-gray-50 p-4 rounded-lg shadow-md mb-6">
+            <div className="bg-white p-4 rounded-lg border border-black mb-6">
   <div className="flex justify-between mb-4">
     <input
       type="number"
-      className="w-1/2 p-2 border rounded-md text-center"
+      className="w-1/2 p-2 border border-black rounded-md text-center"
       placeholder="Min Price"
       value={minPrice}
       onChange={(e) => setMinPrice(e.target.value)}
     />
     <input
       type="number"
-      className="w-1/2 p-2 border rounded-md text-center ml-2"
+      className="w-1/2 p-2 border border-black rounded-md text-center ml-2"
       placeholder="Max Price"
       value={maxPrice}
       onChange={(e) => setMaxPrice(e.target.value)}
@@ -274,7 +274,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
         )}
         </div>
   
-        <div className="w-full lg:w-3/4 p-4">
+        <div className="w-full lg:w-3/4 px-2">
           {filteredAds.length > 0 ? renderAdList(filteredAds, specificType) : 'No ads to display'}
         </div>
       </div>

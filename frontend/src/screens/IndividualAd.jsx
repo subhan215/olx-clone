@@ -264,7 +264,8 @@ const IndividualAd = () => {
     return (
         <>
             <Nav showBechDay={false} showSearchBar={false} showlocationBar={false} />
-            <div className='flex justify-center mx-auto mt-10'>
+            <div className='border border-black my-10 mx-36 rounded-2xl px-4'>
+            <div className='flex justify-center mx-auto mt-10 '>
                 <div >
                 {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
                     <div
@@ -320,7 +321,7 @@ const IndividualAd = () => {
                     adData?.createdBy !== user._id && (
                         <div
                             
-                            className="ml-20 w-[25vw] text-center bg-blue-200 border mt-2 border-black hover:bg-blue-400 hover:cursor-pointer rounded p-3 font-semibold text-black"
+                            className="w-[25vw] text-center bg-blue-200 border mt-2 border-black hover:bg-blue-300 hover:cursor-pointer rounded p-3 font-semibold text-black"
                             onClick={handleCreateTransaction}
                         >
                             Create Transaction
@@ -346,7 +347,7 @@ const IndividualAd = () => {
                 
             <div className="max-w-7xl mx-auto p-5 ">
                 {/* <div className="flex justify-center mx-16 mb-4 flex-col md:flex-row  gap-4 md:gap-4"> */}
-                    <div className="w-full flex item-center justify-center mb-4">
+                    <div className="w-full flex item-center justify-center mb-4 bg-gray-200 rounded-lg">
                         {renderImages()}
                     </div>
                     {/* <div className="flex-none md:w-[25vw]">
@@ -409,7 +410,7 @@ const IndividualAd = () => {
                 
                 </div>
 
-                <div className='border border-black rounded-lg m-1'>
+                <div className='border border-black rounded-lg my-4 mx-1'>
                 <div className="bg-white text-black font-bold p-4 rounded-t-md border-b border-black">Description</div>
                         <p className='p-4'>{adData?.description}</p>
                 </div>
@@ -473,6 +474,7 @@ const IndividualAd = () => {
                     )
                 )} */}
                 {/* <div>user rating: {adData?.userRating}</div> */}
+            </div>
             </div>
         </>
     );

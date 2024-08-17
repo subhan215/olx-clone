@@ -4,19 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCityWithRedux } from '../../redux/slices/locationData';
 import { setProvinceWithRedux } from '../../redux/slices/locationData';
 import { setSearchFilterWithRedux } from '../../redux/slices/searchFilter';
-import classNames from 'classnames';
 import  { useRef } from 'react';
-import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
-import { Toast } from 'primereact/toast';
-import { Badge } from 'primereact/badge';
-import { Avatar } from 'primereact/avatar';
-
 import './nav.css'
 import Notifications from '../Notifications';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import Transaction from '../../screens/Transactions';
-import { handleLogout } from '../../functions/handlesUser/logOut';
 import { handleLogOut } from '../../functions/handlesUser/logOut';
 import { getCookie } from '../../cookies/getCookie';
 import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -104,7 +97,7 @@ function Nav({showlocationBar=true , showSearchBar=true ,showBechDay=true}) {
 
   return (
     <>
-      <div className="bg-white border-b">
+      <div className="bg-white border-b border-black">
         <nav className="flex flex-wrap items-center justify-between px-2 py-3 max-w-screen-xl mx-auto">
           <div className="flex items-center space-x-4">
             <Link className='block no-underline' to={'/'}>

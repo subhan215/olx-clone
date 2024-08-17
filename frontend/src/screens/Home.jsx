@@ -257,7 +257,7 @@ const Home = () => {
                 itemTemplate={adTemplate}
               />
             ) : (
-              <p className="text-center mt-4">No Ads Found</p>
+              <p className="font-semibold text-center mt-4 ">No Ads Found</p>
             )}
           </div>
           <div className="p-4">
@@ -278,7 +278,7 @@ const Home = () => {
                 itemTemplate={adTemplate}
               />
             ) : (
-              <p className="text-center mt-4">No Ads Found</p>
+              <p className="font-semibold text-center mt-4">No Ads Found</p>
             )}
           </div>
           <div className="p-4">
@@ -299,7 +299,7 @@ const Home = () => {
                 itemTemplate={adTemplate}
               />
             ) : (
-              <p className="text-center mt-4">No Ads Found</p>
+              <p className="font-semibold text-center mt-4 ">No Ads Found</p>
             )}
           </div>
           <div className="p-4">
@@ -320,7 +320,7 @@ const Home = () => {
                 itemTemplate={adTemplate}
               />
             ) : (
-              <p className="text-center mt-4">No Ads Found</p>
+              <p className="font-semibold text-center mt-4">No Ads Found</p>
             )}
           </div>
         </div>
