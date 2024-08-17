@@ -10,13 +10,13 @@ const PostAd = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 p-8">
+    <div className="min-h-screen flex flex-col items-center bg-white p-8">
       <h1 className="text-3xl font-bold text-center mb-8">POST YOUR AD</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
         {categories.map((category) => (
           <div
             key={category.name}
-            className="flex items-center p-4 rounded-lg shadow-md bg-white border border-gray-200"
+            className="flex items-center p-4 rounded-lg  bg-white border border-black"
           >
             <div className={`text-3xl p-2 rounded-full ${category.color}`}>
               {category.icon}
@@ -26,7 +26,7 @@ const PostAd = () => {
             </div>
             <NavLink
               to={`/sell/${category.name.toLowerCase()}`}
-              className="ml-auto text-2xl text-gray-800 no-underline"
+              className="ml-auto text-2xl text-gray-800 no-underline hover:text-3xl"
             >
               ➔
             </NavLink>

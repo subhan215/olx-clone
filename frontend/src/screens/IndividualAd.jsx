@@ -8,6 +8,7 @@ import { getAllPosts } from "../functions/handlesPosts/allPosts";
 import { verifyToken } from "../functions/handlesUser/verifyToken";
 import Nav from '../components/Navbar/Nav';
 import { setIndividualAdData } from '../redux/slices/individualAd';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
 const IndividualAd = () => {
     const navigate = useNavigate();
@@ -184,24 +185,24 @@ const IndividualAd = () => {
         }
     };
 
-    const renderImages = () => (
+        const renderImages = () => (
 
-        adData && adData.imagesURL ? (
-            <Carousel className="h-full">
-                {adData.imagesURL.map((url, index) => (
-                    <Carousel.Item key={index}>
-                        <img
-                            src={url}
-                            alt={`Slide ${index}`}
-                            className="object-cover w-full h-[40vw] "
-                        />
-                    </Carousel.Item>
-                ))}
-            </Carousel>
-        ) : (
-            <div>No images</div>
-        )
-    );
+            adData && adData.imagesURL ? (
+                <Carousel className="h-full">
+                    {adData.imagesURL.map((url, index) => (
+                        <Carousel.Item key={index}>
+                            <img
+                                src={url}
+                                alt={`Slide ${index}`}
+                                className="object-cover w-full h-[80vw] "
+                            />
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
+            ) : (
+                <div>No images</div>
+            )
+        );
 
     const renderDetails = () => {
         const details = [
@@ -219,7 +220,7 @@ const IndividualAd = () => {
             { label: 'Mobile No', value: adData?.mobileNo },
             { label: 'Location', value: `${adData?.city}, ${adData?.province}` },
         ].filter(detail => detail.value);
-
+        
         return (
             // <Card className="bg-white shadow-md rounded-md">
             //     <Card.Header className="bg-orange-400 text-white">Details</Card.Header>
@@ -244,15 +245,111 @@ const IndividualAd = () => {
         );
     };
 
+    let userRating = adData?.userRating
+    // const fullStars = Math.floor(adData?.userRating);
+    // const hasHalfStar = adData?.userRating % 1 >= 0.5;
+    // const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    if (userRating === undefined || userRating === null) {
+    userRating = 0; // Default value if userRating is not provided
+    }
+    
+    // Ensure userRating is between 0 and 5
+    userRating = Math.max(0, Math.min(userRating, 5));
+
+    // Round down the rating to get the number of full stars
+    const fullStars = Math.floor(userRating);
+    const hasHalfStar = userRating - fullStars >= 0.5;
+    const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
+
     return (
         <>
             <Nav showBechDay={false} showSearchBar={false} showlocationBar={false} />
-            <div className="max-w-7xl mx-auto p-5 mt-5">
-                <div className="flex justify-center mx-16 mb-4 flex-col md:flex-row  gap-4 md:gap-4">
-                    <div className="flex-1">
+            <div className='flex justify-center mx-auto mt-10'>
+                <div >
+                {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
+                    <div
+                        
+                        className=" w-[25vw] text-center bg-yellow-100 border mt-2 border-black hover:bg-yellow-200 hover:cursor-pointer rounded p-3 font-semibold text-black"   onClick={() => handleStatusUpdate('In Progress')}
+                    >
+                        Mark as In Progress
+                    </div>
+                )}
+
+                </div>
+                
+
+                <div>
+                {(transactionStatus && user._id !== adData?.createdBy) ? (
+                    <>
+                        
+                        {transactionStatus.toLowerCase() === 'in progress' && user?._id == transaction?.buyer && (
+                            <div
+                                
+                                className="w-[25vw] text-center bg-green-300 border mt-2 border-black hover:bg-green-400 hover:cursor-pointer rounded p-3 font-semibold text-black"
+                                onClick={() => handleStatusUpdate('Completed')}
+                            >
+                                Mark as Completed
+                            </div>
+                        )}
+
+                        {transactionStatus.toLowerCase() === 'completed' && !transaction?.rating && user._id !== adData?.createdBy && (
+                            <div className="mt-2">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="5"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                    placeholder="Rate (1-5)"
+                                    className="border border-gray-300 p-2 rounded mr-2"
+                                />
+                                <Button
+                                    variant="warning"
+                                    className="bg-yellow-500 text-white"
+                                    onClick={handleRating}
+                                >
+                                    Submit Rating
+                                </Button>
+                            </div>
+                        )}
+                        {transaction?.rating && (
+                            <p>Rating: {transaction.rating}</p>
+                        )}
+                    </>
+                ) : (
+                    adData?.createdBy !== user._id && (
+                        <div
+                            
+                            className="ml-20 w-[25vw] text-center bg-blue-200 border mt-2 border-black hover:bg-blue-400 hover:cursor-pointer rounded p-3 font-semibold text-black"
+                            onClick={handleCreateTransaction}
+                        >
+                            Create Transaction
+                        </div>
+                    )
+                )}
+                </div>
+                {(user?._id == transaction?.seller || user?._id == transaction?.buyer) && <div className='ml-4 w-[15vw] text-center bg-orange-300 border mt-2 border-black  hover:cursor-pointer rounded font-semibold p-3 text-black'>Status: {transactionStatus} </div>}
+                <div className=" ml-4 mt-2 p-3 border border-black bg-white rounded-lg  flex items-center space-x-2">
+                <div className="text-yellow-500 flex">
+                    {Array(fullStars).fill().map((_, i) => (
+                    <FaStar key={`full-${i}`} className="text-xl" />
+                    ))}
+                    {hasHalfStar && <FaStarHalfAlt className="text-xl" />}
+                    {Array(emptyStars).fill().map((_, i) => (
+                    <FaRegStar key={`empty-${i}`} className="text-xl" />
+                    ))}
+                </div>
+                <span className="text-gray-700">User Rating: {adData?.userRating} / 5</span>
+                
+                </div>
+                </div>
+                
+            <div className="max-w-7xl mx-auto p-5 ">
+                {/* <div className="flex justify-center mx-16 mb-4 flex-col md:flex-row  gap-4 md:gap-4"> */}
+                    <div className="w-full flex item-center justify-center mb-4">
                         {renderImages()}
                     </div>
-                    <div className="flex-none md:w-[25vw]">
+                    {/* <div className="flex-none md:w-[25vw]">
                         <div className='border border-black p-2 rounded-lg m-1'><h1 className="text-xl font-semibold mb-2">{adData?.adTitle}</h1>
                         {adData?.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData?.price}`}</h3>}
                         <p className="text-gray-600 mb-4">{adData?.city}, {adData?.province}</p></div>
@@ -266,21 +363,58 @@ const IndividualAd = () => {
                                 Contact Seller
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     
                     {/* Alert Section
                     <div className="mt-4 bg-blue-100 text-blue-800 p-4 rounded-md">
                         <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
                     </div> */}
+                {/* </div> */}
+                
+                <div className='flex justify-between'>
+                <div className='border w-[50vw] border-black p-3 rounded-lg m-1 text-center'><h1 className="text-xl font-semibold mb-2">{adData?.adTitle}</h1>
+                        {adData?.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData?.price}`}</h3>}
+                        <p className="text-gray-600 mb-4">{adData?.city}, {adData?.province}</p>
+                </div>
+                <div className="w-[34vw] border border-black p-3 rounded-lg m-1 text-center flex flex-col items-center">
+                <h4 className="text-lg font-bold mb-2">Contact Info</h4>
+                <p className="text-base mb-2">Phone: {adData?.mobileNo}</p>
+                <div
+                    className="bg-orange-300 border mt-2 border-black hover:bg-orange-400 hover:cursor-pointer rounded p-3 font-semibold text-black"
+                    onClick={() => handleChat(adData?._id, adData?.category, adData?.createdBy)}
+                >
+                    Contact Seller
+                </div>
                 </div>
                 
+
+                {/* <div>
+                <div className="m-2 p-4 border border-black bg-white rounded-lg  flex items-center space-x-2">
+                <div className="text-yellow-500 flex">
+                    {Array(fullStars).fill().map((_, i) => (
+                    <FaStar key={`full-${i}`} className="text-xl" />
+                    ))}
+                    {hasHalfStar && <FaStarHalfAlt className="text-xl" />}
+                    {Array(emptyStars).fill().map((_, i) => (
+                    <FaRegStar key={`empty-${i}`} className="text-xl" />
+                    ))}
+                </div>
+                <span className="text-gray-700">User Rating: {adData?.userRating} / 5</span>
+                
+                </div>
+
+                </div> */}
+
+                
+                </div>
+
                 <div className='border border-black rounded-lg m-1'>
                 <div className="bg-white text-black font-bold p-4 rounded-t-md border-b border-black">Description</div>
                         <p className='p-4'>{adData?.description}</p>
                 </div>
                 <div className="mt-4">{renderDetails()}</div>
-                {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
+                {/* {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
                             <Button
                                 variant="primary"
                                 className="mt-3 bg-blue-500 text-white"
@@ -337,8 +471,8 @@ const IndividualAd = () => {
                             Create Transaction
                         </Button>
                     )
-                )}
-                <div>user rating: {adData?.userRating}</div>
+                )} */}
+                {/* <div>user rating: {adData?.userRating}</div> */}
             </div>
         </>
     );

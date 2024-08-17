@@ -90,8 +90,8 @@ const ChatDetail = () => {
   return (
     <div className="flex flex-col h-full bg-gray-100 p-4">
       
-      <NavLink to="/individualAd"  onClick={()=> addAdDataToRedux(chatRedux.ad.adId)}>
-      <button>
+      <NavLink to="/individualAd" onClick={()=> addAdDataToRedux(chatRedux.ad.adId)}>
+      <button className='border rounded-xl bg-orange-300 border-black hover:bg-orange-500 '>
           Go to Ad
       </button>
       </NavLink>

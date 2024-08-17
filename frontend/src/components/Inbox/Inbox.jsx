@@ -224,7 +224,7 @@ function Inbox() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message"
-              className="flex-grow p-3 border "
+              className="flex-grow p-3 border"
             />
             <button type="submit" className="p-3 px-5 bg-orange-500 text-white">Send</button>
             </div>

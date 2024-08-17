@@ -129,14 +129,16 @@ const Transaction = ({ turnTransactionsToOff }) => {
                         Buying
                     </button>
                 </div>
-                <div className="p-4 overflow-y-auto flex-grow bg-white scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-orange-200">
+                <div className="border-b border-gray-300 my-2"></div>
+                <div className="p-2 overflow-y-auto flex-grow bg-white scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-orange-200 ">
                     {transactions?.length > 0 ? (
                         transactions.map((transaction) => (
                             <div
                                 key={transaction?._id}
-                                className="mb-4 p-3 bg-white hover:bg-orange-50 rounded-lg cursor-pointer transition-colors duration-200 border border-orange-300"
+                                className="mb-2 p-2 hover:bg-orange-300 rounded-lg cursor-pointer border border-black"
                             >
                                 <NavLink
+                                    className={'block no-underline text-black'}
                                     to="/individualAd"
                                     onClick={() =>
                                         addAdDataToRedux(
@@ -151,10 +153,10 @@ const Transaction = ({ turnTransactionsToOff }) => {
                                     }
                                 >
                                     <div>
-                                        <p className="font-medium text-orange-800">Transaction ID: {transaction?._id}</p>
-                                        <p className="text-orange-700">Ad: {transaction?.adTitle}</p>
-                                        <p className="text-orange-700">Status: {transaction?.status}</p>
-                                        <p className="text-orange-700">Rating: {transaction?.rating || "Not rated yet"}</p>
+                                        <div className="font-medium ">Transaction ID: <span  className="font-light">{transaction?._id}</span></div>
+                                        <div className="font-medium ">Ad Title: <span className="font-light">{transaction?.adTitle}</span></div>
+                                        <div className="font-medium ">Status: <span className="font-light">{transaction?.status}</span></div>
+                                        <div className="font-medium ">Rating: <span className="font-light">{transaction?.rating || "Not rated yet"}</span></div>
                                     </div>
                                 </NavLink>
                                 {activeTab === "selling" && transaction?.status?.toLowerCase() === "pending" && (
