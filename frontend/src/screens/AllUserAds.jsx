@@ -153,7 +153,7 @@ const handleUpdate = (adId,adData,type) => {
             </li>
           ))
         ) : (
-          <li>No ads available.</li>
+          <span className='border hover:bg-white border-black p-2 rounded-lg bg-orange-300' >You have not posted in this category yet.</span>
         )}
       </ul>
     </div>

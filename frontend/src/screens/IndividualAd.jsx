@@ -193,7 +193,7 @@ const IndividualAd = () => {
                         <img
                             src={url}
                             alt={`Slide ${index}`}
-                            className="object-cover w-full h-[400px] md:h-[500px] lg:h-[600px]"
+                            className="object-cover w-full h-[40vw] "
                         />
                     </Carousel.Item>
                 ))}
@@ -231,7 +231,7 @@ const IndividualAd = () => {
             //         ))}
             //     </ListGroup>
             // </Card>
-            <div className="bg-white  rounded border border-black">
+            <div className="bg-white  rounded border border-black mt-4">
             <div className="bg-white text-black font-bold p-4 rounded-t-md border-b border-black">Details</div>
             <ul className="p-4">
                 {details.map((detail, index) => (
@@ -248,24 +248,23 @@ const IndividualAd = () => {
         <>
             <Nav showBechDay={false} showSearchBar={false} showlocationBar={false} />
             <div className="max-w-7xl mx-auto p-5 mt-5">
-                <div className="flex flex-col md:flex-row items-start gap-4 md:gap-4">
+                <div className="flex justify-center mx-16 mb-4 flex-col md:flex-row  gap-4 md:gap-4">
                     <div className="flex-1">
                         {renderImages()}
                     </div>
-                    <div className="flex-none md:w-1/3 bg-white p-4 rounded-lg shadow-md">
-                        <h1 className="text-xl font-semibold mb-2">{adData?.adTitle}</h1>
+                    <div className="flex-none md:w-[25vw]">
+                        <div className='border border-black p-2 rounded-lg m-1'><h1 className="text-xl font-semibold mb-2">{adData?.adTitle}</h1>
                         {adData?.price && <h3 className="text-orange-600 text-2xl mb-4">{`Rs ${adData?.price}`}</h3>}
-                        <p className="text-gray-600 mb-4">{adData?.city}, {adData?.province}</p>
-                        <div className="bg-white p-4 rounded-lg shadow-md">
-                            <h4 className="text-lg font-semibold mb-2">Contact Info</h4>
+                        <p className="text-gray-600 mb-4">{adData?.city}, {adData?.province}</p></div>
+                        <div className="border border-black p-2 rounded-lg m-1">
+                            <h4 className="text-lg font-bold mb-2">Contact Info</h4>
                             <p className="text-base mb-2">Phone: {adData?.mobileNo}</p>
-                            <Button
-                                variant="primary"
-                                className="bg-orange-600 border-orange-600 hover:bg-orange-500 hover:border-orange-500"
+                            <div
+                                className="item-center bg-orange-600 border-orange-600 hover:bg-orange-500 hover:cursor-pointer rounded p-2 hover:border-orange-500 text-white"
                                 onClick={() => handleChat(adData?._id, adData?.category, adData?.createdBy)}
                             >
                                 Contact Seller
-                            </Button>
+                            </div>
                         </div>
                     </div>
 
@@ -275,12 +274,11 @@ const IndividualAd = () => {
                         <strong>Contact:</strong> {adData.ownerName} - {adData.mobileNo}
                     </div> */}
                 </div>
-                <Card className="bg-white shadow-md rounded-md mt-4">
-                    <Card.Header>Description</Card.Header>
-                    <Card.Body>
-                        <Card.Text>{adData?.description}</Card.Text>
-                    </Card.Body>
-                </Card>
+                
+                <div className='border border-black rounded-lg m-1'>
+                <div className="bg-white text-black font-bold p-4 rounded-t-md border-b border-black">Description</div>
+                        <p className='p-4'>{adData?.description}</p>
+                </div>
                 <div className="mt-4">{renderDetails()}</div>
                 {transactionStatus?.toLowerCase() === 'pending' && user?._id == transaction?.seller && (
                             <Button

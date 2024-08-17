@@ -38,18 +38,16 @@ function SignUp() {
           if (response.success) {
             alert('Account has been created')
             const errorData = await response.json();
-            console.log('Error:', errorData.message);
-            // Handle specific error messages here
+            console.log('Response:', errorData.message);
             return;
           }else{
-            alert('Error:',response.error)
-          }
-      
           response = await response.json();
           console.log('Response:', response);
-          // Handle success response here
+          alert(response.message)
+          }
         } catch (error) {
-          console.log('Fetch error:', error);
+          alert(error.message)
+          console.log('Fetch error:', error.message);
         }
       };
   return (

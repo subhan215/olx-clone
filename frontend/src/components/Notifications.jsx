@@ -73,8 +73,8 @@ const Notifications = ({ turnNotificationsToOff }) => {
             className="fixed right-0 top-0 mt-4 mr-4 z-50 max-w-sm w-full transform transition-transform duration-500 ease-in-out translate-x-full"
         >
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="p-4 flex justify-between items-center border-b border-gray-300">
-                    <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                <div className="px-4 py-2 flex justify-between items-center border-b border-gray-300">
+                    <h3 className="ext-2xl font-semibold text-black">Notifications</h3>
                     <FontAwesomeIcon
                         icon={faTimes}
                         className="text-gray-500 cursor-pointer hover:text-gray-800"

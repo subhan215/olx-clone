@@ -199,10 +199,10 @@ const Home = () => {
 
     return (
       !ad.completed && (
-        <div className="border rounded-lg overflow-hidden p-4 m-2 bg-gray-200">
+        <div className="overflow-hidden  m-2 ">
           <div className="rounded-lg overflow-hidden p-4 m-2 bg-white border border-black">
             <div className="m-2">
-              <FontAwesomeIcon icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? { color: "red" } : {}} onClick={()=> handleLike(dispatch , ad , user)} />
+              <FontAwesomeIcon className="text-gray-400" icon={faHeart} size="xl" style={ad.likes.includes(user._id) ? { color: "red" } : {}} onClick={()=> handleLike(dispatch , ad , user)} />
             </div>
             <NavLink to="/individualAd" onClick={addAdDataToRedux} className="block no-underline text-black">
               <div className="rounded-lg h-48 bg-gray-200 flex items-center justify-center">
@@ -239,7 +239,7 @@ const Home = () => {
         <div>
           <Nav />
           <Categories />
-          <div className="p-4">
+          <div className="p-4 ">
             <p className="ml-10 mt-4 text-gray-700 text-3xl font-bold">
               Mobile Phones
             </p>

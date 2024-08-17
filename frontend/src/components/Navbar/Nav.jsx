@@ -107,7 +107,7 @@ function Nav({showlocationBar=true , showSearchBar=true ,showBechDay=true}) {
       <div className="bg-white border-b">
         <nav className="flex flex-wrap items-center justify-between px-2 py-3 max-w-screen-xl mx-auto">
           <div className="flex items-center space-x-4">
-            <Link className='block no-underline' to={'/home'}>
+            <Link className='block no-underline' to={'/'}>
               <h3 className="text-4xl font-bold text-orange-500 mr-10">K.o.F</h3>
             </Link>
 

@@ -96,11 +96,11 @@ const Transaction = ({ turnTransactionsToOff }) => {
             className="fixed right-0 top-0 mt-4 mr-4 z-50 max-w-sm w-full transform transition-transform duration-500 ease-in-out translate-x-full"
         >
             <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[90vh] flex flex-col">
-                <div className="p-4 flex justify-between items-center border-b border-gray-300 bg-white text-orange-500">
-                    <h3 className="text-lg font-semibold">Transactions</h3>
+                <div className="px-4 py-2 flex justify-between items-center border-b border-gray-300 bg-white text-orange-500 mb-2">
+                    <h3 className="text-2xl font-semibold text-black">Transactions</h3>
                     <FontAwesomeIcon
                         icon={faTimes}
-                        className="cursor-pointer hover:text-orange-400"
+                        className="cursor-pointer text-gray-400 hover:text-gray-900"
                         onClick={() => {
                             const modalElement = document.getElementById("transactionModal");
                             modalElement.classList.remove("translate-x-0");
@@ -111,11 +111,11 @@ const Transaction = ({ turnTransactionsToOff }) => {
                         }}
                     />
                 </div>
-                <div className="flex justify-around p-2 bg-white border-b border-gray-300">
+                <div className="mx-2 my-2 flex justify-around bg-white border border-black rounded-lg">
                     <button
                         onClick={() => setActiveTab("selling")}
                         className={`w-1/2 p-2 text-center ${
-                            activeTab === "selling" ? "border-b-2 border-orange-500 font-bold text-orange-600" : "text-gray-700"
+                            activeTab === "selling" ? "font-bold text-white bg-orange-300 border-tl border-white rounded-lg" : "font-medium text-black bg-white border border-white rounded-lg"
                         }`}
                     >
                         Selling
@@ -123,7 +123,7 @@ const Transaction = ({ turnTransactionsToOff }) => {
                     <button
                         onClick={() => setActiveTab("buying")}
                         className={`w-1/2 p-2 text-center ${
-                            activeTab === "buying" ? "border-b-2 border-orange-500 font-bold text-orange-600" : "text-gray-700"
+                            activeTab === "buying" ? "font-bold text-white bg-orange-300 border-tl border-white rounded-lg" : "font-medium text-black bg-white border border-white rounded-lg"
                         }`}
                     >
                         Buying

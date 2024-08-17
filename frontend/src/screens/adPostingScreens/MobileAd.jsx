@@ -9,7 +9,9 @@ import { getAllPosts } from "../../functions/handlesPosts/allPosts";
 import { useLocation } from "react-router-dom";
 import Nav from "../../components/Navbar/Nav";
 import MyAlert from "../../components/MyAlert";
+import { useNavigate } from "react-router-dom";
 const MobileAd = () => { 
+  const navigate = useNavigate()
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("danger"); 
@@ -133,6 +135,7 @@ const MobileAd = () => {
       if (data.success) {
         setAlertMessage(adId ? "Ad updated successfully" : "Ad posted successfully");
         setAlertVariant("success") 
+        navigate('')
       }
       else {
         setAlertMessage(data.message)

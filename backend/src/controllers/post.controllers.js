@@ -99,7 +99,12 @@ async function postService(req, res) {
     } else {
       // Calculate the seller's average rating
       let user = await User.findById(createdBy);
-      let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+      let totalRating = 0;
+      
+      if (user.sellerRating.length > 0) {
+        totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+      }
+      // let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
 
       // Create a new service ad
       service = await Service.create({
@@ -183,8 +188,12 @@ async function postJob(req, res) {
 
     // Calculate the seller's average rating
     let user = await User.findById(createdBy);
-    let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
-
+    // let totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+    let totalRating = 0;
+      
+      if (user.sellerRating.length > 0) {
+        totalRating = user.sellerRating.reduce((acc, r) => acc + r.rating, 0) / user.sellerRating.length;
+      }
     const adId = req.params.adId;
     const adData = {
       category,
@@ -308,11 +317,20 @@ async function postVehicle(req, res) {
       });
     } else {
       let user = await User.findById(req.body.createdBy)
-    let totalRating= 0
-    for(let i = 0 ; i < user.sellerRating.length ; i++) {
-      totalRating += user.sellerRating[i].rating
-    }
-    totalRating /= user.sellerRating.length
+      let totalRating= 0
+      if (user.sellerRating.length > 0) {
+        for (let i = 0; i < user.sellerRating.length; i++) {
+          totalRating += user.sellerRating[i].rating;
+        }
+        totalRating /= user.sellerRating.length;
+      } else {
+        totalRating = 0;  // or any default value you consider appropriate
+      }
+    // let totalRating= 0
+    // for(let i = 0 ; i < user.sellerRating.length ; i++) {
+    //   totalRating += user.sellerRating[i].rating
+    // }
+    // totalRating /= user.sellerRating.length
       // Create a new Vehicle Ad
       const vehicle = await Vehicle.create({
         category, make, adTitle, description, city, province, price: Number(price),
@@ -451,10 +469,18 @@ async function postMobile(req, res) {
     } else {
       let user = await User.findById(req.body.createdBy)
       let totalRating= 0
-      for(let i = 0 ; i < user.sellerRating.length ; i++) {
-        totalRating += user.sellerRating[i].rating
+      if (user.sellerRating.length > 0) {
+        for (let i = 0; i < user.sellerRating.length; i++) {
+          totalRating += user.sellerRating[i].rating;
+        }
+        totalRating /= user.sellerRating.length;
+      } else {
+        totalRating = 0;  // or any default value you consider appropriate
       }
-      totalRating /= user.sellerRating.length
+      // for(let i = 0 ; i < user.sellerRating.length ; i++) {
+      //   totalRating += user.sellerRating[i].rating
+      // }
+      // totalRating /= user.sellerRating.length
       const mobile = await Mobile.create({
         category: req.body.category,
         brand: req.body.brand,
