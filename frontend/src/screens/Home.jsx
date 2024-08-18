@@ -19,6 +19,8 @@ import { Alert } from "react-bootstrap";
 import { setCookie } from "../cookies/setCookie";
 
 const Home = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
  
   const navigate = useNavigate()
   const dispatch = useDispatch();
@@ -80,12 +82,13 @@ const Home = () => {
       }
     };
 
-    getAllPosts(dispatch);
-
     if (token) {
       verifyToken();
     }
   }, [token, dispatch]);
+  useEffect(()=> {
+    getAllPosts(dispatch ,ads ,  currentPage , pageSize)
+  } , [currentPage , dispatch])
 
   useEffect(() => {
     const getNotifications = async (userId) => {
@@ -255,6 +258,7 @@ const Home = () => {
                 circular
                 autoplayInterval={3000}
                 itemTemplate={adTemplate}
+                onPageChange={()=> setCurrentPage(currentPage+1)}
               />
             ) : (
               <p className="font-semibold text-center mt-4 ">No Ads Found</p>

@@ -7,8 +7,14 @@ import Nav from '../components/Navbar/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { handleLike } from '../functions/handlesPosts/handleLike';
+import { setViewAllWithRedux } from '../redux/slices/viewAll';
+import { getCookie } from '../cookies/getCookie';
 function ViewAll() {
-  const specificAds = useSelector((state) => state.viewAll.data);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
+  const specificAds = useSelector((state) => state.viewAll.data) || [];
+  console.log(specificAds)
+  console.log(getCookie("specificAds"))
   const specificType = useSelector((state) => state.viewAll.type);
   const user = useSelector((state) => state.userData.data);
   const dispatch = useDispatch();
@@ -97,15 +103,54 @@ function ViewAll() {
   const [category ,setCategory] = useState("")
   const [minPrice, setMinPrice] = useState(0);
 const [maxPrice, setMaxPrice] = useState(10000000);
-  const [filteredAds, setFilteredAds] = useState(specificAds[0].ads);
+  const [filteredAds, setFilteredAds] = useState(specificAds);
 
   const addAdDataToRedux = (ad) => {
     dispatch(setIndividualAdData({ payload: ad }));
   };
-
+  const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 200) {
+      // Fetch more ads if we are near the bottom of the page
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/posts/?page=${currentPage}&pageSize=${pageSize}`
+        );
+        const result = await response.json();
+  
+        if (result.success) {
+          const fetchedAds = result.adsData.filter((ad) => 
+            ad.model === (getCookie("specificAds")?.toLowerCase())
+          );
+  
+          const adsToAdd = fetchedAds.length > 0 ? fetchedAds[0].ads : [];
+  
+          // Prevent adding duplicate ads
+          const uniqueAds = adsToAdd.filter(ad => !specificAds.some(existingAd => existingAd._id === ad._id));
+  
+          // Update Redux state with the unique list of ads
+          dispatch(setViewAllWithRedux({
+            data: [...specificAds, ...uniqueAds],
+            type: getCookie("specificAds")
+          }));
+        } else {
+          console.error("Failed to fetch ads");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  
+    fetchAds();
+  }, [dispatch, currentPage, pageSize, specificType]);
+  
   // Filter ads when province or city changes
   useEffect(() => {
-    let ads = specificAds[0].ads;
+    let ads = specificAds;
     if (province && province !== "All Over Pakistan") {
       ads = ads.filter(ad => ad.province === province);
     }
@@ -122,7 +167,12 @@ const [maxPrice, setMaxPrice] = useState(10000000);
     }
     setFilteredAds(ads);
   }, [province, city, specificAds , category , minPrice , maxPrice , specificType]);
-
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   const renderAdList = (ads, type) => (
     <div className="w-full">
       <div className="px-4">
@@ -188,7 +238,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-4">Categories</h2>
             <ul className="space-y-2">
-              {categoryData[specificType].map((cat) => (
+              {specificType && categoryData[specificType].map((cat) => (
                 <li 
                   key={cat} 
                   className="cursor-pointer hover:text-orange-400"

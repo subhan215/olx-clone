@@ -118,7 +118,9 @@ const createChat = async (req, res) => {
 };
 const getChatMessages = async (req, res) => {
     const { chatId } = req.params;
-    console.log(chatId)
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    console.log(chatId, page, limit);
+    
     try {
         // Check if the chatId is valid
         if (!chatId) {
@@ -129,8 +131,10 @@ const getChatMessages = async (req, res) => {
         }
 
         // Find chat and populate messages.sender
-        let chat = null
-        if(chatId!= "undefined") chat = await Chat.findById(chatId).populate('messages.sender');
+        let chat = null;
+        if (chatId !== "undefined") {
+            chat = await Chat.findById(chatId).populate('messages.sender');
+        }
 
         // Check if chat exists
         if (!chat) {
@@ -140,20 +144,24 @@ const getChatMessages = async (req, res) => {
             });
         }
 
-        // Check if there are messages
-        if (chat.messages.length === 0) {
-            return res.status(200).json({
-                success: true,
-                messages: [],
-                message: 'No messages yet. Start the conversation!',
-            });
-        }
-        await notificationMsg.deleteMany({chatId: chat._id , recipientId: req?.body?.userId})
+        // Get paginated messages
+        const totalMessages = chat.messages.length;
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + parseInt(limit);
+        const paginatedMessages = chat.messages.slice(startIndex, endIndex);
+
+        // Delete notifications
+        await notificationMsg.deleteMany({ chatId: chat._id, recipientId: req?.body?.userId });
 
         return res.status(200).json({
             success: true,
-            messages: chat.messages,
-            chat
+            messages: paginatedMessages,
+            chat,
+            pagination: {
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(totalMessages / limit),
+                totalMessages: totalMessages
+            }
         });
     } catch (error) {
         console.error(error);
@@ -163,6 +171,7 @@ const getChatMessages = async (req, res) => {
         });
     }
 };
+
 const sendMessage = async (req, res) => {
     const { chatId } = req.params;
     const { sender, content , name } = req.body;

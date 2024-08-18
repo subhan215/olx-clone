@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import ChatDetail from "../ChatDetail/ChatDetail";
 import { io } from 'socket.io-client';
+import { fetchMessages } from "../../functions/handleMessages/fetchMessages";
 const socket = io('http://localhost:8000');
 //sari chat uthani hogi backend say
 function Inbox() {
@@ -47,26 +48,6 @@ function Inbox() {
       }
 
     };
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`http://localhost:8000/api/v1/chat/${chatId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "PUT",
-          body: JSON.stringify({ userId: user._id }),
-        });
-        const data = await response.json();
-        /// console.log(data.chat)
-        if (data.success) {
-          dispatch(setChatMessages(data.messages));
-        } else {
-          alert(data.message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
 
     if (user) {
       fetchChats();
@@ -75,7 +56,7 @@ function Inbox() {
       console.error("User data is missing");
     }
     if (chatId && user) {
-      fetchMessages()
+      fetchMessages(chatId , user._id , 1 , 10 , dispatch)
     }
   }, [user, dispatch]);
 
@@ -170,6 +151,7 @@ function Inbox() {
       console.log(error);
     }
   }
+  
   return (
     <div className="flex h-[calc(100vh-120px)] mx-4 border border-gray rounded-xl ">
       {/* Sidebar */}

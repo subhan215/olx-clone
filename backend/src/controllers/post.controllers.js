@@ -8,26 +8,45 @@ const { uploadOnCloudinary } = require("../utils/cloudinary/cloudinary");
 
 async function allPosts(req, res) {
   try {
-    const vehiclesAds = await Vehicle.find({completed: false})
-    const mobileAds = await Mobile.find({completed: false})
-    const jobAds = await Job.find({completed: false})
-    const serviceAds = await Service.find({completed: false})
+    const { page = 1, pageSize = 10 } = req.query;
+
+    const vehiclesAds = await Vehicle.find({ completed: false })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    const mobileAds = await Mobile.find({ completed: false })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    const jobAds = await Job.find({ completed: false })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    const serviceAds = await Service.find({ completed: false })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
     return res.status(200).json({
       message: "Ads successfully fetched",
       success: true,
-      adsData: [{ model: "vehicle", ads: [...vehiclesAds] }, { model: "mobile", ads: [...mobileAds] }, { model: "jobs", ads: [...jobAds] }, { model: "service", ads: [...serviceAds] }]
-    })
-  }
-  catch (err) {
-    console.log("error: ", err)
+      adsData: [
+        { model: "vehicle", ads: vehiclesAds },
+        { model: "mobile", ads: mobileAds },
+        { model: "jobs", ads: jobAds },
+        { model: "service", ads: serviceAds },
+      ],
+      currentPage: page,
+      pageSize,
+    });
+  } catch (err) {
+    console.log("error: ", err);
     return res.status(500).json({
       message: "Internal Server Error",
-      success: false
-    })
+      success: false,
+    });
   }
-
-
 }
+
 
 
 
@@ -360,64 +379,6 @@ async function postVehicle(req, res) {
   }
   
 }
-
-// if (!req.body.category || !req.body.make || !req.body.adTitle ||
-  //   !req.body.description || !req.body.city || !req.body.province || !req.body.price ||
-  //   !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Provide complete details!"
-  //   })
-  // }
-  // console.log("Vehicle", req.body.createdBy)
-  // try {
-  //   let cloudinaryUrls = []
-  //   for (let i = 0; i < req?.files?.images?.length; i++) {
-  //     let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
-  //     console.log("loop", cloudinaryURL)
-  //     cloudinaryUrls.push(cloudinaryURL.url)
-  //   }
-  //   // Check if user already exists
-  //   const vehicle = await Vehicle.create({
-  //     category: req.body.category,
-  //     make: req.body.make,
-  //     adTitle: req.body.adTitle,
-  //     description: req.body.description,
-  //     city: req.body.city,
-  //     province: req.body.province,
-  //     price: Number(req.body.price),
-  //     ownerName: req.body.ownerName,
-  //     mobileNo: req.body.phoneNo,
-  //     imagesURL: cloudinaryUrls,
-  //     createdBy: req.body.createdBy
-  //   })
-
-
-
-
-  //   // Create a new Vehicle A ///
-
-  //   if (!vehicle) {
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: "Internal server error while creating account."
-  //     });
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     vehicle: vehicle,
-  //     message: "Vehicle Ad created succesfully!"
-  //   });
-  // }
-  // catch (error) {
-  //   console.error("Error during creating vehicle:", error);
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: "Internal server error."
-  //   });
-  // }
-
 async function postMobile(req, res) {
   console.log(req.body);
   console.log(req.files);
@@ -517,60 +478,6 @@ async function postMobile(req, res) {
       message: "Internal server error."
     });
   }
-  // console.log(req.body)
-  // console.log(req.files)
-  // if (!req.body.category || !req.body.brand || !req.body.condition || !req.body.adTitle ||
-  //   !req.body.description || !req.body.city || !req.body.province || !req.body.price ||
-  //   !req.body.ownerName || !req.body.phoneNo || !req.body.createdBy) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Provide complete details!"
-  //   })
-  // }
-  // console.log(`hllo ${req.body.createdBy}`)
-  // try {
-  //   let cloudinaryUrls = []
-  //   for (let i = 0; i < req?.files?.images?.length; i++) {
-  //     let cloudinaryURL = await uploadOnCloudinary(req.files.images[i].path)
-  //     console.log("loop", cloudinaryURL)
-  //     cloudinaryUrls.push(cloudinaryURL.url)
-  //   }
-  //   // Check if user already exists
-  //   const mobile = await Mobile.create({
-  //     category: req.body.category,
-  //     brand: req.body.brand,
-  //     condition: req.body.condition,
-  //     adTitle: req.body.adTitle,
-  //     description: req.body.description,
-  //     province: req.body.province,
-  //     city: req.body.city,
-  //     price: Number(req.body.price),
-  //     ownerName: req.body.ownerName,
-  //     mobileNo: req.body.phoneNo,
-  //     imagesURL: cloudinaryUrls,
-  //     createdBy: req.body.createdBy
-  //   })
-  //   // Create a new Mobile ad ///
-  //   if (!mobile) {
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: "Internal server error while creating account."
-  //     });
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     mobileAd: mobile,
-  //     message: "Mobile Ad created succesfully!"
-  //   });
-  // }
-  // catch (error) {
-  //   console.error("Error during creating mobile:", error);
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: "Internal server error."
-  //   });
-  // }
 
 }
 async function postLike(req, res) {

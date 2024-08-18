@@ -1,5 +1,5 @@
 // ChatDetail.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
 import { formatDistanceToNow } from 'date-fns';
@@ -13,8 +13,11 @@ import { faCheckSquare } from '@fortawesome/free-solid-svg-icons/faCheckSquare';
 import { NavLink } from 'react-router-dom';
 import { setIndividualAdData } from '../../redux/slices/individualAd';
 import { getAllPosts } from '../../functions/handlesPosts/allPosts';
+import { fetchMessages } from '../../functions/handleMessages/fetchMessages';
 const socket = io('http://localhost:8000');
 const ChatDetail = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
   let messages = useSelector((state) => state.chatData.messages) || [];
   let chatId = useSelector((state)=> state.chatData.selectedChatId)
   let chat = useSelector((state)=> state.chatData.chats)
@@ -86,7 +89,32 @@ const ChatDetail = () => {
           console.error("Error updating transaction rating:", error);
       }
   }
-  
+  const handleScroll = () => {
+    const element = document.getElementById('messages-container');
+    if (element) {
+      const { scrollTop, scrollHeight, clientHeight } = element;
+      // Check if scrolled close to the bottom
+      if (scrollHeight - scrollTop <= clientHeight + 50) {
+        console.log("Scrolled to bottom");
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const element = document.getElementById('messages-container');
+    if (element) {
+      element.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (element) {
+        element.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [currentPage]);
+  useEffect(()=> {
+      fetchMessages(chatId , user._id , currentPage , pageSize, dispatch, messages)
+  } , [currentPage  ,dispatch]) 
   return (
     <div className="flex flex-col h-full bg-gray-100 p-4">
       
@@ -96,7 +124,7 @@ const ChatDetail = () => {
       </button>
       </NavLink>
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto flex flex-col space-y-4">
+      <div className="flex-1 overflow-y-auto flex flex-col space-y-4" id="messages-container">
       {messages.length === 0 ? (
           <div className="flex justify-center items-center h-full text-gray-600">
             Start the conversation!
@@ -106,6 +134,7 @@ const ChatDetail = () => {
             <div
               key={index}
               className={`flex ${(message.sender == user._id || message.sender._id == user._id) ? 'justify-end ' : 'justify-start'}`}
+              
             >
               <div
                 className={`p-2 rounded-lg ${

@@ -441,8 +441,8 @@ const JobsAd = () => {
                   <Dropdown.Menu>
                     <Dropdown.Item eventKey="Punjab">Punjab</Dropdown.Item>
                     <Dropdown.Item eventKey="Sindh">Sindh</Dropdown.Item>
-                    <Dropdown.Item eventKey="Khyber Pakhtunkhwa">
-                      Khyber Pakhtunkhwa
+                    <Dropdown.Item eventKey="KPK">
+                    KPK
                     </Dropdown.Item>
                     <Dropdown.Item eventKey="Balochistan">Balochistan</Dropdown.Item>
                     <Dropdown.Item eventKey="Balochistan">Kashmir</Dropdown.Item>
