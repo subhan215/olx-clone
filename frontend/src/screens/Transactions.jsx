@@ -8,7 +8,7 @@ import { setIndividualAdData } from "../redux/slices/individualAd";
 
 const Transaction = ({ turnTransactionsToOff }) => {
     const dispatch = useDispatch();
-    const transactions = useSelector((state) => state.transactions.data);
+    const transactions = useSelector((state) => state.transactions.data) || [];
     const user = useSelector((state) => state.userData.data);
     const [activeTab, setActiveTab] = useState("selling");
     const [rating, setRating] = useState(0);
@@ -27,45 +27,84 @@ const Transaction = ({ turnTransactionsToOff }) => {
         fetchTransactions();
     }, [activeTab, user._id, dispatch]);
 
-    const handleStatusUpdate = async (transactionId, newStatus) => {
+    const handleStatusUpdate = async (adId, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/v1/transaction/${transactionId}/status`, {
-                method: "PUT",
+            const response = await fetch(`http://localhost:8000/api/v1/transaction/${adId}/status`, {
+                method: 'PUT',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ status: newStatus, userId: user._id }),
             });
             const result = await response.json();
+    
             if (result.success) {
-                const updatedTransactions = await fetch(
-                    `http://localhost:8000/api/v1/transaction/${activeTab}/${user._id}`
-                ).then((res) => res.json());
-                dispatch(setTransactionsWithRedux(updatedTransactions.transactions));
+                const updatedTransaction = result.t; // Assuming this is the updated transaction
+    
+                // Find the index of the transaction to update
+                const index = transactions.findIndex(t => t._id === updatedTransaction._id);
+    
+                if (index !== -1) {
+                    // Create a new array with the updated transaction
+                    const updatedTransactions = [
+                        ...transactions.slice(0, index),
+                        updatedTransaction,
+                        ...transactions.slice(index + 1)
+                    ];
+    
+                    // Dispatch the updated transactions array
+                    dispatch(setTransactionsWithRedux(updatedTransactions));
+                } else {
+                    console.error('Transaction not found in the list.');
+                }
+    
+                // Optionally, if you want to update the individual ad data as well
+                dispatch(setIndividualAdData({ payload: result.ad }));
+            } else {
+                console.error(result.message);
             }
         } catch (error) {
-            console.error("Error updating transaction status:", error);
+            console.error('Error updating transaction status:', error);
         }
     };
+    
 
     const handleRating = async (transactionId) => {
         try {
             const response = await fetch(`http://localhost:8000/api/v1/transaction/${transactionId}/rate`, {
-                method: "PUT",
+                method: 'PUT',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ rating, userId: user._id }),
             });
             const result = await response.json();
             if (result.success) {
-                const updatedTransactions = await fetch(
-                    `http://localhost:8000/api/v1/transaction/${activeTab}/${user._id}`
-                ).then((res) => res.json());
-                dispatch(setTransactionsWithRedux(updatedTransactions.transactions));
+                setRating(rating); // Update rating in state
+                const updatedTransaction = result.t; // Assuming this is the updated transaction
+    
+                // Find the index of the transaction to update
+                const index = transactions.findIndex(t => t._id === updatedTransaction._id);
+    
+                if (index !== -1) {
+                    // Create a new array with the updated transaction
+                    const updatedTransactions = [
+                        ...transactions.slice(0, index),
+                        updatedTransaction,
+                        ...transactions.slice(index + 1)
+                    ];
+    
+                    // Dispatch the updated transactions array
+                    dispatch(setTransactionsWithRedux(updatedTransactions));
+                } else {
+                    console.error('Transaction not found in the list.');
+                }
+                dispatch(setIndividualAdData({payload: result.ad}))
+            } else {
+                console.error(result.message);
             }
         } catch (error) {
-            console.error("Error updating transaction rating:", error);
+            console.error('Error updating transaction rating:', error);
         }
     };
 
@@ -161,7 +200,7 @@ const Transaction = ({ turnTransactionsToOff }) => {
                                 </NavLink>
                                 {activeTab === "selling" && transaction?.status?.toLowerCase() === "pending" && (
                                     <button
-                                        onClick={() => handleStatusUpdate(transaction._id, "in progress")}
+                                        onClick={() => handleStatusUpdate(transaction.job ? transaction.job:transaction.service ?transaction.service : transaction.vehicle? transaction.vehicle: transaction.mobile, "in progress")}
                                         className="mt-2 bg-orange-500 text-white p-2 rounded"
                                     >
                                         Mark as In Progress
@@ -170,7 +209,7 @@ const Transaction = ({ turnTransactionsToOff }) => {
 
                                 {activeTab === "buying" && transaction?.status?.toLowerCase() === "in progress" && (
                                     <button
-                                        onClick={() => handleStatusUpdate(transaction._id, "Completed")}
+                                        onClick={() => handleStatusUpdate(transaction.job ? transaction.job:transaction.service ?transaction.service : transaction.vehicle? transaction.vehicle: transaction.mobile  , "Completed")}
                                         className="mt-2 bg-orange-500 text-white p-2 rounded"
                                     >
                                         Mark as Completed

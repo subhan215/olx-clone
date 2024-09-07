@@ -123,6 +123,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
         const result = await response.json();
   
         if (result.success) {
+          console.log(result)
           const fetchedAds = result.adsData.filter((ad) => 
             ad.model === (getCookie("specificAds")?.toLowerCase())
           );
@@ -131,7 +132,7 @@ const [maxPrice, setMaxPrice] = useState(10000000);
   
           // Prevent adding duplicate ads
           const uniqueAds = adsToAdd.filter(ad => !specificAds.some(existingAd => existingAd._id === ad._id));
-  
+          console.log(specificAds)  
           // Update Redux state with the unique list of ads
           dispatch(setViewAllWithRedux({
             data: [...specificAds, ...uniqueAds],

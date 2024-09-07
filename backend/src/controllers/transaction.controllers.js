@@ -42,13 +42,13 @@ async function putRating(req, res) {
         let seller = await User.findById(t.seller);
         seller.sellerRating.push({ rating, userId });
 
-        await User.findByIdAndUpdate(t.seller , {
+        await User.findByIdAndUpdate(t.seller, {
             sellerRating: seller.sellerRating
         })
         let user = await User.findById(t.seller)
-        let totalRating= 0
-        for(let i = 0 ; i < user.sellerRating.length ; i++) {
-          totalRating += user.sellerRating[i].rating
+        let totalRating = 0
+        for (let i = 0; i < user.sellerRating.length; i++) {
+            totalRating += user.sellerRating[i].rating
         }
         totalRating /= user.sellerRating.length
         // Calculate the average rating correctly
@@ -69,11 +69,11 @@ async function putRating(req, res) {
             updateAds(Service, t.seller),
             updateAds(Mobile, t.seller)
         ]);
-        let adModel = t.job ? Job: t.service ? Service : t.vehicle ? Vehicle : Mobile
-        let adId = t.job ? t.job: t.service ? St.service : t.vehicle ? t.vehicle : t.mobile
+        let adModel = t.job ? Job : t.service ? Service : t.vehicle ? Vehicle : Mobile
+        let adId = t.job ? t.job : t.service ? t.service : t.vehicle ? t.vehicle : t.mobile
         let ad = await adModel.findById(adId)
         // Return the updated transaction
-        return res.json({ success: true, t , ad });
+        return res.json({ success: true, t, ad });
     } catch (error) {
         // Handle server errors
         return res.status(500).json({ success: false, error: error.message });
@@ -124,10 +124,13 @@ async function updateStatus(req, res) {
         if (status.toLowerCase() === "completed") {
             // Check and update the relevant ad
             ad = await Job.findByIdAndUpdate(relatedAdId, { completed: true }) ||
-                 await Service.findByIdAndUpdate(relatedAdId, { completed: true }) ||
-                 await Vehicle.findByIdAndUpdate(relatedAdId, { completed: true }) ||
-                 await Mobile.findByIdAndUpdate(relatedAdId, { completed: true });
-
+                await Service.findByIdAndUpdate(relatedAdId, { completed: true }) ||
+                await Vehicle.findByIdAndUpdate(relatedAdId, { completed: true }) ||
+                await Mobile.findByIdAndUpdate(relatedAdId, { completed: true });
+            ad = await Job.findById(relatedAdId) ||
+                await Service.findById(relatedAdId) ||
+                await Vehicle.findById(relatedAdId) ||
+                await Mobile.findById(relatedAdId);
             if (!ad) {
                 return res.status(404).json({
                     success: false,
@@ -145,7 +148,7 @@ async function updateStatus(req, res) {
 
 async function createOrder(req, res) {
     try {
-        const { adId, sellerId, buyerId , adTitle } = req.body
+        const { adId, sellerId, buyerId, adTitle } = req.body
         console.log(req.body)
         if (!adId || !sellerId || !buyerId || !adTitle) {
             return res.status(400).json({
@@ -169,11 +172,11 @@ async function createOrder(req, res) {
             job,
             service,
             vehicle,
-            mobile , 
+            mobile,
             adTitle
         })
-        let ad = job ? job : service  ?service : vehicle ? vehicle : mobile
-        return res.status(201).json({ success: true, t ,ad  });
+        let ad = job ? job : service ? service : vehicle ? vehicle : mobile
+        return res.status(201).json({ success: true, t, ad });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }
@@ -239,6 +242,6 @@ module.exports = {
     putRating,
     updateStatus,
     createOrder,
-    getTransactions , 
+    getTransactions,
     getSpecificTransaction,
 }

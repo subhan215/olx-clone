@@ -79,7 +79,6 @@ function Nav({showlocationBar=true , showSearchBar=true ,showBechDay=true}) {
   const items = [
     { label: 'View and Edit Profile', icon: 'pi pi-user-edit', command: () => navigate('/update-profile',{ state: { user } }) },
     { label: 'My Ads', icon: 'pi pi-list', command: () => navigate('/my-ads',{ state: { user } }) },
-    { label: 'Favourites', icon: 'pi pi-heart', command: () => console.log('Favourites clicked') },
     { separator: true },
     { label: 'Logout', icon: 'pi pi-sign-out', command: ()=> handleLogOut(dispatch , setIsLogOutBool) }
   ];
